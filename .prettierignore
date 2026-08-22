@@ -1,0 +1,14 @@
+node_modules
+dist
+coverage
+test-results
+playwright-report
+artifacts
+package-lock.json
+prompts
+reference
+templates
+.ai
+reports
+README.md
+AGENTS.md

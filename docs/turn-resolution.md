@@ -64,14 +64,14 @@ else:
 
 ### P6 动态结算（固定子顺序，均基于已提交位置）
 
-| 子阶段 | 内容 | 规则出处 |
-|---|---|---|
-| D1 脆弱格坍塌 | 回合开始时所在格为脆弱格、且该角色**最终位置**（D2 后）不再等于该格、且该格尚未坍塌 → 记入 `fragileCollapsed`；被阻挡而停留不坍塌 | M7 |
-| D2 传送 | 见 §3 传送算法 | M6 |
-| D3 映射切换 | 传送后仍站在某 `switcher` 上的角色 → `state.mapping = switcher.target`；两角色站在不同 target 的切换器上 → 蓝色优先（ADR-006） | M4 |
-| D4 压板与门 | 对每个 `plate`：`doors[plate.doorId] = 有角色（传送后）站在该板上`；无板联动的门保持关闭 | M1 |
-| D5 同步脉冲 | 若某 `pairId` 的两个 `pulseSwitch` 本回合各被一名角色占用（传送后位置）→ `pulseDoors[pairId] = true`（闩锁，之后不回退，仅撤销可还原） | M8 |
-| D6 — | （保留） | |
+| 子阶段        | 内容                                                                                                                                   | 规则出处 |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------- | -------- |
+| D1 脆弱格坍塌 | 回合开始时所在格为脆弱格、且该角色**最终位置**（D2 后）不再等于该格、且该格尚未坍塌 → 记入 `fragileCollapsed`；被阻挡而停留不坍塌      | M7       |
+| D2 传送       | 见 §3 传送算法                                                                                                                         | M6       |
+| D3 映射切换   | 传送后仍站在某 `switcher` 上的角色 → `state.mapping = switcher.target`；两角色站在不同 target 的切换器上 → 蓝色优先（ADR-006）         | M4       |
+| D4 压板与门   | 对每个 `plate`：`doors[plate.doorId] = 有角色（传送后）站在该板上`；无板联动的门保持关闭                                               | M1       |
+| D5 同步脉冲   | 若某 `pairId` 的两个 `pulseSwitch` 本回合各被一名角色占用（传送后位置）→ `pulseDoors[pairId] = true`（闩锁，之后不回退，仅撤销可还原） | M8       |
+| D6 —          | （保留）                                                                                                                               |          |
 
 注意：D4/D5 读取的是 D2 之后的位置（传送落点可压板/触发脉冲）；D1 比较回合开始位置与 D2 后最终位置（移动离开或传送离开均触发坍塌，被阻挡停留不坍塌）。
 
@@ -113,15 +113,15 @@ RESTART: 从 LevelDef 重建初始 GameState（history 清空）。
 
 ## 5. 状态转移表
 
-| 当前状态 | 事件 | 条件 | 次态 / 效果 |
-|---|---|---|---|
-| PLAYING | MOVE(d) | 结算成立，未达成出口 | PLAYING；moveCount+1；压快照 |
-| PLAYING | MOVE(d) | 结算成立且达成双出口 | WON；同上 |
-| PLAYING | MOVE(d) | P5 同格取消 | PLAYING；状态按位不变；不压栈不计数（I6） |
-| PLAYING | UNDO | history 非空 | PLAYING/WON→恢复栈顶快照 |
-| PLAYING/WON | UNDO | history 为空 | 无变化 |
-| PLAYING/WON | RESTART | — | PLAYING；初始状态 |
-| WON | MOVE(d) | — | 忽略（由表现层引导下一关/重开） |
+| 当前状态    | 事件    | 条件                 | 次态 / 效果                               |
+| ----------- | ------- | -------------------- | ----------------------------------------- |
+| PLAYING     | MOVE(d) | 结算成立，未达成出口 | PLAYING；moveCount+1；压快照              |
+| PLAYING     | MOVE(d) | 结算成立且达成双出口 | WON；同上                                 |
+| PLAYING     | MOVE(d) | P5 同格取消          | PLAYING；状态按位不变；不压栈不计数（I6） |
+| PLAYING     | UNDO    | history 非空         | PLAYING/WON→恢复栈顶快照                  |
+| PLAYING/WON | UNDO    | history 为空         | 无变化                                    |
+| PLAYING/WON | RESTART | —                    | PLAYING；初始状态                         |
+| WON         | MOVE(d) | —                    | 忽略（由表现层引导下一关/重开）           |
 
 ## 6. 结算顺序无循环依赖论证
 

@@ -2,12 +2,12 @@
 
 ## 当前事实
 
-- 当前版本：架构与实施计划 V1.0（`docs/architecture.md`、`docs/implementation-plan.md`、ADR-007~013）
-- 当前阶段：03 已完成，下一阶段 04（仓库初始化与质量基线）
+- 当前版本：工程基线 0.1.0（可构建、可测试、全绿；最小 Boot/Home 场景 + 健康检查页）
+- 当前阶段：04 已完成，下一阶段 05（核心移动引擎）
 - 最后更新：2026-08-22
-- 最近通过命令：`node scripts/check-deps.mjs`（退出码 0）；夹具验证：故意违规文件被检出 4 处、退出码 1；`node scripts/check-stage01.mjs`（退出码 0，51 个 md 链接有效）
+- 最近通过命令：`npm run check`（10 步全过，退出码 0）；`npm run test:e2e`（chromium+webkit 2/2 通过）；`npm ci`（干净安装，退出码 0）
 - 当前阻塞：无
-- 下一步：执行 `prompts/04_仓库初始化与质量基线.md`：npm 初始化（`--save-exact` 锁版本）、落地 `docs/architecture.md` §4 全部质量命令、Vitest/Playwright 冒烟、`check` 门禁（含 check-deps）
+- 下一步：执行 `prompts/05_核心移动引擎.md`：按 `docs/domain-model.md`、`docs/turn-resolution.md`、`docs/invariants.md` 实现 `src/domain` 纯逻辑引擎（resolveTurn/undo/restart/projectSnapshot/stableHash）与单元测试；出口=`npm run check` 全绿且 I1–I19 引擎相关项有测试
 
 ## 阶段状态
 
@@ -17,7 +17,7 @@
 | 01 | completed | 2026-08-22 | 2026-08-22 | `reports/stage-01-report.md` | 需求解析与范围冻结；V1.0 基线冻结，ADR-001~004 |
 | 02 | completed | 2026-08-22 | 2026-08-22 | `reports/stage-02-report.md` | 规则形式化与状态模型；结算流水线 P1–P9、不变量 I1–I19、GWT 用例 49 例 |
 | 03 | completed | 2026-08-22 | 2026-08-22 | `reports/stage-03-report.md` | 技术架构与实施计划；ADR-007~013、目录/依赖/场景/命令冻结 |
-| 04 | pending |  |  | `reports/stage-04-report.md` | 仓库初始化与质量基线 |
+| 04 | completed | 2026-08-22 | 2026-08-22 | `reports/stage-04-report.md` | 仓库初始化与质量基线；check 十步全绿、e2e 双引擎通过、单文件 1.15MB |
 | 05 | pending |  |  | `reports/stage-05-report.md` | 核心移动引擎 |
 | 06 | pending |  |  | `reports/stage-06-report.md` | 前三关 MVP 与交互闭环 |
 | 07 | pending |  |  | `reports/stage-07-report.md` | 基础机关 M1–M4 |
@@ -50,8 +50,10 @@
 
 - OS：Windows（win32），PowerShell 5.1
 - Node：v24.14.0；npm：11.9.0；pnpm：11.22.0；yarn：不可用
-- Git：2.53.0.windows.1，分支 `main`，与 `origin/main` 同步，工作树干净
-- 包管理器：npm（ADR-007 冻结），`--save-exact` 锁版本，`package-lock.json` 入库
+- Git：2.53.0.windows.1，分支 `main`，与 `origin/main` 同步
+- 包管理器：npm（ADR-007 冻结），`--save-exact` 锁版本，`package-lock.json` 入库；`npm ci` 干净安装验证通过
+- 依赖锁定版本（2026-08-22）：phaser 3.90.0（注意：npm latest 已是 4.2.1，本项目按基线锁 3.x）；typescript 6.0.3；vite 8.2.2；vitest 4.1.11；@vitest/coverage-v8 4.1.11；vite-plugin-singlefile 2.3.3；@playwright/test 1.62.1；eslint 10.9.0；@eslint/js 10.0.1；typescript-eslint 8.67.0；eslint-config-prettier 10.1.8；prettier 3.9.6；globals 17.11.0；@types/node 26.2.0
+- Playwright 浏览器：chromium + webkit 已安装并通过冒烟
 
 ## 新会话恢复指令
 
