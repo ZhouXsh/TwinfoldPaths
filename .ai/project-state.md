@@ -2,19 +2,19 @@
 
 ## 当前事实
 
-- 当前版本：V1.0 需求基线（`reference/项目需求规格.md`）
-- 当前阶段：00 已完成，下一阶段 01（需求解析与范围冻结）
+- 当前版本：V1.0 需求基线已冻结（`docs/requirements.md`，ADR-001~004 已登记）
+- 当前阶段：01 已完成，下一阶段 02（规则形式化与状态模型）
 - 最后更新：2026-08-22
-- 最近通过命令：`git status`（工作树干净）、`node --version`（v24.14.0）、`npm --version`（11.9.0）、`pnpm --version`（11.22.0）
+- 最近通过命令：`node scripts/check-stage01.mjs`（退出码 0：36 个 md、31 项需求编号、矩阵双向完整、链接有效）
 - 当前阻塞：无
-- 下一步：执行 `prompts/01_需求解析与范围冻结.md`，产出 `docs/requirements.md`、`docs/traceability-matrix.md`、`docs/risk-register.md`、`reports/stage-01-report.md`
+- 下一步：执行 `prompts/02_规则形式化与状态模型.md`，输入为 `docs/requirements.md`（R-01~R-07 与 ADR-002）、`docs/traceability-matrix.md`、`docs/risk-register.md`
 
 ## 阶段状态
 
 | 阶段 | 状态 | 开始 | 完成 | 报告 | 阻塞/备注 |
 |---:|---|---|---|---|---|
 | 00 | completed | 2026-08-22 | 2026-08-22 | `reports/stage-00-report.md` | 总控与执行协议；基础设施已建立 |
-| 01 | pending |  |  | `reports/stage-01-report.md` | 需求解析与范围冻结 |
+| 01 | completed | 2026-08-22 | 2026-08-22 | `reports/stage-01-report.md` | 需求解析与范围冻结；V1.0 基线冻结，ADR-001~004 |
 | 02 | pending |  |  | `reports/stage-02-report.md` | 规则形式化与状态模型 |
 | 03 | pending |  |  | `reports/stage-03-report.md` | 技术架构与实施计划 |
 | 04 | pending |  |  | `reports/stage-04-report.md` | 仓库初始化与质量基线 |
@@ -37,7 +37,7 @@
 ## 关键路径与决策
 
 - 当前发布候选：无（尚未进入编码阶段）
-- 最近决策记录：暂无（`docs/decision-log.md` 已初始化，等待首条 ADR）
+- 最近决策记录：ADR-001（存档分槽回退）、ADR-002（暂停令牌消耗回合）、ADR-003（parMoves 允许上偏禁下偏）、ADR-004（线性解锁），见 `docs/decision-log.md`
 - 用户提供的外部材料：无（除仓库内执行包文档外）
 - 不得遗忘的限制：
   - 无后端、无账号、无在线模型、无 CDN、无远程字体/音频/追踪；发布为单文件离线 H5。
