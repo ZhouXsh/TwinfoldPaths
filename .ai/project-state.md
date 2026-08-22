@@ -2,12 +2,12 @@
 
 ## 当前事实
 
-- 当前版本：工程基线 0.1.0（可构建、可测试、全绿；最小 Boot/Home 场景 + 健康检查页）
-- 当前阶段：04 已完成，下一阶段 05（核心移动引擎）
+- 当前版本：核心移动引擎 V1.0（`src/domain` 全流水线 + 62 单元测试全绿，覆盖率 100%）
+- 当前阶段：05 已完成，下一阶段 06（前三关 MVP 与交互闭环）
 - 最后更新：2026-08-22
-- 最近通过命令：`npm run check`（10 步全过，退出码 0）；`npm run test:e2e`（chromium+webkit 2/2 通过）；`npm ci`（干净安装，退出码 0）
+- 最近通过命令：`npm run check`（10 步全过，退出码 0）；`npm run coverage`（src/domain 语句/分支/函数/行 100%）；`npm test`（6 文件 62 用例通过）
 - 当前阻塞：无
-- 下一步：执行 `prompts/05_核心移动引擎.md`：按 `docs/domain-model.md`、`docs/turn-resolution.md`、`docs/invariants.md` 实现 `src/domain` 纯逻辑引擎（resolveTurn/undo/restart/projectSnapshot/stableHash）与单元测试；出口=`npm run check` 全绿且 I1–I19 引擎相关项有测试
+- 下一步：执行 `prompts/06_前三关MVP与交互闭环.md`：接入领域引擎做可玩闭环（滑动+按钮输入、前三关、撤销/重开、通关结算、存档入口）；引擎 API 契约见 `docs/api/domain-engine.md`；出入口=`npm run check` 全绿 + E2E 通关一局
 
 ## 阶段状态
 
@@ -18,7 +18,7 @@
 | 02 | completed | 2026-08-22 | 2026-08-22 | `reports/stage-02-report.md` | 规则形式化与状态模型；结算流水线 P1–P9、不变量 I1–I19、GWT 用例 49 例 |
 | 03 | completed | 2026-08-22 | 2026-08-22 | `reports/stage-03-report.md` | 技术架构与实施计划；ADR-007~013、目录/依赖/场景/命令冻结 |
 | 04 | completed | 2026-08-22 | 2026-08-22 | `reports/stage-04-report.md` | 仓库初始化与质量基线；check 十步全绿、e2e 双引擎通过、单文件 1.15MB |
-| 05 | pending |  |  | `reports/stage-05-report.md` | 核心移动引擎 |
+| 05 | completed | 2026-08-22 | 2026-08-22 | `reports/stage-05-report.md` | 核心移动引擎；62 测试全绿、覆盖率 100%、规范补全 D6/§3-d |
 | 06 | pending |  |  | `reports/stage-06-report.md` | 前三关 MVP 与交互闭环 |
 | 07 | pending |  |  | `reports/stage-07-report.md` | 基础机关 M1–M4 |
 | 08 | pending |  |  | `reports/stage-08-report.md` | 高级机关 M5–M8 |

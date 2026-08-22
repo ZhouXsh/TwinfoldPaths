@@ -71,9 +71,9 @@ else:
 | D3 映射切换   | 传送后仍站在某 `switcher` 上的角色 → `state.mapping = switcher.target`；两角色站在不同 target 的切换器上 → 蓝色优先（ADR-006）         | M4       |
 | D4 压板与门   | 对每个 `plate`：`doors[plate.doorId] = 有角色（传送后）站在该板上`；无板联动的门保持关闭                                               | M1       |
 | D5 同步脉冲   | 若某 `pairId` 的两个 `pulseSwitch` 本回合各被一名角色占用（传送后位置）→ `pulseDoors[pairId] = true`（闩锁，之后不回退，仅撤销可还原） | M8       |
-| D6 —          | （保留）                                                                                                                               |          |
+| D6 令牌授予   | 回合结束时（传送后）站在 `pauseTile` 上且无令牌的角色 → `hasPauseToken = true`；已有令牌不叠加（ADR-005）                              | M3       |
 
-注意：D4/D5 读取的是 D2 之后的位置（传送落点可压板/触发脉冲）；D1 比较回合开始位置与 D2 后最终位置（移动离开或传送离开均触发坍塌，被阻挡停留不坍塌）。
+注意：实现顺序须先 D2 再 D1——D1/D3/D4/D5/D6 全部读取 D2 之后的位置（传送落点可压板、触发脉冲、站切换器、站暂停格）；D1 比较回合开始位置与最终位置（移动离开或传送离开均触发坍塌，被阻挡停留不坍塌）。
 
 ### P7 胜利判定（R-05）
 
@@ -96,7 +96,8 @@ teleporters = 站在某 portal 入口格上的角色（0、1 或 2 个）
   a. target 出界/墙/坍塌脆弱格/关闭普通门/不匹配 colorDoor/未激活 pulseDoor → 失败，停留原地
   b. target == 另一角色的当前位置，且另一角色本阶段不传送 → 失败，停留原地
   c. target == 另一角色的当前位置，且另一角色本阶段也传送 → 两者同时交换（成功）
-  d. 其余情况 → 成功，移动到 target
+  d. 两角色的传送目标为同一格 → 双方均失败，停留原地（避免同格，I2）
+  e. 其余情况 → 成功，移动到 target
 每角色每回合最多传送一次（I5）：落在 portal 入口格上不触发二次传送。
 ```
 
@@ -125,7 +126,7 @@ RESTART: 从 LevelDef 重建初始 GameState（history 清空）。
 
 ## 6. 结算顺序无循环依赖论证
 
-P1→P9 严格单向：P2 只读映射；P3 只读令牌；P4 只读回合开始地形/门状态（门状态由上一回合 D4 已定）；P5 只比较候选格；D1 读回合开始位置与最终位置；D2 读提交后位置并只改位置；D3/D4/D5 读 D2 后位置并只写映射/门/闩锁；P7 只读最终位置。无任何步骤输出回灌先前步骤，故无循环依赖（阶段验收门）。
+P1→P9 严格单向：P2 只读映射；P3 只读令牌；P4 只读回合开始地形/门状态（门状态由上一回合 D4 已定）；P5 只比较候选格；D2 读提交后位置并只改位置；D1 读回合开始位置与 D2 后最终位置；D3/D4/D5/D6 读 D2 后位置并只写映射/门/闩锁/令牌；P7 只读最终位置。无任何步骤输出回灌先前步骤，故无循环依赖（阶段验收门）。
 
 ## 7. 伪代码（总入口）
 
@@ -142,11 +143,12 @@ function resolveTurn(state, input) -> MoveResult:
       restoreTokens(state, tokens)
       return MoveResult(applied=false, ...)
   state.actors.blue.pos = bNext; state.actors.orange.pos = oNext
+  teleport(state)                                // D2（先行：后续阶段读传送后位置）
   collapseFragiles(state, 起始脆弱格且最终位置已离开的集合)   // D1
-  teleport(state)                                // D2
   applySwitchers(state)                          // D3
   refreshDoors(state)                            // D4
   latchPulses(state)                             // D5
+  grantPauseTokens(state)                        // D6（已有令牌不叠加）
   state.status = checkWin(state) ? WON : PLAYING // P7
   if applied: state.history.push(snap); state.moveCount += 1  // P8
   return MoveResult(...)
