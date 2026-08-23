@@ -1,0 +1,1207 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#0f1218" />
+    <title>双生折线 · H5 Demo</title>
+    <!--
+  《双生折线》(Twinfold Paths) 离线 H5 Demo —— 样板文件，仅供试玩与参考。
+  - 单文件自包含：无网络、无 CDN、无构建步骤，浏览器直接打开即可。
+  - 领域规则忠实移植自仓库 src/domain（M0 核心移动）：
+    R-01 正交网格四方向 | R-02 蓝原方向/橙水平镜像 | R-03 阻挡停留
+    R-04 同格取消、允许对穿 | R-05 双出口同回合通关 | R-06 无限撤销 | R-07 不限步
+  - 关卡数据沿用项目 Schema（levels/chapter-01 同构），全部经 tmp/solver.mjs BFS 验证可解。
+  - 星级为 demo 口径：步数≤目标=3★，≤目标+2=2★，其余 1★（正式版以需求基线为准）。
+  - 机关（门/压板/传送/单向/脆弱格/脉冲）不在 demo 范围，见正式项目阶段 07/08。
+-->
+    <style>
+      :root {
+        --bg: #0f1218;
+        --panel: #171c26;
+        --panel2: #1f2634;
+        --line: #2a3244;
+        --text: #e8ecf4;
+        --muted: #98a2b6;
+        --blue: #4da3ff;
+        --orange: #ffa14a;
+        --gold: #ffd76a;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family:
+          system-ui,
+          -apple-system,
+          'PingFang SC',
+          'Microsoft YaHei',
+          sans-serif;
+        overflow: hidden;
+        touch-action: manipulation;
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+      #app {
+        height: 100vh;
+        height: 100dvh;
+        max-width: 520px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+      }
+      [hidden] {
+        display: none !important;
+      }
+      button {
+        font: inherit;
+        color: var(--text);
+        background: var(--panel2);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        min-height: 44px;
+        min-width: 44px;
+        padding: 8px 14px;
+        cursor: pointer;
+        touch-action: manipulation;
+      }
+      button:active {
+        filter: brightness(1.25);
+        transform: translateY(1px);
+      }
+      button:disabled {
+        opacity: 0.45;
+        cursor: default;
+      }
+
+      /* ---------- 首页 ---------- */
+      #screen-home {
+        overflow-y: auto;
+        padding: calc(20px + env(safe-area-inset-top)) 16px calc(24px + env(safe-area-inset-bottom));
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      #screen-home h1 {
+        font-size: 34px;
+        letter-spacing: 10px;
+        text-align: center;
+        text-indent: 10px;
+      }
+      #screen-home .sub {
+        text-align: center;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .rules {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 12px 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        font-size: 13.5px;
+        line-height: 1.5;
+        color: var(--muted);
+      }
+      .rules b {
+        color: var(--text);
+        font-weight: 600;
+      }
+      .rules .blue {
+        color: var(--blue);
+      }
+      .rules .orange {
+        color: var(--orange);
+      }
+      #btn-continue {
+        padding: 13px;
+        font-size: 16px;
+        font-weight: 700;
+        background: #274066;
+        border-color: #3b5a8a;
+      }
+      #level-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+      .lv {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        padding: 10px 12px;
+        text-align: left;
+      }
+      .lv .t {
+        font-weight: 600;
+        font-size: 14px;
+      }
+      .lv .s {
+        font-size: 12px;
+        color: var(--gold);
+        letter-spacing: 2px;
+      }
+      .lv .s .off {
+        color: #39415a;
+      }
+      .lv .m {
+        font-size: 11.5px;
+        color: var(--muted);
+      }
+      .lv.locked {
+        opacity: 0.45;
+      }
+      #btn-reset-save {
+        align-self: center;
+        font-size: 12.5px;
+        color: var(--muted);
+        background: transparent;
+        border: none;
+        min-height: 36px;
+        text-decoration: underline;
+      }
+      .foot {
+        font-size: 11.5px;
+        color: #5d6880;
+        text-align: center;
+        line-height: 1.6;
+      }
+
+      /* ---------- 对局 ---------- */
+      #screen-game {
+        flex: 1;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+      }
+      .hud {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: calc(10px + env(safe-area-inset-top)) 12px 6px;
+      }
+      .hud .label {
+        flex: 1;
+        text-align: center;
+        font-weight: 600;
+        font-size: 15px;
+      }
+      .hud .moves {
+        font-variant-numeric: tabular-nums;
+        color: var(--muted);
+        font-size: 13px;
+        min-width: 104px;
+        text-align: right;
+      }
+      .hud .moves b {
+        color: var(--text);
+        font-size: 16px;
+      }
+      #board-wrap {
+        flex: 1;
+        min-height: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 6px 10px;
+        touch-action: none;
+      }
+      #board {
+        border-radius: 14px;
+        background: var(--panel);
+        box-shadow: 0 0 0 1px var(--line);
+      }
+      #status {
+        text-align: center;
+        color: var(--muted);
+        font-size: 13px;
+        min-height: 36px;
+        padding: 4px 16px;
+        line-height: 1.4;
+      }
+      #status.alert {
+        color: #ff8f8f;
+        font-weight: 600;
+      }
+      .controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        padding: 4px 18px calc(14px + env(safe-area-inset-bottom));
+      }
+      .dpad {
+        display: grid;
+        grid-template-areas: '. up .' 'left mid right' '. down .';
+        grid-template-columns: repeat(3, 62px);
+        grid-template-rows: repeat(3, 54px);
+        gap: 7px;
+      }
+      .dpad button {
+        font-size: 17px;
+        padding: 0;
+        border-radius: 13px;
+      }
+      .dpad [data-dir='UP'] {
+        grid-area: up;
+      }
+      .dpad [data-dir='DOWN'] {
+        grid-area: down;
+      }
+      .dpad [data-dir='LEFT'] {
+        grid-area: left;
+      }
+      .dpad [data-dir='RIGHT'] {
+        grid-area: right;
+      }
+      .actions {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        min-width: 92px;
+      }
+      .actions button {
+        font-size: 14px;
+      }
+
+      /* ---------- 通关弹层 ---------- */
+      #win-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(7, 9, 13, 0.74);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 20;
+        padding: 24px;
+      }
+      .win-card {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 26px 30px;
+        text-align: center;
+        min-width: 264px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .win-card h2 {
+        font-size: 22px;
+        letter-spacing: 4px;
+      }
+      .win-stars {
+        font-size: 36px;
+        letter-spacing: 8px;
+        color: var(--gold);
+        text-indent: 8px;
+      }
+      .win-stars .off {
+        color: #39415a;
+      }
+      .win-moves {
+        color: var(--muted);
+        font-size: 13.5px;
+      }
+      .win-card .row {
+        display: flex;
+        gap: 10px;
+      }
+      .win-card .row button {
+        flex: 1;
+      }
+      .win-card .primary {
+        background: #274066;
+        border-color: #3b5a8a;
+        font-weight: 700;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <section id="screen-home">
+        <h1>双生折线</h1>
+        <p class="sub">Twinfold Paths · 离线 H5 Demo（样板）</p>
+        <div class="rules">
+          <span><b>一次输入，双子同动</b>：上/下/左/右，滑动或按方向键。</span>
+          <span
+            ><b class="blue">蓝</b> 按原方向走；<b class="orange">橙</b>
+            左右相反（上下相同）。</span
+          >
+          <span>被墙/边界挡住的一方<b>原地停留</b>，另一方照常移动。</span>
+          <span>若两者将撞入同一格，<b>整步取消</b>（不计步）；对穿交换允许。</span>
+          <span>回合结束时双双站上各自出口即通关；<b>出口不锁定</b>，先到可离开。</span>
+        </div>
+        <button id="btn-continue">继续前进</button>
+        <div id="level-grid"></div>
+        <button id="btn-reset-save">清除本地进度</button>
+        <p class="foot">
+          demo 仅含核心移动规则；关卡均经 BFS 求解器验证可解（tmp/solver.mjs）。<br />键盘：方向键 /
+          WASD 移动，Z 撤销，R 重开，Esc 返回。
+        </p>
+      </section>
+
+      <section id="screen-game" hidden>
+        <div class="hud">
+          <button id="btn-home" aria-label="返回选关">‹ 选关</button>
+          <div class="label" id="level-label"></div>
+          <div class="moves">
+            步数 <b id="move-count">0</b> / 目标 <span id="par-label">0</span>
+          </div>
+        </div>
+        <div id="board-wrap">
+          <canvas id="board" aria-label="游戏棋盘"></canvas>
+        </div>
+        <div id="status"></div>
+        <div class="controls">
+          <div class="dpad" role="group" aria-label="方向按钮">
+            <button data-dir="UP" aria-label="上">▲</button>
+            <button data-dir="LEFT" aria-label="左">◀</button>
+            <button data-dir="RIGHT" aria-label="右">▶</button>
+            <button data-dir="DOWN" aria-label="下">▼</button>
+          </div>
+          <div class="actions">
+            <button id="btn-undo">撤销</button>
+            <button id="btn-restart">重开</button>
+          </div>
+        </div>
+      </section>
+
+      <div id="win-overlay" hidden>
+        <div class="win-card">
+          <h2>双出口同步达成</h2>
+          <div class="win-stars" id="win-stars"></div>
+          <div class="win-moves" id="win-moves"></div>
+          <div class="row">
+            <button id="btn-replay">再玩一次</button>
+            <button id="btn-next" class="primary">下一关</button>
+          </div>
+          <button id="btn-win-home">返回选关</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      'use strict';
+
+      /* ============================================================
+       * §1 领域层 —— src/domain 的 M0 核心移植（纯函数，不触碰 DOM）
+       *    R-01 正交网格四方向；R-02 蓝原方向/橙水平镜像；
+       *    R-03 单方被阻挡则停留；R-04 结算后同格整步取消、允许对穿；
+       *    R-05 双出口同回合通关、出口不锁定；R-06 无限撤销。
+       * ============================================================ */
+
+      const DIRECTIONS = ['UP', 'DOWN', 'LEFT', 'RIGHT'];
+      const DELTA = {
+        UP: { x: 0, y: -1 },
+        DOWN: { x: 0, y: 1 },
+        LEFT: { x: -1, y: 0 },
+        RIGHT: { x: 1, y: 0 }
+      };
+      const MAPPINGS = {
+        H_MIRROR: { LEFT: 'RIGHT', RIGHT: 'LEFT', UP: 'UP', DOWN: 'DOWN' },
+        V_MIRROR: { UP: 'DOWN', DOWN: 'UP', LEFT: 'LEFT', RIGHT: 'RIGHT' },
+        ROTATE_CW: { UP: 'RIGHT', RIGHT: 'DOWN', DOWN: 'LEFT', LEFT: 'UP' }
+      };
+
+      const pointKey = (p) => `${p.x},${p.y}`;
+      const equalsPoint = (a, b) => a.x === b.x && a.y === b.y;
+      const addDir = (p, d) => ({ x: p.x + DELTA[d].x, y: p.y + DELTA[d].y });
+      const inBounds = (grid, p) => p.x >= 0 && p.y >= 0 && p.x < grid.width && p.y < grid.height;
+      const applyMapping = (d, mode) => MAPPINGS[mode][d];
+
+      function createInitialState(level) {
+        return {
+          version: 1,
+          levelId: level.id,
+          status: 'PLAYING',
+          moveCount: 0,
+          mapping: level.initialMapping,
+          actors: {
+            blue: { color: 'BLUE', pos: { ...level.blueStart } },
+            orange: { color: 'ORANGE', pos: { ...level.orangeStart } }
+          },
+          history: []
+        };
+      }
+
+      function proposeStep(level, walls, from, dir) {
+        const next = addDir(from, dir);
+        if (!inBounds(level.grid, next) || walls.has(pointKey(next))) {
+          return { to: { ...from }, blocked: true };
+        }
+        return { to: next, blocked: false };
+      }
+
+      function applyCommand(level, prev, input) {
+        if (!DIRECTIONS.includes(input)) throw new Error(`非法方向输入: ${String(input)}`);
+        if (prev.status === 'WON') {
+          return {
+            state: prev,
+            result: {
+              applied: false,
+              won: false,
+              blue: {
+                from: prev.actors.blue.pos,
+                to: prev.actors.blue.pos,
+                blocked: false,
+                dir: input
+              },
+              orange: {
+                from: prev.actors.orange.pos,
+                to: prev.actors.orange.pos,
+                blocked: false,
+                dir: input
+              }
+            }
+          };
+        }
+        const walls = new Set(level.walls.map(pointKey));
+        const blueDir = input;
+        const orangeDir = applyMapping(input, prev.mapping);
+        const blueFrom = { ...prev.actors.blue.pos };
+        const orangeFrom = { ...prev.actors.orange.pos };
+        const blueStep = proposeStep(level, walls, blueFrom, blueDir);
+        const orangeStep = proposeStep(level, walls, orangeFrom, orangeDir);
+
+        if (equalsPoint(blueStep.to, orangeStep.to)) {
+          return {
+            state: prev,
+            result: {
+              applied: false,
+              won: false,
+              blue: { from: blueFrom, to: blueFrom, blocked: false, dir: blueDir },
+              orange: { from: orangeFrom, to: orangeFrom, blocked: false, dir: orangeDir }
+            }
+          };
+        }
+
+        const won =
+          equalsPoint(blueStep.to, level.blueExit) && equalsPoint(orangeStep.to, level.orangeExit);
+        const snapshot = {
+          status: prev.status,
+          moveCount: prev.moveCount,
+          mapping: prev.mapping,
+          actors: {
+            blue: { color: 'BLUE', pos: { ...blueFrom } },
+            orange: { color: 'ORANGE', pos: { ...orangeFrom } }
+          }
+        };
+        const state = {
+          version: 1,
+          levelId: prev.levelId,
+          status: won ? 'WON' : 'PLAYING',
+          moveCount: prev.moveCount + 1,
+          mapping: prev.mapping,
+          actors: {
+            blue: { color: 'BLUE', pos: { ...blueStep.to } },
+            orange: { color: 'ORANGE', pos: { ...orangeStep.to } }
+          },
+          history: [...prev.history, snapshot]
+        };
+        return {
+          state,
+          result: {
+            applied: true,
+            won,
+            blue: { from: blueFrom, to: blueStep.to, blocked: blueStep.blocked, dir: blueDir },
+            orange: {
+              from: orangeFrom,
+              to: orangeStep.to,
+              blocked: orangeStep.blocked,
+              dir: orangeDir
+            }
+          }
+        };
+      }
+
+      function undo(state) {
+        const snapshot = state.history[state.history.length - 1];
+        if (!snapshot) return { state, undone: false };
+        return {
+          state: {
+            version: 1,
+            levelId: state.levelId,
+            status: snapshot.status,
+            moveCount: snapshot.moveCount,
+            mapping: snapshot.mapping,
+            actors: {
+              blue: { color: 'BLUE', pos: { ...snapshot.actors.blue.pos } },
+              orange: { color: 'ORANGE', pos: { ...snapshot.actors.orange.pos } }
+            },
+            history: state.history.slice(0, -1)
+          },
+          undone: true
+        };
+      }
+
+      const restart = (level) => createInitialState(level);
+
+      function swipeToDirection(dx, dy, minDistance = 20) {
+        const ax = Math.abs(dx);
+        const ay = Math.abs(dy);
+        if (Math.max(ax, ay) < minDistance) return null;
+        if (ax >= ay) return dx > 0 ? 'RIGHT' : 'LEFT';
+        return dy > 0 ? 'DOWN' : 'UP';
+      }
+
+      /* ============================================================
+       * §2 关卡数据 —— 与项目 levels/chapter-01 Schema 同构。
+       *    1-1~1-3 为仓库正式关卡；1-4~1-8 为 demo 追加关卡，
+       *    全部经 tmp/solver.mjs BFS 验证可解并给出最短步数。
+       * ============================================================ */
+
+      const P = (x, y) => ({ x, y });
+      const row = (width, y) => Array.from({ length: width }, (_, x) => P(x, y));
+
+      const LEVELS = [
+        {
+          schemaVersion: 1,
+          id: 'level-001',
+          chapter: 1,
+          order: 1,
+          title: '第一次分岔',
+          grid: { width: 5, height: 3 },
+          blueStart: P(1, 1),
+          orangeStart: P(3, 1),
+          blueExit: P(0, 1),
+          orangeExit: P(3, 1),
+          initialMapping: 'H_MIRROR',
+          walls: [P(4, 1)],
+          entities: [],
+          parMoves: 1,
+          hint: { focus: '按 ← ：蓝向左走，橙被墙挡住', direction: 'LEFT' },
+          tags: ['chapter-1', 'tutorial', 'M0', 'single-block']
+        },
+        {
+          schemaVersion: 1,
+          id: 'level-002',
+          chapter: 1,
+          order: 2,
+          title: '左右相反',
+          grid: { width: 5, height: 5 },
+          blueStart: P(1, 3),
+          orangeStart: P(3, 3),
+          blueExit: P(0, 1),
+          orangeExit: P(4, 1),
+          initialMapping: 'H_MIRROR',
+          walls: [],
+          entities: [],
+          parMoves: 3,
+          hint: { focus: '上下一致，左右相反', direction: null },
+          tags: ['chapter-1', 'tutorial', 'M0', 'mirror']
+        },
+        {
+          schemaVersion: 1,
+          id: 'level-003',
+          chapter: 1,
+          order: 3,
+          title: '同步双出口',
+          grid: { width: 5, height: 5 },
+          blueStart: P(1, 0),
+          orangeStart: P(3, 0),
+          blueExit: P(1, 4),
+          orangeExit: P(3, 2),
+          initialMapping: 'H_MIRROR',
+          walls: [P(3, 3)],
+          entities: [],
+          parMoves: 4,
+          hint: { focus: '出口不锁定：先到的人等另一人', direction: 'DOWN' },
+          tags: ['chapter-1', 'tutorial', 'M0', 'sync-exit', 'exit-no-lock']
+        },
+        {
+          schemaVersion: 1,
+          id: 'level-004',
+          chapter: 1,
+          order: 4,
+          title: '对穿交换',
+          grid: { width: 7, height: 3 },
+          blueStart: P(2, 1),
+          orangeStart: P(3, 1),
+          blueExit: P(6, 1),
+          orangeExit: P(0, 1),
+          initialMapping: 'H_MIRROR',
+          walls: [...row(7, 0), ...row(7, 2)],
+          entities: [],
+          parMoves: 4,
+          hint: { focus: '面对面出发：撞同格会取消，但对穿可以互换位置', direction: 'RIGHT' },
+          tags: ['chapter-1', 'demo', 'M0', 'pass-through']
+        },
+        {
+          schemaVersion: 1,
+          id: 'level-005',
+          chapter: 1,
+          order: 5,
+          title: '停车让行',
+          grid: { width: 5, height: 5 },
+          blueStart: P(1, 2),
+          orangeStart: P(3, 2),
+          blueExit: P(0, 4),
+          orangeExit: P(4, 0),
+          initialMapping: 'H_MIRROR',
+          walls: [P(2, 1), P(2, 2), P(2, 3), P(1, 1), P(4, 1)],
+          entities: [],
+          parMoves: 5,
+          hint: { focus: '先把橙停进右上角的口袋，蓝再独自下行', direction: null },
+          tags: ['chapter-1', 'demo', 'M0', 'park-and-wait']
+        },
+        {
+          schemaVersion: 1,
+          id: 'level-006',
+          chapter: 1,
+          order: 6,
+          title: '绕墩错身',
+          grid: { width: 6, height: 5 },
+          blueStart: P(1, 2),
+          orangeStart: P(4, 2),
+          blueExit: P(5, 2),
+          orangeExit: P(0, 2),
+          initialMapping: 'H_MIRROR',
+          walls: [P(2, 2), P(3, 2)],
+          entities: [],
+          parMoves: 6,
+          hint: { focus: '正面被墙墩挡住：先错开，再对穿', direction: null },
+          tags: ['chapter-1', 'demo', 'M0', 'detour']
+        },
+        {
+          schemaVersion: 1,
+          id: 'level-007',
+          chapter: 1,
+          order: 7,
+          title: '借墙',
+          grid: { width: 5, height: 5 },
+          blueStart: P(0, 2),
+          orangeStart: P(2, 2),
+          blueExit: P(4, 2),
+          orangeExit: P(1, 0),
+          initialMapping: 'H_MIRROR',
+          walls: [P(1, 2), P(2, 0), P(3, 3)],
+          entities: [],
+          parMoves: 10,
+          hint: { focus: '让墙替你“按住”其中一人，另一人独行', direction: null },
+          tags: ['chapter-1', 'demo', 'M0', 'use-the-wall']
+        },
+        {
+          schemaVersion: 1,
+          id: 'level-008',
+          chapter: 1,
+          order: 8,
+          title: '同侧而行',
+          grid: { width: 6, height: 5 },
+          blueStart: P(0, 2),
+          orangeStart: P(1, 2),
+          blueExit: P(5, 2),
+          orangeExit: P(5, 4),
+          initialMapping: 'H_MIRROR',
+          walls: [P(3, 1), P(3, 2), P(2, 4), P(4, 0)],
+          entities: [],
+          parMoves: 17,
+          hint: { focus: '两个出口都在右侧：耐心借墙、敢于回头', direction: null },
+          tags: ['chapter-1', 'demo', 'M0', 'same-side']
+        }
+      ];
+
+      /* ============================================================
+       * §3 存档 —— localStorage（FR-07 的 demo 简化版：解锁 + 最佳成绩）
+       * ============================================================ */
+
+      const SAVE_KEY = 'twinfold-demo-save-v1';
+
+      function loadSave() {
+        try {
+          const raw = localStorage.getItem(SAVE_KEY);
+          if (!raw) return null;
+          const data = JSON.parse(raw);
+          if (!data || typeof data !== 'object' || data.v !== 1) return null;
+          return data;
+        } catch {
+          return null;
+        }
+      }
+
+      function persistSave(save) {
+        try {
+          localStorage.setItem(SAVE_KEY, JSON.stringify(save));
+        } catch {
+          /* 隐私模式等场景下静默降级：不存档不影响游玩 */
+        }
+      }
+
+      function freshSave() {
+        return { v: 1, unlocked: 1, best: {} };
+      }
+
+      const starsOf = (moves, par) => (moves <= par ? 3 : moves <= par + 2 ? 2 : 1);
+
+      // <smoke-cut>
+
+      /* ============================================================
+       * §4 表现层 —— Canvas 渲染 + DOM UI（只消费状态，不修改逻辑）
+       * ============================================================ */
+
+      const $ = (id) => document.getElementById(id);
+
+      const MOVE_ANIM_MS = 180;
+      const CANCEL_ANIM_MS = 260;
+      const WIN_ANIM_MS = 850;
+
+      const COLORS = {
+        tile: '#222a3a',
+        tileEdge: '#2b3550',
+        wall: '#46536e',
+        wallEdge: '#5a6a8c',
+        blue: '#4da3ff',
+        blueDeep: '#2a67c9',
+        orange: '#ffa14a',
+        orangeDeep: '#cf7420',
+        exitGlow: 0.35
+      };
+
+      const G = {
+        screen: 'home',
+        level: null,
+        state: null,
+        anim: null,
+        busyUntil: 0,
+        wonLocked: false,
+        tile: 48,
+        dpr: 1
+      };
+
+      const boardCanvas = $('board');
+      const ctx = boardCanvas.getContext('2d');
+
+      /* ---------- 屏幕切换 ---------- */
+
+      function showScreen(name) {
+        G.screen = name;
+        $('screen-home').hidden = name !== 'home';
+        $('screen-game').hidden = name !== 'game';
+        if (name !== 'game') $('win-overlay').hidden = true;
+      }
+
+      /* ---------- HUD ---------- */
+
+      function setMoves(n) {
+        $('move-count').textContent = String(n);
+      }
+
+      function setStatus(text, alert = false) {
+        const el = $('status');
+        el.textContent = text;
+        el.classList.toggle('alert', alert);
+      }
+
+      /* ---------- 棋盘尺寸 ---------- */
+
+      function layoutBoard() {
+        if (!G.level) return;
+        const wrap = $('board-wrap');
+        const availW = Math.max(80, wrap.clientWidth - 8);
+        const availH = Math.max(80, wrap.clientHeight - 8);
+        const { width: w, height: h } = G.level.grid;
+        G.tile = Math.max(20, Math.min(78, Math.floor(Math.min(availW / w, availH / h))));
+        G.dpr = Math.min(window.devicePixelRatio || 1, 3);
+        const cssW = G.tile * w;
+        const cssH = G.tile * h;
+        boardCanvas.style.width = `${cssW}px`;
+        boardCanvas.style.height = `${cssH}px`;
+        boardCanvas.width = Math.round(cssW * G.dpr);
+        boardCanvas.height = Math.round(cssH * G.dpr);
+      }
+
+      /* ---------- 动画状态（仅视觉，不影响逻辑） ---------- */
+
+      function actorVisual(color, now) {
+        const base = G.state.actors[color].pos;
+        const anim = G.anim;
+        if (!anim) return { x: base.x, y: base.y, s: 1 };
+        const p = Math.min(1, (now - anim.start) / anim.dur);
+        if (anim.type === 'move') {
+          const info = anim.result[color];
+          const ease = 1 - (1 - p) * (1 - p);
+          if (info.blocked) {
+            const d = DELTA[info.dir];
+            const k = Math.sin(p * Math.PI) * 0.22;
+            return { x: info.from.x + d.x * k, y: info.from.y + d.y * k, s: 1 };
+          }
+          return {
+            x: info.from.x + (info.to.x - info.from.x) * ease,
+            y: info.from.y + (info.to.y - info.from.y) * ease,
+            s: 1
+          };
+        }
+        if (anim.type === 'cancel') {
+          const k = Math.sin(p * Math.PI * 4) * 0.09 * (1 - p);
+          return { x: base.x + k, y: base.y, s: 1 };
+        }
+        if (anim.type === 'win') {
+          return { x: base.x, y: base.y, s: 1 + 0.28 * Math.sin(p * Math.PI) };
+        }
+        return { x: base.x, y: base.y, s: 1 };
+      }
+
+      /* ---------- 绘制 ---------- */
+
+      function roundRect(x, y, w, h, r) {
+        const rr = Math.min(r, w / 2, h / 2);
+        ctx.beginPath();
+        ctx.moveTo(x + rr, y);
+        ctx.arcTo(x + w, y, x + w, y + h, rr);
+        ctx.arcTo(x + w, y + h, x, y + h, rr);
+        ctx.arcTo(x, y + h, x, y, rr);
+        ctx.arcTo(x, y, x + w, y, rr);
+        ctx.closePath();
+      }
+
+      function drawExit(cell, color, deep, occupied, now) {
+        const t = G.tile;
+        const cx = (cell.x + 0.5) * t;
+        const cy = (cell.y + 0.5) * t;
+        const pulse = occupied ? 1 + 0.07 * Math.sin(now / 260) : 1;
+        const r = t * 0.34 * pulse;
+        ctx.save();
+        ctx.globalAlpha = occupied ? 0.3 : 0.14;
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = occupied ? 1 : 0.8;
+        ctx.strokeStyle = color;
+        ctx.lineWidth = Math.max(2, t * 0.06);
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.globalAlpha = 0.9;
+        ctx.fillStyle = deep;
+        ctx.beginPath();
+        ctx.arc(cx, cy, t * 0.07, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      function drawActor(color, now) {
+        const vis = actorVisual(color, now);
+        const t = G.tile;
+        const cx = (vis.x + 0.5) * t;
+        const cy = (vis.y + 0.5) * t;
+        const r = t * 0.33 * vis.s;
+        ctx.save();
+        if (color === 'blue') {
+          ctx.fillStyle = COLORS.blueDeep;
+          ctx.beginPath();
+          ctx.arc(cx, cy, r, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = COLORS.blue;
+          ctx.beginPath();
+          ctx.arc(cx, cy, r * 0.78, 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          ctx.translate(cx, cy);
+          ctx.rotate(Math.PI / 4);
+          const side = r * 1.5;
+          ctx.fillStyle = COLORS.orangeDeep;
+          roundRect(-side / 2, -side / 2, side, side, side * 0.28);
+          ctx.fill();
+          ctx.fillStyle = COLORS.orange;
+          const inner = side * 0.78;
+          roundRect(-inner / 2, -inner / 2, inner, inner, inner * 0.26);
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+
+      function draw(now) {
+        if (G.screen !== 'game' || !G.level) return;
+        const level = G.level;
+        const t = G.tile;
+        const w = level.grid.width;
+        const h = level.grid.height;
+        ctx.setTransform(G.dpr, 0, 0, G.dpr, 0, 0);
+        ctx.clearRect(0, 0, w * t, h * t);
+
+        for (let y = 0; y < h; y++) {
+          for (let x = 0; x < w; x++) {
+            ctx.fillStyle = COLORS.tile;
+            roundRect(x * t + 1.5, y * t + 1.5, t - 3, t - 3, Math.max(4, t * 0.14));
+            ctx.fill();
+          }
+        }
+        for (const wall of level.walls) {
+          ctx.fillStyle = COLORS.wall;
+          roundRect(wall.x * t + 2, wall.y * t + 2, t - 4, t - 4, Math.max(4, t * 0.16));
+          ctx.fill();
+          ctx.strokeStyle = COLORS.wallEdge;
+          ctx.lineWidth = 1.5;
+          roundRect(wall.x * t + 3.5, wall.y * t + 3.5, t - 7, t - 7, Math.max(3, t * 0.13));
+          ctx.stroke();
+        }
+
+        const blueOnExit = equalsPoint(G.state.actors.blue.pos, level.blueExit);
+        const orangeOnExit = equalsPoint(G.state.actors.orange.pos, level.orangeExit);
+        drawExit(level.blueExit, COLORS.blue, COLORS.blueDeep, blueOnExit, now);
+        drawExit(level.orangeExit, COLORS.orange, COLORS.orangeDeep, orangeOnExit, now);
+        drawActor('blue', now);
+        drawActor('orange', now);
+      }
+
+      function frame(now) {
+        requestAnimationFrame(frame);
+        const anim = G.anim;
+        if (anim && now - anim.start >= anim.dur) {
+          if (anim.type === 'move' && anim.result.won) {
+            startWinSequence();
+          } else if (anim.type === 'win') {
+            G.anim = null;
+            showWinOverlay();
+          } else {
+            G.anim = null;
+          }
+        }
+        draw(now);
+      }
+
+      /* ---------- 指令入口 ---------- */
+
+      function command(dir) {
+        if (G.screen !== 'game' || !G.state || G.wonLocked) return;
+        const now = performance.now();
+        if (now < G.busyUntil) return; // 输入门：动画期丢弃而非排队
+        const { state, result } = applyCommand(G.level, G.state, dir);
+        if (!result.applied) {
+          G.anim = { type: 'cancel', start: now, dur: CANCEL_ANIM_MS };
+          G.busyUntil = now + CANCEL_ANIM_MS;
+          setStatus('将撞入同一格：整步取消（不计步）', true);
+          return;
+        }
+        G.state = state;
+        G.busyUntil = now + MOVE_ANIM_MS + 40;
+        G.anim = { type: 'move', start: now, dur: MOVE_ANIM_MS, result };
+        setMoves(state.moveCount);
+        if (result.blue.blocked !== result.orange.blocked) {
+          setStatus(result.blue.blocked ? '蓝被挡住停留，橙继续移动' : '橙被挡住停留，蓝继续移动');
+        } else if (result.blue.blocked && result.orange.blocked) {
+          setStatus('双方都被挡住（消耗一步，可撤销）', true);
+        } else {
+          setStatus(G.level.hint.focus);
+        }
+      }
+
+      function doUndo() {
+        if (G.screen !== 'game' || !G.state || G.wonLocked) return;
+        const now = performance.now();
+        if (now < G.busyUntil) return;
+        const { state, undone } = undo(G.state);
+        if (!undone) return;
+        G.state = state;
+        G.anim = null;
+        setMoves(state.moveCount);
+        setStatus(G.level.hint.focus);
+      }
+
+      function doRestart() {
+        if (G.screen !== 'game' || !G.level || G.wonLocked) return;
+        G.state = restart(G.level);
+        G.anim = null;
+        G.busyUntil = 0;
+        setMoves(0);
+        setStatus(G.level.hint.focus);
+      }
+
+      /* ---------- 通关与存档 ---------- */
+
+      function recordWin(level, moves) {
+        const save = loadSave() || freshSave();
+        const stars = starsOf(moves, level.parMoves);
+        const prevBest = save.best[level.id];
+        save.best[level.id] = {
+          moves: prevBest ? Math.min(prevBest.moves, moves) : moves,
+          stars: prevBest ? Math.max(prevBest.stars, stars) : stars
+        };
+        save.unlocked = Math.max(save.unlocked, Math.min(level.order + 1, LEVELS.length));
+        persistSave(save);
+      }
+
+      function startWinSequence() {
+        if (G.wonLocked) return;
+        G.wonLocked = true;
+        recordWin(G.level, G.state.moveCount);
+        G.anim = { type: 'win', start: performance.now(), dur: WIN_ANIM_MS };
+        setStatus('双出口同步达成！');
+      }
+
+      function showWinOverlay() {
+        const moves = G.state.moveCount;
+        const par = G.level.parMoves;
+        const stars = starsOf(moves, par);
+        $('win-stars').innerHTML = [1, 2, 3]
+          .map((i) => (i <= stars ? '★' : '<span class="off">★</span>'))
+          .join('');
+        $('win-moves').textContent =
+          `本关步数 ${moves} · 目标步数 ${par}` + (moves <= par ? ' · 达成目标！' : '');
+        const next = LEVELS.find((l) => l.order === G.level.order + 1);
+        const btnNext = $('btn-next');
+        btnNext.disabled = !next;
+        btnNext.textContent = next ? '下一关' : '已全部通关';
+        $('win-overlay').hidden = false;
+      }
+
+      /* ---------- 关卡流程 ---------- */
+
+      function startLevel(level) {
+        G.level = level;
+        G.state = createInitialState(level);
+        G.anim = null;
+        G.busyUntil = 0;
+        G.wonLocked = false;
+        $('win-overlay').hidden = true;
+        $('level-label').textContent = `${level.chapter}-${level.order} ${level.title}`;
+        $('par-label').textContent = String(level.parMoves);
+        setMoves(0);
+        setStatus(level.hint.focus);
+        showScreen('game');
+        layoutBoard();
+      }
+
+      function goHome() {
+        showScreen('home');
+        renderHome();
+      }
+
+      /* ---------- 首页 ---------- */
+
+      function renderHome() {
+        const save = loadSave() || freshSave();
+        const grid = $('level-grid');
+        grid.textContent = '';
+        for (const level of LEVELS) {
+          const locked = level.order > save.unlocked;
+          const best = save.best[level.id];
+          const btn = document.createElement('button');
+          btn.className = 'lv' + (locked ? ' locked' : '');
+          btn.disabled = locked;
+          const title = document.createElement('span');
+          title.className = 't';
+          title.textContent = `${level.chapter}-${level.order} ${level.title}`;
+          const stars = document.createElement('span');
+          stars.className = 's';
+          if (best) {
+            stars.innerHTML = [1, 2, 3]
+              .map((i) => (i <= best.stars ? '★' : '<span class="off">★</span>'))
+              .join('');
+          } else {
+            stars.innerHTML = '<span class="off">★★★</span>';
+          }
+          const meta = document.createElement('span');
+          meta.className = 'm';
+          meta.textContent = locked
+            ? '未解锁'
+            : `目标 ${level.parMoves} 步${best ? ` · 最佳 ${best.moves}` : ''}`;
+          btn.append(title, stars, meta);
+          if (!locked) btn.addEventListener('click', () => startLevel(level));
+          grid.appendChild(btn);
+        }
+        const firstUnfinished =
+          LEVELS.find((l) => l.order <= save.unlocked && !save.best[l.id]) ||
+          LEVELS.find((l) => l.order === save.unlocked) ||
+          LEVELS[0];
+        $('btn-continue').textContent =
+          `继续前进 · ${firstUnfinished.chapter}-${firstUnfinished.order} ${firstUnfinished.title}`;
+        $('btn-continue').onclick = () => startLevel(firstUnfinished);
+      }
+
+      /* ---------- 输入绑定 ---------- */
+
+      function bindInputs() {
+        const KEY_DIRS = {
+          ArrowUp: 'UP',
+          KeyW: 'UP',
+          ArrowDown: 'DOWN',
+          KeyS: 'DOWN',
+          ArrowLeft: 'LEFT',
+          KeyA: 'LEFT',
+          ArrowRight: 'RIGHT',
+          KeyD: 'RIGHT'
+        };
+        window.addEventListener('keydown', (e) => {
+          if (G.screen !== 'game') return;
+          const dir = KEY_DIRS[e.code];
+          if (dir) {
+            e.preventDefault();
+            command(dir);
+          } else if (e.code === 'KeyZ' || e.code === 'KeyU') {
+            doUndo();
+          } else if (e.code === 'KeyR') {
+            doRestart();
+          } else if (e.code === 'Escape') {
+            goHome();
+          }
+        });
+
+        const wrap = $('board-wrap');
+        let swipe = null;
+        wrap.addEventListener('pointerdown', (e) => {
+          swipe = { id: e.pointerId, x: e.clientX, y: e.clientY };
+          wrap.setPointerCapture(e.pointerId);
+        });
+        wrap.addEventListener('pointerup', (e) => {
+          if (!swipe || e.pointerId !== swipe.id) return;
+          const dir = swipeToDirection(e.clientX - swipe.x, e.clientY - swipe.y);
+          swipe = null;
+          if (dir) command(dir);
+        });
+        wrap.addEventListener('pointercancel', () => {
+          swipe = null;
+        });
+
+        document.querySelectorAll('.dpad [data-dir]').forEach((btn) => {
+          btn.addEventListener('click', () => command(btn.dataset.dir));
+        });
+        $('btn-undo').addEventListener('click', doUndo);
+        $('btn-restart').addEventListener('click', doRestart);
+        $('btn-home').addEventListener('click', goHome);
+        $('btn-replay').addEventListener('click', () => {
+          $('win-overlay').hidden = true;
+          startLevel(G.level);
+        });
+        $('btn-next').addEventListener('click', () => {
+          const next = LEVELS.find((l) => l.order === G.level.order + 1);
+          if (next) startLevel(next);
+        });
+        $('btn-win-home').addEventListener('click', goHome);
+        $('btn-reset-save').addEventListener('click', () => {
+          if (window.confirm('确定清除全部本地进度？')) {
+            try {
+              localStorage.removeItem(SAVE_KEY);
+            } catch {
+              /* 忽略 */
+            }
+            renderHome();
+          }
+        });
+
+        window.addEventListener('resize', () => {
+          if (G.screen === 'game') layoutBoard();
+        });
+      }
+
+      renderHome();
+      bindInputs();
+      requestAnimationFrame(frame);
+    </script>
+  </body>
+</html>
