@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "level-001",
+  "chapter": 1,
+  "order": 1,
+  "title": "第一次分岔",
+  "grid": { "width": 5, "height": 3 },
+  "blueStart": { "x": 1, "y": 1 },
+  "orangeStart": { "x": 3, "y": 1 },
+  "blueExit": { "x": 0, "y": 1 },
+  "orangeExit": { "x": 3, "y": 1 },
+  "initialMapping": "H_MIRROR",
+  "walls": [{ "x": 4, "y": 1 }],
+  "entities": [],
+  "parMoves": 1,
+  "parMovesNote": "MVP：人工最短解（LEFT）经单元测试回放验证；阶段09 由 BFS 求解器复核",
+  "hint": { "focus": "按 ← ：蓝向左走，橙被墙挡住", "direction": "LEFT" },
+  "tags": ["chapter-1", "tutorial", "M0", "single-block"]
+}

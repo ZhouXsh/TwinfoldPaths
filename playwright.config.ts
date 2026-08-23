@@ -10,7 +10,16 @@ export default defineConfig({
   },
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-    { name: 'webkit', use: { ...devices['Desktop Safari'] } }
+    { name: 'webkit', use: { ...devices['Desktop Safari'] } },
+    {
+      name: 'mobile-320',
+      use: {
+        ...devices['Desktop Chrome'],
+        viewport: { width: 320, height: 568 },
+        hasTouch: true,
+        isMobile: true
+      }
+    }
   ],
   webServer: {
     command: 'npm run preview',

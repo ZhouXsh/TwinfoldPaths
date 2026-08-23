@@ -6,6 +6,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
     />
+    <link rel="icon" href="data:," />
     <title>双生折线 Twinfold Paths</title>
     <style>
       html,
@@ -15,27 +16,167 @@
         height: 100%;
         overflow: hidden;
         background: #101418;
+        color: #dbe7f3;
+        font-family: system-ui, sans-serif;
+      }
+      #app {
+        height: 100vh;
+        height: 100dvh;
+        display: flex;
+        flex-direction: column;
+      }
+      .bar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 8px;
+      }
+      #bar-hud {
+        min-height: 44px;
+        flex-wrap: wrap;
+      }
+      /* HUD/控制条始终占位（保持 Phaser 父容器尺寸稳定），只切换可见性 */
+      .ui-off {
+        visibility: hidden !important;
+        pointer-events: none !important;
+      }
+      #level-label {
+        font-size: 14px;
+        color: #9fb4c7;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      #move-box {
+        font-size: 14px;
+        color: #9fb4c7;
+        margin-left: auto;
+        white-space: nowrap;
+      }
+      #move-count {
+        color: #e8f1f8;
+        font-size: 16px;
+      }
+      #stage {
+        position: relative;
+        flex: 1;
+        min-height: 0;
+        overflow: hidden;
+        touch-action: none;
       }
       #game {
-        height: 100%;
+        position: absolute;
+        inset: 0;
+      }
+      .overlay {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 10px;
+        padding-bottom: 12%;
+        pointer-events: none;
+      }
+      .overlay > * {
+        pointer-events: auto;
+      }
+      #result-text {
+        font-size: 14px;
+        color: #9fb4c7;
+      }
+      #home-continue {
+        font-size: 14px;
+        color: #7fa8c9;
+      }
+      button {
+        min-width: 48px;
+        min-height: 48px;
+        padding: 8px 14px;
+        font-size: 18px;
+        color: #dbe7f3;
+        background: #1c2733;
+        border: 1px solid #33455a;
+        border-radius: 10px;
+        touch-action: manipulation;
+        user-select: none;
+        -webkit-user-select: none;
+        cursor: pointer;
+      }
+      button:active {
+        background: #2a3a4d;
+      }
+      .bar button {
+        font-size: 14px;
+        min-height: 44px;
+        padding: 4px 10px;
+      }
+      #bar-controls {
+        justify-content: center;
+        padding-bottom: max(8px, env(safe-area-inset-bottom));
+      }
+      #dpad {
+        display: grid;
+        grid-template-columns: repeat(3, 56px);
+        grid-template-rows: repeat(2, 56px);
+        gap: 6px;
+      }
+      #dpad button {
+        min-width: 56px;
+        min-height: 56px;
+        font-size: 22px;
+        padding: 0;
       }
       #status {
-        position: fixed;
-        left: 0;
-        right: 0;
-        bottom: 6px;
+        padding: 4px 8px;
         text-align: center;
-        font:
-          12px/1.4 system-ui,
-          sans-serif;
+        font-size: 12px;
+        line-height: 1.4;
         color: #5d7285;
-        pointer-events: none;
+        min-height: 18px;
+      }
+      [hidden] {
+        display: none !important;
       }
     </style>
   </head>
   <body>
-    <div id="game"></div>
-    <div id="status" data-testid="status">初始化中…</div>
+    <div id="app">
+      <header id="bar-hud" class="bar ui-off">
+        <button id="btn-home" data-testid="btn-home" type="button">首页</button>
+        <span id="level-label" data-testid="level-label"></span>
+        <span id="move-box">步数 <b id="move-count" data-testid="move-count">0</b></span>
+        <button id="btn-undo" data-testid="btn-undo" type="button">撤销</button>
+        <button id="btn-restart" data-testid="btn-restart" type="button">重开</button>
+      </header>
+      <div id="stage">
+        <div id="game" data-testid="board"></div>
+        <div id="bar-home" class="overlay" hidden>
+          <div id="home-continue" data-testid="home-continue"></div>
+          <button id="btn-start" data-testid="btn-start" type="button">开始游戏</button>
+        </div>
+        <div id="bar-result" class="overlay" hidden>
+          <div id="result-text" data-testid="result-text"></div>
+          <div class="bar" style="padding: 0">
+            <button id="btn-replay" data-testid="btn-replay" type="button">重玩</button>
+            <button id="btn-next" data-testid="btn-next" type="button">下一关</button>
+            <button id="btn-result-home" data-testid="btn-result-home" type="button">首页</button>
+          </div>
+        </div>
+      </div>
+      <div id="bar-controls" class="bar ui-off">
+        <div id="dpad">
+          <span></span>
+          <button id="btn-up" data-testid="btn-up" type="button" aria-label="上">↑</button>
+          <span></span>
+          <button id="btn-left" data-testid="btn-left" type="button" aria-label="左">←</button>
+          <button id="btn-down" data-testid="btn-down" type="button" aria-label="下">↓</button>
+          <button id="btn-right" data-testid="btn-right" type="button" aria-label="右">→</button>
+        </div>
+      </div>
+      <div id="status" data-testid="status">初始化中…</div>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

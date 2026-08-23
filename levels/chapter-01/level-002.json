@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "level-002",
+  "chapter": 1,
+  "order": 2,
+  "title": "左右相反",
+  "grid": { "width": 5, "height": 5 },
+  "blueStart": { "x": 1, "y": 3 },
+  "orangeStart": { "x": 3, "y": 3 },
+  "blueExit": { "x": 0, "y": 1 },
+  "orangeExit": { "x": 4, "y": 1 },
+  "initialMapping": "H_MIRROR",
+  "walls": [],
+  "entities": [],
+  "parMoves": 3,
+  "parMovesNote": "MVP：人工最短解（UP、UP、LEFT 任意序）经单元测试回放验证；阶段09 由 BFS 求解器复核",
+  "hint": { "focus": "上下一致，左右相反", "direction": null },
+  "tags": ["chapter-1", "tutorial", "M0", "mirror"]
+}
