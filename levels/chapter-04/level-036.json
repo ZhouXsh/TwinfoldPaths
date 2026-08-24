@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "level-036",
+  "chapter": 4,
+  "order": 36,
+  "title": "穿墙之门",
+  "grid": { "width": 7, "height": 5 },
+  "blueStart": { "x": 0, "y": 4 },
+  "orangeStart": { "x": 6, "y": 4 },
+  "blueExit": { "x": 0, "y": 1 },
+  "orangeExit": { "x": 6, "y": 1 },
+  "initialMapping": "H_MIRROR",
+  "walls": [
+    { "x": 0, "y": 2 },
+    { "x": 1, "y": 2 },
+    { "x": 2, "y": 2 },
+    { "x": 3, "y": 2 },
+    { "x": 4, "y": 2 },
+    { "x": 5, "y": 2 },
+    { "x": 6, "y": 2 }
+  ],
+  "entities": [
+    { "type": "portal", "portalId": "p", "x": 1, "y": 3, "end": "A" },
+    { "type": "portal", "portalId": "p", "x": 1, "y": 1, "end": "B" },
+    { "type": "portal", "portalId": "q", "x": 5, "y": 3, "end": "A" },
+    { "type": "portal", "portalId": "q", "x": 5, "y": 1, "end": "B" }
+  ],
+  "parMoves": 3,
+  "parMovesNote": "阶段08：人工最短解（RIGHT、UP、LEFT）经单元测试回放验证，临时 BFS 复核一致（阶段09 替换为正式求解器）",
+  "hint": { "focus": "墙过不去：站上传送门，回合末送到配对的另一端", "direction": "RIGHT" },
+  "tags": ["chapter-4", "tutorial", "M6", "portal"]
+}

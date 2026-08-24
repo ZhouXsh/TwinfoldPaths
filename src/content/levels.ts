@@ -11,6 +11,14 @@ import level021 from '../../levels/chapter-03/level-021.json';
 import level023 from '../../levels/chapter-03/level-023.json';
 import level026 from '../../levels/chapter-03/level-026.json';
 import level029 from '../../levels/chapter-03/level-029.json';
+import level031 from '../../levels/chapter-04/level-031.json';
+import level034 from '../../levels/chapter-04/level-034.json';
+import level036 from '../../levels/chapter-04/level-036.json';
+import level038 from '../../levels/chapter-04/level-038.json';
+import level041 from '../../levels/chapter-05/level-041.json';
+import level044 from '../../levels/chapter-05/level-044.json';
+import level046 from '../../levels/chapter-05/level-046.json';
+import level047 from '../../levels/chapter-05/level-047.json';
 
 const RAW_LEVELS: readonly unknown[] = [
   level001,
@@ -23,7 +31,15 @@ const RAW_LEVELS: readonly unknown[] = [
   level021,
   level023,
   level026,
-  level029
+  level029,
+  level031,
+  level034,
+  level036,
+  level038,
+  level041,
+  level044,
+  level046,
+  level047
 ];
 
 export const LEVELS: readonly LevelRecord[] = (() => {

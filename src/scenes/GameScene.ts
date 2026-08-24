@@ -35,6 +35,13 @@ const SWITCHER_TEXTURES: Record<MappingMode, string> = {
   ROTATE_CW: 'switcher-R'
 };
 
+const ONEWAY_TEXTURES: Record<'UP' | 'DOWN' | 'LEFT' | 'RIGHT', string> = {
+  UP: 'oneway-UP',
+  DOWN: 'oneway-DOWN',
+  LEFT: 'oneway-LEFT',
+  RIGHT: 'oneway-RIGHT'
+};
+
 const KEY_DIRECTIONS: ReadonlyArray<readonly [string, Direction]> = [
   ['UP', 'UP'],
   ['DOWN', 'DOWN'],
@@ -72,6 +79,10 @@ export class GameScene extends Phaser.Scene {
   private exitBaseScale = 1;
   private doorSprites = new Map<string, Phaser.GameObjects.Image>();
   private plateSprites: Array<{ sprite: Phaser.GameObjects.Image; x: number; y: number }> = [];
+  private fragileSprites: Array<{ sprite: Phaser.GameObjects.Image; x: number; y: number }> = [];
+  private pulseDoorSprites: Array<{ sprite: Phaser.GameObjects.Image; pairId: string }> = [];
+  private pulseSwitchSprites: Array<{ sprite: Phaser.GameObjects.Image; x: number; y: number }> =
+    [];
   private blueToken: Phaser.GameObjects.Image | null = null;
   private orangeToken: Phaser.GameObjects.Image | null = null;
   private cleanupFns: Array<() => void> = [];
@@ -94,6 +105,9 @@ export class GameScene extends Phaser.Scene {
     this.gate.reset();
     this.doorSprites.clear();
     this.plateSprites = [];
+    this.fragileSprites = [];
+    this.pulseDoorSprites = [];
+    this.pulseSwitchSprites = [];
     this.blueToken = null;
     this.orangeToken = null;
 
@@ -157,6 +171,32 @@ export class GameScene extends Phaser.Scene {
           this.add
             .image(c.x, c.y, entity.color === 'BLUE' ? 'colordoor-blue' : 'colordoor-orange')
             .setScale(scale);
+          break;
+        case 'oneWay':
+          this.add.image(c.x, c.y, ONEWAY_TEXTURES[entity.arrow]).setScale(scale);
+          break;
+        case 'portal':
+          this.add.image(c.x, c.y, 'portal').setScale(scale);
+          break;
+        case 'fragile':
+          this.fragileSprites.push({
+            sprite: this.add.image(c.x, c.y, 'fragile').setScale(scale),
+            x: entity.x,
+            y: entity.y
+          });
+          break;
+        case 'pulseSwitch':
+          this.pulseSwitchSprites.push({
+            sprite: this.add.image(c.x, c.y, 'pulseswitch').setScale(scale),
+            x: entity.x,
+            y: entity.y
+          });
+          break;
+        case 'pulseDoor':
+          this.pulseDoorSprites.push({
+            sprite: this.add.image(c.x, c.y, 'pulsedoor-closed').setScale(scale),
+            pairId: entity.pairId
+          });
           break;
         default:
           break;
@@ -227,6 +267,8 @@ export class GameScene extends Phaser.Scene {
     if (!this.gate.canAccept(now)) return;
 
     const mappingBefore = state.mapping;
+    const collapsedBefore = state.fragileCollapsed.length;
+    const pulseBefore = { ...state.pulseDoors };
     const { state: next, result } = applyCommand(level, state, dir);
     if (!result.applied) {
       this.feedbackCancel();
@@ -235,13 +277,15 @@ export class GameScene extends Phaser.Scene {
     this.state = next;
     this.gate.lock(now, MOVE_ANIM_MS);
     setMoveCount(next.moveCount);
-    this.animateTurn(result, dir, mappingBefore);
+    this.animateTurn(result, dir, mappingBefore, collapsedBefore, pulseBefore);
   }
 
   private animateTurn(
     result: ReturnType<typeof applyCommand>['result'],
     input: Direction,
-    mappingBefore: MappingMode
+    mappingBefore: MappingMode,
+    collapsedBefore: number,
+    pulseBefore: Record<string, boolean>
   ): void {
     if (this.blueActor)
       this.animateActor(this.blueActor, result.blue, input, result.teleported.blue);
@@ -256,6 +300,17 @@ export class GameScene extends Phaser.Scene {
       this.syncEntityStates(state);
       this.syncTokens(state);
       const events: string[] = [];
+      if (result.teleported.blue) events.push('蓝被传送');
+      if (result.teleported.orange) events.push('橙被传送');
+      if (state.fragileCollapsed.length > collapsedBefore) events.push('脆弱格坍塌');
+      if (Object.keys(state.pulseDoors).some((k) => state.pulseDoors[k] && !pulseBefore[k])) {
+        events.push('同步脉冲达成，脉冲门开启');
+      }
+      if (result.blue.reason === 'oneWay' || result.orange.reason === 'oneWay') {
+        events.push('单向格只能顺箭头离开');
+      } else if (result.blue.reason === 'pulseDoor' || result.orange.reason === 'pulseDoor') {
+        events.push('脉冲门未激活');
+      }
       if (result.pauseConsumed.blue) events.push('蓝消耗暂停令牌，原地停留');
       if (result.pauseConsumed.orange) events.push('橙消耗暂停令牌，原地停留');
       if (state.mapping !== mappingBefore) {
@@ -276,9 +331,27 @@ export class GameScene extends Phaser.Scene {
     const toPx = this.cellCenter(info.to);
     if (teleported) {
       sprite.setPosition(toPx.x, toPx.y);
+      sprite.setAlpha(0.35);
+      this.tweens.add({
+        targets: sprite,
+        alpha: 1,
+        duration: MOVE_ANIM_MS,
+        ease: 'Quad.easeOut'
+      });
       return;
     }
     if (info.blocked) {
+      if (info.reason === 'oneWay') {
+        // M5：单向格阻挡反馈与墙不同——原地短促左右抖动（不朝输入方向冲撞）
+        this.tweens.add({
+          targets: sprite,
+          x: sprite.x + 4,
+          duration: MOVE_ANIM_MS / 4,
+          yoyo: true,
+          repeat: 1
+        });
+        return;
+      }
       const delta = DELTA[input];
       const bump = this.tile * 0.22;
       this.tweens.add({
@@ -338,6 +411,24 @@ export class GameScene extends Phaser.Scene {
         equalsPoint(state.actors.blue.pos, { x: plate.x, y: plate.y }) ||
         equalsPoint(state.actors.orange.pos, { x: plate.x, y: plate.y });
       plate.sprite.setAlpha(occupied ? 1 : 0.72);
+    }
+    for (const fragile of this.fragileSprites) {
+      const collapsed = state.fragileCollapsed.some((p) =>
+        equalsPoint(p, { x: fragile.x, y: fragile.y })
+      );
+      fragile.sprite.setTexture(collapsed ? 'fragile-collapsed' : 'fragile');
+      fragile.sprite.setAlpha(collapsed ? 0.9 : 1);
+    }
+    for (const pulseDoor of this.pulseDoorSprites) {
+      pulseDoor.sprite.setTexture(
+        state.pulseDoors[pulseDoor.pairId] ? 'pulsedoor-open' : 'pulsedoor-closed'
+      );
+    }
+    for (const pulseSwitch of this.pulseSwitchSprites) {
+      const occupied =
+        equalsPoint(state.actors.blue.pos, { x: pulseSwitch.x, y: pulseSwitch.y }) ||
+        equalsPoint(state.actors.orange.pos, { x: pulseSwitch.x, y: pulseSwitch.y });
+      pulseSwitch.sprite.setAlpha(occupied ? 1 : 0.72);
     }
   }
 
@@ -409,8 +500,8 @@ export class GameScene extends Phaser.Scene {
     this.tweens.killTweensOf(this.orangeActor);
     const bluePx = this.cellCenter(state.actors.blue.pos);
     const orangePx = this.cellCenter(state.actors.orange.pos);
-    this.blueActor.setPosition(bluePx.x, bluePx.y);
-    this.orangeActor.setPosition(orangePx.x, orangePx.y);
+    this.blueActor.setPosition(bluePx.x, bluePx.y).setAlpha(1);
+    this.orangeActor.setPosition(orangePx.x, orangePx.y).setAlpha(1);
   }
 
   private winSequence(): void {

@@ -95,7 +95,7 @@ async function expectResult(page: Page, moves: number): Promise<void> {
 }
 
 async function shot(page: Page, testInfo: TestInfo, name: string): Promise<void> {
-  await page.screenshot({ path: `artifacts/stage-07/${testInfo.project.name}-${name}.png` });
+  await page.screenshot({ path: `artifacts/stage-08/${testInfo.project.name}-${name}.png` });
 }
 
 test('首页一键进入第1关（FR-01）', async ({ page }, testInfo) => {
@@ -216,7 +216,7 @@ test('M2/M3/M4 机关渲染可见且映射标签实时切换（视觉证据）',
     await expect(page.getByTestId('level-label')).toHaveText(c.label);
     await expect(page.getByTestId('mapping-label')).toHaveText('映射：水平镜像');
     await page.screenshot({
-      path: `artifacts/stage-07/${testInfo.project.name}-render-${c.name}.png`
+      path: `artifacts/stage-08/${testInfo.project.name}-render-${c.name}.png`
     });
     g.assertClean();
     await ctx.close();
@@ -242,6 +242,149 @@ test('M4 映射切换后界面标签同步更新（M4 验收门）', async ({ br
   await expect(page.getByTestId('mapping-label')).toHaveText('映射：垂直镜像');
   await page.getByTestId('btn-undo').click();
   await expect(page.getByTestId('mapping-label')).toHaveText('映射：水平镜像');
+  g.assertClean();
+  await ctx.close();
+});
+
+test('M5–M8 教学关渲染可见（视觉证据）', async ({ browser }, testInfo) => {
+  const cases: Array<{ unlock: number; label: string; name: string }> = [
+    { unlock: 12, label: '4-31 顺箭而行', name: 'm5-oneway' },
+    { unlock: 13, label: '4-34 映射与离向', name: 'm4m5-switcher-oneway' },
+    { unlock: 14, label: '4-36 穿墙之门', name: 'm6-portal' },
+    { unlock: 15, label: '4-38 传送接单向', name: 'm5m6-portal-oneway' },
+    { unlock: 16, label: '5-41 脆弱之桥', name: 'm7-fragile' },
+    { unlock: 17, label: '5-44 不可回头路', name: 'm5m7-noreturn' },
+    { unlock: 18, label: '5-46 同步脉冲', name: 'm8-pulse' },
+    { unlock: 19, label: '5-47 暂停调节同步', name: 'm3m8-pausesync' }
+  ];
+  for (const c of cases) {
+    const ctx = await browser.newContext();
+    const page = await ctx.newPage();
+    const g = guard(page);
+    await page.addInitScript((unlock: number) => {
+      localStorage.setItem(
+        'twinfold-paths:save:a',
+        JSON.stringify({ version: 2, highestUnlocked: unlock, bestMoves: {} })
+      );
+    }, c.unlock);
+    await page.goto('/');
+    await expect(page.getByTestId('btn-start')).toBeVisible({ timeout: 20000 });
+    await page.getByTestId('btn-start').click();
+    await expect(page.getByTestId('level-label')).toHaveText(c.label);
+    await page.screenshot({
+      path: `artifacts/stage-08/${testInfo.project.name}-render-${c.name}.png`
+    });
+    g.assertClean();
+    await ctx.close();
+  }
+});
+
+test('M5 单向格教学关 4-31：阻挡反馈区分于墙且可通关（M5 验收门）', async ({ browser }) => {
+  const ctx = await browser.newContext();
+  const page = await ctx.newPage();
+  const g = guard(page);
+  await page.addInitScript(() => {
+    localStorage.setItem(
+      'twinfold-paths:save:a',
+      JSON.stringify({ version: 2, highestUnlocked: 12, bestMoves: {} })
+    );
+  });
+  await page.goto('/');
+  await expect(page.getByTestId('btn-start')).toBeVisible({ timeout: 20000 });
+  await page.getByTestId('btn-start').click();
+  await expect(page.getByTestId('level-label')).toHaveText('4-31 顺箭而行');
+  await pressMove(page, 'up', 1);
+  await pressMove(page, 'right', 2);
+  await pressMove(page, 'up', 3);
+  // 此刻蓝在 oneWay(RIGHT)、橙在 oneWay(LEFT)；输入 LEFT 对双方都是逆箭头离开
+  await pressMove(page, 'left', 4);
+  await expect(page.getByTestId('status')).toHaveText(/单向/);
+  await page.getByTestId('btn-undo').click();
+  await expect(page.getByTestId('move-count')).toHaveText('3');
+  await pressMove(page, 'right', 4);
+  await pressMove(page, 'up', 5);
+  await pressMove(page, 'left', 6);
+  await pressMove(page, 'left', 7);
+  await expectResult(page, 7);
+  g.assertClean();
+  await ctx.close();
+});
+
+test('M6 传送教学关 4-36 通关且传送状态行可见（M6 验收门）', async ({ browser }) => {
+  const ctx = await browser.newContext();
+  const page = await ctx.newPage();
+  const g = guard(page);
+  await page.addInitScript(() => {
+    localStorage.setItem(
+      'twinfold-paths:save:a',
+      JSON.stringify({ version: 2, highestUnlocked: 14, bestMoves: {} })
+    );
+  });
+  await page.goto('/');
+  await expect(page.getByTestId('btn-start')).toBeVisible({ timeout: 20000 });
+  await page.getByTestId('btn-start').click();
+  await expect(page.getByTestId('level-label')).toHaveText('4-36 穿墙之门');
+  await pressMove(page, 'up', 1);
+  await pressMove(page, 'right', 2);
+  await expect(page.getByTestId('status')).toHaveText(/传送/);
+  await pressMove(page, 'left', 3);
+  await expectResult(page, 3);
+  g.assertClean();
+  await ctx.close();
+});
+
+test('M7 脆弱格教学关 5-41：坍塌与撤销恢复（M7 验收门）', async ({ browser }, testInfo) => {
+  const ctx = await browser.newContext();
+  const page = await ctx.newPage();
+  const g = guard(page);
+  await page.addInitScript(() => {
+    localStorage.setItem(
+      'twinfold-paths:save:a',
+      JSON.stringify({ version: 2, highestUnlocked: 16, bestMoves: {} })
+    );
+  });
+  await page.goto('/');
+  await expect(page.getByTestId('btn-start')).toBeVisible({ timeout: 20000 });
+  await page.getByTestId('btn-start').click();
+  await expect(page.getByTestId('level-label')).toHaveText('5-41 脆弱之桥');
+  await pressMove(page, 'right', 1);
+  await pressMove(page, 'up', 2);
+  await pressMove(page, 'up', 3);
+  await pressMove(page, 'up', 4);
+  await expect(page.getByTestId('status')).toHaveText(/坍塌/);
+  await shot(page, testInfo, 'level-041-collapsed');
+  await page.getByTestId('btn-undo').click();
+  await expect(page.getByTestId('move-count')).toHaveText('3');
+  await shot(page, testInfo, 'level-041-undo-restored');
+  await pressMove(page, 'up', 4);
+  await pressMove(page, 'left', 5);
+  await expectResult(page, 5);
+  g.assertClean();
+  await ctx.close();
+});
+
+test('M8 同步脉冲教学关 4-46 通关（闩锁开启脉冲门）', async ({ browser }) => {
+  const ctx = await browser.newContext();
+  const page = await ctx.newPage();
+  const g = guard(page);
+  await page.addInitScript(() => {
+    localStorage.setItem(
+      'twinfold-paths:save:a',
+      JSON.stringify({ version: 2, highestUnlocked: 18, bestMoves: {} })
+    );
+  });
+  await page.goto('/');
+  await expect(page.getByTestId('btn-start')).toBeVisible({ timeout: 20000 });
+  await page.getByTestId('btn-start').click();
+  await expect(page.getByTestId('level-label')).toHaveText('5-46 同步脉冲');
+  await pressMove(page, 'up', 1);
+  await pressMove(page, 'right', 2);
+  await expect(page.getByTestId('status')).toHaveText(/同步脉冲/);
+  await pressMove(page, 'up', 3);
+  await pressMove(page, 'up', 4);
+  await pressMove(page, 'up', 5);
+  await pressMove(page, 'left', 6);
+  await expectResult(page, 6);
   g.assertClean();
   await ctx.close();
 });

@@ -23,7 +23,15 @@ const SOLUTIONS: Record<string, Direction[]> = {
   'level-021': ['DOWN', 'RIGHT', 'DOWN', 'DOWN'],
   'level-023': ['DOWN', 'DOWN', 'DOWN', 'UP'],
   'level-026': ['UP', 'UP', 'UP', 'UP'],
-  'level-029': ['LEFT', 'RIGHT', 'RIGHT', 'RIGHT']
+  'level-029': ['LEFT', 'RIGHT', 'RIGHT', 'RIGHT'],
+  'level-031': ['UP', 'RIGHT', 'UP', 'RIGHT', 'UP', 'LEFT', 'LEFT'],
+  'level-034': ['RIGHT', 'UP', 'UP', 'UP', 'UP'],
+  'level-036': ['UP', 'RIGHT', 'LEFT'],
+  'level-038': ['RIGHT', 'RIGHT', 'UP'],
+  'level-041': ['UP', 'RIGHT', 'UP', 'UP', 'LEFT'],
+  'level-044': ['UP', 'UP', 'RIGHT', 'UP', 'UP', 'LEFT'],
+  'level-046': ['UP', 'RIGHT', 'UP', 'UP', 'UP', 'LEFT'],
+  'level-047': ['UP', 'UP', 'UP', 'UP', 'UP', 'UP']
 };
 
 const TUTORIAL_IDS = new Set([
@@ -33,7 +41,11 @@ const TUTORIAL_IDS = new Set([
   'level-011',
   'level-016',
   'level-021',
-  'level-026'
+  'level-026',
+  'level-031',
+  'level-036',
+  'level-041',
+  'level-046'
 ]);
 
 function replay(level: LevelRecord, moves: Direction[]): GameState {
@@ -44,8 +56,8 @@ function replay(level: LevelRecord, moves: Direction[]): GameState {
   return state;
 }
 
-describe('关卡注册表（levels/chapter-01..03）', () => {
-  it('注册表恰有 11 关，按章节/序号排序', () => {
+describe('关卡注册表（levels/chapter-01..05）', () => {
+  it('注册表恰有 19 关，按章节/序号排序', () => {
     expect(LEVELS.map((l) => l.id)).toEqual([
       'level-001',
       'level-002',
@@ -57,11 +69,21 @@ describe('关卡注册表（levels/chapter-01..03）', () => {
       'level-021',
       'level-023',
       'level-026',
-      'level-029'
+      'level-029',
+      'level-031',
+      'level-034',
+      'level-036',
+      'level-038',
+      'level-041',
+      'level-044',
+      'level-046',
+      'level-047'
     ]);
     expect(LEVELS.filter((l) => l.chapter === 1).map((l) => l.order)).toEqual([1, 2, 3]);
     expect(LEVELS.filter((l) => l.chapter === 2).map((l) => l.order)).toEqual([11, 15, 16, 17]);
     expect(LEVELS.filter((l) => l.chapter === 3).map((l) => l.order)).toEqual([21, 23, 26, 29]);
+    expect(LEVELS.filter((l) => l.chapter === 4).map((l) => l.order)).toEqual([31, 34, 36, 38]);
+    expect(LEVELS.filter((l) => l.chapter === 5).map((l) => l.order)).toEqual([41, 44, 46, 47]);
     expect(FIRST_LEVEL_ID).toBe('level-001');
   });
 
@@ -93,7 +115,9 @@ describe('关卡注册表（levels/chapter-01..03）', () => {
     expect(nextLevelId('level-001')).toBe('level-002');
     expect(nextLevelId('level-003')).toBe('level-011');
     expect(nextLevelId('level-017')).toBe('level-021');
-    expect(nextLevelId('level-029')).toBeNull();
+    expect(nextLevelId('level-029')).toBe('level-031');
+    expect(nextLevelId('level-038')).toBe('level-041');
+    expect(nextLevelId('level-047')).toBeNull();
     expect(nextLevelId('不存在')).toBeNull();
     expect(getLevelById('level-002')?.title).toBe('左右相反');
   });
@@ -103,6 +127,8 @@ describe('关卡注册表（levels/chapter-01..03）', () => {
     expect(levelLinearIndex('level-003')).toBe(3);
     expect(levelLinearIndex('level-011')).toBe(4);
     expect(levelLinearIndex('level-029')).toBe(11);
+    expect(levelLinearIndex('level-031')).toBe(12);
+    expect(levelLinearIndex('level-047')).toBe(19);
     expect(levelLinearIndex('不存在')).toBe(-1);
   });
 });

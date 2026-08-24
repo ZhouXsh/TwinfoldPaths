@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "level-034",
+  "chapter": 4,
+  "order": 34,
+  "title": "映射与离向",
+  "grid": { "width": 6, "height": 5 },
+  "blueStart": { "x": 0, "y": 4 },
+  "orangeStart": { "x": 5, "y": 0 },
+  "blueExit": { "x": 1, "y": 0 },
+  "orangeExit": { "x": 4, "y": 4 },
+  "initialMapping": "H_MIRROR",
+  "walls": [
+    { "x": 0, "y": 1 },
+    { "x": 0, "y": 2 },
+    { "x": 0, "y": 3 },
+    { "x": 5, "y": 1 },
+    { "x": 5, "y": 2 },
+    { "x": 5, "y": 3 }
+  ],
+  "entities": [
+    { "type": "switcher", "x": 1, "y": 4, "target": "V_MIRROR" },
+    { "type": "oneWay", "x": 1, "y": 3, "arrow": "UP" },
+    { "type": "oneWay", "x": 4, "y": 1, "arrow": "DOWN" }
+  ],
+  "parMoves": 5,
+  "parMovesNote": "阶段08：人工最短解（RIGHT、UP×4）经单元测试回放验证，临时 BFS 复核一致（阶段09 替换为正式求解器）",
+  "hint": { "focus": "先踩切换器换成垂直镜像：一个 UP，蓝上橙下各过单向格", "direction": "RIGHT" },
+  "tags": ["chapter-4", "combo", "M4", "M5", "mapping-exit-dir"]
+}

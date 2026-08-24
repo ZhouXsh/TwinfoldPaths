@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { applyCommand, undo } from '../../../src/domain/engine';
 import { createInitialState } from '../../../src/domain/level';
 import { canonicalJSON, stableHash } from '../../../src/domain/serialize';
-import { inBounds } from '../../../src/domain/point';
+import { equalsPoint, inBounds } from '../../../src/domain/point';
 import type { Direction } from '../../../src/domain/types';
 import { DIRECTIONS } from '../../../src/domain/types';
 import { makeLevel, mulberry32 } from './helpers';
@@ -67,7 +67,7 @@ describe('随机序列属性测试', () => {
     expect(canonicalJSON(state)).toBe(canonicalJSON(initial));
   });
 
-  it('每步结算后保持 I1（在界内）与 I2（不同格）', () => {
+  it('每步结算后保持 I1（在界内、不站坍塌格）与 I2（不同格）', () => {
     const seq = randomSequence(7, 200);
     let state = createInitialState(stressLevel);
     for (const d of seq) {
@@ -75,6 +75,14 @@ describe('随机序列属性测试', () => {
       expect(inBounds(stressLevel.grid, state.actors.blue.pos)).toBe(true);
       expect(inBounds(stressLevel.grid, state.actors.orange.pos)).toBe(true);
       expect(state.actors.blue.pos).not.toEqual(state.actors.orange.pos);
+      expect(
+        state.fragileCollapsed.some((c) => equalsPoint(c, state.actors.blue.pos)),
+        '蓝色不得站在已坍塌脆弱格上（I1、ADR-016）'
+      ).toBe(false);
+      expect(
+        state.fragileCollapsed.some((c) => equalsPoint(c, state.actors.orange.pos)),
+        '橙色不得站在已坍塌脆弱格上（I1、ADR-016）'
+      ).toBe(false);
     }
   });
 

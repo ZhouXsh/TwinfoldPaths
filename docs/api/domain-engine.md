@@ -36,6 +36,7 @@
 - `applied`：回合是否成立。
 - `blue/orange.from/to`：回合内起点与实际终点（被阻挡或取消时 `to == from`）。
 - `blue/orange.blocked`：本回合未移动（墙/边界/门/单向/暂停均记为 true）。
+- `blue/orange.reason`：阻挡原因 `BlockReason | null`（`bounds|wall|door|colorDoor|pulseDoor|oneWay|pause`），仅 `blocked=true` 时非空；阶段 08 追加，供表现层区分反馈（M5 单向格反馈必须与墙不同）。坍塌脆弱格记为 `wall`。
 - `teleported`：本回合是否发生传送。
 - `pauseConsumed`：本回合是否消耗了令牌。
 - `won`：本回合是否达成胜利。
@@ -61,7 +62,7 @@
 - I5：传送每角色每回合最多一次（单次 D2，无循环重入）。
 - I6：取消路径不产生新状态。
 - I11：门开闭每回合末由压板占用推导，无独立记忆。
-- I12：脆弱格仅"离开"坍塌（比较回合开始位置与最终位置）。
+- I12：脆弱格仅"离开"坍塌（比较回合开始位置与最终位置）；D2 后格上仍有角色则不坍塌（ADR-016）。
 - I17：脉冲闩锁只置真不回退（仅撤销还原）。
 - I18：映射切换不影响本回合方向（方向在 D3 之前已计算）。
 

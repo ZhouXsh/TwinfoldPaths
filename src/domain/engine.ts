@@ -1,5 +1,6 @@
 import type {
   ActorColor,
+  BlockReason,
   Direction,
   Entity,
   GameState,
@@ -49,6 +50,25 @@ function isCollapsed(state: GameState, p: Point): boolean {
   return state.fragileCollapsed.some((c) => equalsPoint(c, p));
 }
 
+/** P4 阻挡判定并给出原因（优先级与结算规范 P4 一致：目标格 1–5 先于当前格 6 单向约束）。 */
+function obstructionReason(
+  idx: LevelIndex,
+  state: GameState,
+  color: ActorColor,
+  cell: Point,
+  grid: LevelDef['grid']
+): BlockReason | null {
+  if (!inBounds(grid, cell)) return 'bounds';
+  if (idx.walls.has(pointKey(cell))) return 'wall';
+  if (isCollapsed(state, cell)) return 'wall';
+  for (const entity of entitiesAt(idx, cell)) {
+    if (entity.type === 'door' && !state.doors[entity.id]) return 'door';
+    if (entity.type === 'colorDoor' && entity.color !== color) return 'colorDoor';
+    if (entity.type === 'pulseDoor' && !state.pulseDoors[entity.pairId]) return 'pulseDoor';
+  }
+  return null;
+}
+
 function isObstructedCell(
   idx: LevelIndex,
   state: GameState,
@@ -56,15 +76,7 @@ function isObstructedCell(
   cell: Point,
   grid: LevelDef['grid']
 ): boolean {
-  if (!inBounds(grid, cell)) return true;
-  if (idx.walls.has(pointKey(cell))) return true;
-  if (isCollapsed(state, cell)) return true;
-  for (const entity of entitiesAt(idx, cell)) {
-    if (entity.type === 'door' && !state.doors[entity.id]) return true;
-    if (entity.type === 'colorDoor' && entity.color !== color) return true;
-    if (entity.type === 'pulseDoor' && !state.pulseDoors[entity.pairId]) return true;
-  }
-  return false;
+  return obstructionReason(idx, state, color, cell, grid) !== null;
 }
 
 function proposeStep(
@@ -74,17 +86,18 @@ function proposeStep(
   color: ActorColor,
   from: Point,
   dir: Direction
-): { to: Point; blocked: boolean } {
+): { to: Point; blocked: boolean; reason: BlockReason | null } {
   const next = addDir(from, dir);
-  if (isObstructedCell(idx, state, color, next, level.grid)) {
-    return { to: { ...from }, blocked: true };
+  const cellReason = obstructionReason(idx, state, color, next, level.grid);
+  if (cellReason) {
+    return { to: { ...from }, blocked: true, reason: cellReason };
   }
   for (const entity of entitiesAt(idx, from)) {
     if (entity.type === 'oneWay' && entity.arrow !== dir) {
-      return { to: { ...from }, blocked: true };
+      return { to: { ...from }, blocked: true, reason: 'oneWay' };
     }
   }
-  return { to: next, blocked: false };
+  return { to: next, blocked: false, reason: null };
 }
 
 function teleportActors(
@@ -167,8 +180,18 @@ export function applyCommand(level: LevelDef, prev: GameState, input: Direction)
       state: prev,
       result: {
         applied: false,
-        blue: { from: prev.actors.blue.pos, to: prev.actors.blue.pos, blocked: false },
-        orange: { from: prev.actors.orange.pos, to: prev.actors.orange.pos, blocked: false },
+        blue: {
+          from: prev.actors.blue.pos,
+          to: prev.actors.blue.pos,
+          blocked: false,
+          reason: null
+        },
+        orange: {
+          from: prev.actors.orange.pos,
+          to: prev.actors.orange.pos,
+          blocked: false,
+          reason: null
+        },
         teleported: { blue: false, orange: false },
         pauseConsumed: { blue: false, orange: false },
         won: false
@@ -196,10 +219,10 @@ export function applyCommand(level: LevelDef, prev: GameState, input: Direction)
   const blueFrom = { ...prev.actors.blue.pos };
   const orangeFrom = { ...prev.actors.orange.pos };
   const blueStep = paused.blue
-    ? { to: { ...blueFrom }, blocked: true }
+    ? { to: { ...blueFrom }, blocked: true, reason: 'pause' as BlockReason | null }
     : proposeStep(level, idx, prev, 'BLUE', blueFrom, blueDir);
   const orangeStep = paused.orange
-    ? { to: { ...orangeFrom }, blocked: true }
+    ? { to: { ...orangeFrom }, blocked: true, reason: 'pause' as BlockReason | null }
     : proposeStep(level, idx, prev, 'ORANGE', orangeFrom, orangeDir);
 
   if (equalsPoint(blueStep.to, orangeStep.to)) {
@@ -207,8 +230,8 @@ export function applyCommand(level: LevelDef, prev: GameState, input: Direction)
       state: prev,
       result: {
         applied: false,
-        blue: { from: blueFrom, to: blueFrom, blocked: false },
-        orange: { from: orangeFrom, to: orangeFrom, blocked: false },
+        blue: { from: blueFrom, to: blueFrom, blocked: false, reason: null },
+        orange: { from: orangeFrom, to: orangeFrom, blocked: false, reason: null },
         teleported: { blue: false, orange: false },
         pauseConsumed: { blue: false, orange: false },
         won: false
@@ -221,8 +244,18 @@ export function applyCommand(level: LevelDef, prev: GameState, input: Direction)
 
   const result: MoveResult = {
     applied: true,
-    blue: { from: blueFrom, to: blueStep.to, blocked: blueStep.blocked },
-    orange: { from: orangeFrom, to: orangeStep.to, blocked: orangeStep.blocked },
+    blue: {
+      from: blueFrom,
+      to: blueStep.to,
+      blocked: blueStep.blocked,
+      reason: paused.blue ? 'pause' : blueStep.reason
+    },
+    orange: {
+      from: orangeFrom,
+      to: orangeStep.to,
+      blocked: orangeStep.blocked,
+      reason: paused.orange ? 'pause' : orangeStep.reason
+    },
     teleported: { blue: false, orange: false },
     pauseConsumed,
     won: false
@@ -232,11 +265,12 @@ export function applyCommand(level: LevelDef, prev: GameState, input: Direction)
 
   for (const who of ['blue', 'orange'] as const) {
     const start = who === 'blue' ? blueFrom : orangeFrom;
-    if (
-      entitiesAt(idx, start).some((e) => e.type === 'fragile') &&
-      !equalsPoint(state.actors[who].pos, start) &&
-      !isCollapsed(state, start)
-    ) {
+    if (!entitiesAt(idx, start).some((e) => e.type === 'fragile')) continue;
+    // D1（ADR-016）：仅当 D2 后该格无任何角色才坍塌——对穿/传送落点占位时不坍塌，
+    // 否则会出现角色站在已坍塌格上（违反 I1）。
+    const occupiedAfter =
+      equalsPoint(state.actors.blue.pos, start) || equalsPoint(state.actors.orange.pos, start);
+    if (!occupiedAfter && !isCollapsed(state, start)) {
       state.fragileCollapsed.push({ ...start });
     }
   }

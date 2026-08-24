@@ -159,10 +159,16 @@ export interface GameState {
   history: Snapshot[];
 }
 
+/** 阻挡原因（M5 要求单向格阻挡反馈与墙不同但逻辑确定；仅表现层消费）。 */
+export type BlockReason =
+  'bounds' | 'wall' | 'door' | 'colorDoor' | 'pulseDoor' | 'oneWay' | 'pause';
+
 export interface ActorMoveInfo {
   from: Point;
   to: Point;
   blocked: boolean;
+  /** blocked=true 时给出原因；未阻挡与回合取消为 null。 */
+  reason: BlockReason | null;
 }
 
 export interface MoveResult {

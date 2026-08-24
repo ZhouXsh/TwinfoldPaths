@@ -233,6 +233,110 @@ export class BootScene extends Phaser.Scene {
     g.generateTexture('token', S, S);
     g.clear();
 
+    // M5 单向格：底色 + 箭头形状即方向编码（四向各一张）
+    const drawOneWay = (key: string, dx: number, dy: number): void => {
+      g.fillStyle(0x232338);
+      g.fillRect(0, 0, S, S);
+      g.lineStyle(2, 0x5a5f8a);
+      g.strokeRect(1, 1, S - 2, S - 2);
+      const cx = S / 2;
+      const cy = S / 2;
+      const px = -dy;
+      const py = dx;
+      g.lineStyle(6, 0xa8d94e);
+      g.lineBetween(cx - dx * 16, cy - dy * 16, cx + dx * 6, cy + dy * 6);
+      g.fillStyle(0xa8d94e);
+      g.fillPoints(
+        [
+          { x: cx + dx * 20, y: cy + dy * 20 },
+          { x: cx + dx * 2 + px * 10, y: cy + dy * 2 + py * 10 },
+          { x: cx + dx * 2 - px * 10, y: cy + dy * 2 - py * 10 }
+        ],
+        true
+      );
+      g.generateTexture(key, S, S);
+      g.clear();
+    };
+    drawOneWay('oneway-UP', 0, -1);
+    drawOneWay('oneway-DOWN', 0, 1);
+    drawOneWay('oneway-LEFT', -1, 0);
+    drawOneWay('oneway-RIGHT', 1, 0);
+
+    // M6 传送门：圆环 + 内旋弧 + 中心点
+    g.fillStyle(0x101c24);
+    g.fillRect(0, 0, S, S);
+    g.lineStyle(5, 0x59e3ff);
+    g.strokeCircle(S / 2, S / 2, 21);
+    g.lineStyle(3, 0x2ea8c4);
+    g.beginPath();
+    g.arc(S / 2, S / 2, 12, -Math.PI / 3, Math.PI, false);
+    g.strokePath();
+    g.fillStyle(0xbdf3ff);
+    g.fillCircle(S / 2, S / 2, 4);
+    g.generateTexture('portal', S, S);
+    g.clear();
+
+    // M7 脆弱格：暖底色 + 裂纹
+    g.fillStyle(0x3a3226);
+    g.fillRect(0, 0, S, S);
+    g.lineStyle(2, 0x9c8a6a);
+    g.lineBetween(12, 10, 26, 28);
+    g.lineBetween(26, 28, 18, 46);
+    g.lineBetween(26, 28, 44, 36);
+    g.lineBetween(44, 36, 52, 18);
+    g.lineBetween(44, 36, 50, 52);
+    g.lineStyle(2, 0x221d14);
+    g.strokeRect(1, 1, S - 2, S - 2);
+    g.generateTexture('fragile', S, S);
+    g.clear();
+
+    // M7 脆弱格（已坍塌）：暗坑 + 碎屑
+    g.fillStyle(0x0d1117);
+    g.fillRect(0, 0, S, S);
+    g.fillStyle(0x2a323c);
+    g.fillRect(12, 40, 10, 8);
+    g.fillRect(34, 44, 12, 7);
+    g.fillRect(24, 20, 8, 7);
+    g.fillRect(42, 24, 7, 6);
+    g.lineStyle(2, 0x1c232c);
+    g.strokeRect(1, 1, S - 2, S - 2);
+    g.generateTexture('fragile-collapsed', S, S);
+    g.clear();
+
+    // M8 脉冲开关：圆形按钮 + 外环
+    g.fillStyle(0x241722);
+    g.fillRect(0, 0, S, S);
+    g.lineStyle(2, 0x5a3350);
+    g.strokeRect(1, 1, S - 2, S - 2);
+    g.lineStyle(2, 0x8a2f57);
+    g.strokeCircle(S / 2, S / 2, 21);
+    g.fillStyle(0xff5fa2);
+    g.fillCircle(S / 2, S / 2, 14);
+    g.lineStyle(3, 0xffc2da);
+    g.strokeCircle(S / 2, S / 2, 14);
+    g.generateTexture('pulseswitch', S, S);
+    g.clear();
+
+    // M8 脉冲门（未激活）：实体栅栏（品红）
+    g.fillStyle(0x2b1a24);
+    g.fillRect(0, 0, S, S);
+    g.fillStyle(0xff5fa2);
+    for (const bx of [12, 28, 44]) g.fillRect(bx, 6, 8, S - 12);
+    g.lineStyle(3, 0x22101c);
+    g.strokeRect(2, 2, S - 4, S - 4);
+    g.generateTexture('pulsedoor-closed', S, S);
+    g.clear();
+
+    // M8 脉冲门（已激活）：地面 + 沉底边框（可通行）
+    g.fillStyle(0x161d26);
+    g.fillRect(0, 0, S, S);
+    g.lineStyle(3, 0x8a2f57);
+    g.strokeRect(6, 6, S - 12, S - 12);
+    g.fillStyle(0x8a2f57);
+    for (const bx of [14, 30, 46]) g.fillRect(bx, S - 12, 6, 6);
+    g.generateTexture('pulsedoor-open', S, S);
+    g.clear();
+
     g.destroy();
     this.scene.start('Home');
   }

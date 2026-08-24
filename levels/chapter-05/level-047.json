@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "level-047",
+  "chapter": 5,
+  "order": 47,
+  "title": "暂停调节同步",
+  "grid": { "width": 7, "height": 6 },
+  "blueStart": { "x": 1, "y": 5 },
+  "orangeStart": { "x": 5, "y": 5 },
+  "blueExit": { "x": 1, "y": 0 },
+  "orangeExit": { "x": 5, "y": 0 },
+  "initialMapping": "H_MIRROR",
+  "walls": [
+    { "x": 0, "y": 1 },
+    { "x": 2, "y": 1 },
+    { "x": 3, "y": 1 },
+    { "x": 4, "y": 1 },
+    { "x": 6, "y": 1 }
+  ],
+  "entities": [
+    { "type": "pauseTile", "x": 5, "y": 4 },
+    { "type": "pulseSwitch", "pairId": "p1", "x": 1, "y": 2 },
+    { "type": "pulseSwitch", "pairId": "p1", "x": 5, "y": 3 },
+    { "type": "pulseDoor", "pairId": "p1", "x": 1, "y": 1 },
+    { "type": "pulseDoor", "pairId": "p1", "x": 5, "y": 2 }
+  ],
+  "parMoves": 6,
+  "parMovesNote": "阶段08：人工最短解（UP×6）经单元测试回放验证，临时 BFS 复核一致（阶段09 替换为正式求解器）",
+  "hint": { "focus": "橙先拿暂停令牌等一拍：两边才能同回合站上脉冲点", "direction": "UP" },
+  "tags": ["chapter-5", "combo", "M3", "M8", "pause-sync"]
+}
