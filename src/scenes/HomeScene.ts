@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { LEVELS, getLevelByOrder } from '../content/levels';
+import { LEVELS } from '../content/levels';
 import { localStorageStore, loadSave } from '../persistence/save-store';
 import { bindButton, setHomeContinue, setStatusText, showBars } from './dom-ui';
 
@@ -29,9 +29,9 @@ export class HomeScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     const save = loadSave(localStorageStore());
-    const order = Math.min(save.highestUnlocked, LEVELS.length);
-    const level = getLevelByOrder(1, order) ?? LEVELS[0];
-    setHomeContinue(`继续：第 ${order} 关`);
+    const index = Math.min(Math.max(save.highestUnlocked, 1), LEVELS.length);
+    const level = LEVELS[index - 1] ?? LEVELS[0];
+    setHomeContinue(`继续：第 ${index} 关`);
 
     this.cleanup = bindButton('btn-start', () => {
       if (level) this.scene.start('Game', { levelId: level.id });

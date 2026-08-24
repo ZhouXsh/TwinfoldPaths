@@ -271,8 +271,10 @@ export function applyCommand(level: LevelDef, prev: GameState, input: Direction)
   }
 
   for (const who of ['blue', 'orange'] as const) {
+    const start = who === 'blue' ? blueFrom : orangeFrom;
+    const arrived = !equalsPoint(state.actors[who].pos, start);
     const onTile = entitiesAt(idx, state.actors[who].pos).some((e) => e.type === 'pauseTile');
-    if (onTile && !state.actors[who].hasPauseToken) {
+    if (arrived && onTile && !state.actors[who].hasPauseToken) {
       state.actors[who].hasPauseToken = true;
     }
   }

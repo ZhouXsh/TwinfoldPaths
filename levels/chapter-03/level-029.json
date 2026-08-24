@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "level-029",
+  "chapter": 3,
+  "order": 29,
+  "title": "映射决定开门",
+  "grid": { "width": 6, "height": 3 },
+  "blueStart": { "x": 0, "y": 1 },
+  "orangeStart": { "x": 2, "y": 1 },
+  "blueExit": { "x": 3, "y": 1 },
+  "orangeExit": { "x": 5, "y": 1 },
+  "initialMapping": "H_MIRROR",
+  "walls": [],
+  "entities": [
+    { "type": "switcher", "x": 0, "y": 1, "target": "V_MIRROR" },
+    { "type": "plate", "id": "p1", "x": 1, "y": 1, "doorId": "d1" },
+    { "type": "door", "id": "d1", "x": 4, "y": 1 }
+  ],
+  "parMoves": 4,
+  "parMovesNote": "阶段07：人工最短解（LEFT、RIGHT×3）经单元测试回放验证；阶段09 由 BFS 求解器复核",
+  "hint": { "focus": "切换成垂直镜像后左右同向：一起向右，压板开门", "direction": null },
+  "tags": ["chapter-3", "M1", "M4", "combo"]
+}

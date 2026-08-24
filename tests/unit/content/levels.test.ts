@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { FIRST_LEVEL_ID, LEVELS, getLevelById, nextLevelId } from '../../../src/content/levels';
+import {
+  FIRST_LEVEL_ID,
+  LEVELS,
+  getLevelById,
+  levelLinearIndex,
+  nextLevelId
+} from '../../../src/content/levels';
 import type { LevelRecord } from '../../../src/content/validate';
 import { parseLevel } from '../../../src/content/validate';
 import { applyCommand } from '../../../src/domain/engine';
@@ -9,8 +15,26 @@ import type { Direction, GameState } from '../../../src/domain/types';
 const SOLUTIONS: Record<string, Direction[]> = {
   'level-001': ['LEFT'],
   'level-002': ['UP', 'UP', 'LEFT'],
-  'level-003': ['DOWN', 'DOWN', 'DOWN', 'DOWN']
+  'level-003': ['DOWN', 'DOWN', 'DOWN', 'DOWN'],
+  'level-011': ['LEFT', 'LEFT', 'LEFT', 'UP', 'RIGHT'],
+  'level-015': ['LEFT', 'UP', 'LEFT', 'LEFT', 'LEFT', 'DOWN', 'DOWN'],
+  'level-016': ['RIGHT', 'RIGHT', 'RIGHT'],
+  'level-017': ['LEFT', 'LEFT', 'LEFT', 'LEFT', 'LEFT'],
+  'level-021': ['DOWN', 'RIGHT', 'DOWN', 'DOWN'],
+  'level-023': ['DOWN', 'DOWN', 'DOWN', 'UP'],
+  'level-026': ['UP', 'UP', 'UP', 'UP'],
+  'level-029': ['LEFT', 'RIGHT', 'RIGHT', 'RIGHT']
 };
+
+const TUTORIAL_IDS = new Set([
+  'level-001',
+  'level-002',
+  'level-003',
+  'level-011',
+  'level-016',
+  'level-021',
+  'level-026'
+]);
 
 function replay(level: LevelRecord, moves: Direction[]): GameState {
   let state = createInitialState(level);
@@ -20,11 +44,24 @@ function replay(level: LevelRecord, moves: Direction[]): GameState {
   return state;
 }
 
-describe('前三关关卡数据（levels/chapter-01）', () => {
-  it('注册表恰有 3 关，ID/章节/序号连续', () => {
-    expect(LEVELS.map((l) => l.id)).toEqual(['level-001', 'level-002', 'level-003']);
-    expect(LEVELS.every((l) => l.chapter === 1)).toBe(true);
-    expect(LEVELS.map((l) => l.order)).toEqual([1, 2, 3]);
+describe('关卡注册表（levels/chapter-01..03）', () => {
+  it('注册表恰有 11 关，按章节/序号排序', () => {
+    expect(LEVELS.map((l) => l.id)).toEqual([
+      'level-001',
+      'level-002',
+      'level-003',
+      'level-011',
+      'level-015',
+      'level-016',
+      'level-017',
+      'level-021',
+      'level-023',
+      'level-026',
+      'level-029'
+    ]);
+    expect(LEVELS.filter((l) => l.chapter === 1).map((l) => l.order)).toEqual([1, 2, 3]);
+    expect(LEVELS.filter((l) => l.chapter === 2).map((l) => l.order)).toEqual([11, 15, 16, 17]);
+    expect(LEVELS.filter((l) => l.chapter === 3).map((l) => l.order)).toEqual([21, 23, 26, 29]);
     expect(FIRST_LEVEL_ID).toBe('level-001');
   });
 
@@ -39,19 +76,34 @@ describe('前三关关卡数据（levels/chapter-01）', () => {
     }
   });
 
-  it('教学关标签包含 tutorial 与章节标签', () => {
+  it('所有关卡带章节与机制标签；教学关含 tutorial 标签', () => {
     for (const level of LEVELS) {
-      expect(level.tags).toContain('tutorial');
-      expect(level.tags).toContain(`chapter-${level.chapter}`);
+      expect(level.tags, `${level.id} 缺章节标签`).toContain(`chapter-${level.chapter}`);
+      expect(
+        level.tags.some((t) => /^M\d$/.test(t)),
+        `${level.id} 缺机制标签`
+      ).toBe(true);
+      expect(level.tags.includes('tutorial'), `${level.id} tutorial 标记错误`).toBe(
+        TUTORIAL_IDS.has(level.id)
+      );
     }
   });
 
   it('nextLevelId 链与关卡顺序一致，末关返回 null', () => {
     expect(nextLevelId('level-001')).toBe('level-002');
-    expect(nextLevelId('level-002')).toBe('level-003');
-    expect(nextLevelId('level-003')).toBeNull();
+    expect(nextLevelId('level-003')).toBe('level-011');
+    expect(nextLevelId('level-017')).toBe('level-021');
+    expect(nextLevelId('level-029')).toBeNull();
     expect(nextLevelId('不存在')).toBeNull();
     expect(getLevelById('level-002')?.title).toBe('左右相反');
+  });
+
+  it('levelLinearIndex 给出 1 基全局序号（稀疏编号不破坏线性解锁）', () => {
+    expect(levelLinearIndex('level-001')).toBe(1);
+    expect(levelLinearIndex('level-003')).toBe(3);
+    expect(levelLinearIndex('level-011')).toBe(4);
+    expect(levelLinearIndex('level-029')).toBe(11);
+    expect(levelLinearIndex('不存在')).toBe(-1);
   });
 });
 

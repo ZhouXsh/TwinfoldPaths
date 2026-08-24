@@ -2,12 +2,12 @@
 
 ## 当前事实
 
-- 当前版本：MVP V0.1（领域引擎 V1.0 + 表现层 MVP；前三关可玩闭环；单文件产物 1.17MB）
-- 当前阶段：06 已完成，下一阶段 07（基础机关 M1–M4）
-- 最后更新：2026-08-23
-- 最近通过命令：`npm run check`（10 步全过，退出码 0）；`npm run test:e2e`（18/18，chromium+webkit+mobile-320，连跑两轮）；`npm test`（10 文件 94 用例）
+- 当前版本：MVP V0.2（领域引擎 V1.1 含 ADR-015；M1–M4 渲染与映射标签；11 关；单文件产物 1.18MB）
+- 当前阶段：07 已完成，下一阶段 08（高级机关 M5–M8）
+- 最后更新：2026-08-24
+- 最近通过命令：`npm run check`（10 步全过，退出码 0）；`npm run test:e2e`（24/24，chromium+webkit+mobile-320，连跑两轮）；`npm test`（11 文件 121 用例）
 - 当前阻塞：无
-- 下一步：执行 `prompts/07_基础机关M1–M4.md`；引擎已含 M1–M4 结算路径，阶段 07 职责为逐机关用例、教学关与渲染反馈；出入口=`npm run check` + `npm run test:e2e` 全绿
+- 下一步：执行 `prompts/08_高级机关M5至M8.md`；M1–M4 语义冻结（含 ADR-015），表现层实体渲染模式可复用；出入口=`npm run check` + `npm run test:e2e` 全绿
 
 ## 阶段状态
 
@@ -20,7 +20,7 @@
 | 04 | completed | 2026-08-22 | 2026-08-22 | `reports/stage-04-report.md` | 仓库初始化与质量基线；check 十步全绿、e2e 双引擎通过、单文件 1.15MB |
 | 05 | completed | 2026-08-22 | 2026-08-22 | `reports/stage-05-report.md` | 核心移动引擎；62 测试全绿、覆盖率 100%、规范补全 D6/§3-d |
 | 06 | completed | 2026-08-23 | 2026-08-23 | `reports/stage-06-report.md` | 前三关 MVP 与交互闭环；E2E 18/18 三引擎；ADR-014 |
-| 07 | pending |  |  | `reports/stage-07-report.md` | 基础机关 M1–M4 |
+| 07 | completed | 2026-08-24 | 2026-08-24 | `reports/stage-07-report.md` | 基础机关 M1–M4；8 教学/组合关；ADR-015；E2E 24/24 |
 | 08 | pending |  |  | `reports/stage-08-report.md` | 高级机关 M5–M8 |
 | 09 | pending |  |  | `reports/stage-09-report.md` | 关卡 Schema、编辑器、求解器 |
 | 10 | pending |  |  | `reports/stage-10-report.md` | 50 关生产与难度曲线 |
@@ -37,7 +37,7 @@
 ## 关键路径与决策
 
 - 当前发布候选：无（MVP 可玩，未进入 RC）
-- 最近决策记录：ADR-001~006（需求/规则类，全文在 `docs/decision-log.md`）；ADR-007~013（架构类，全文在 `docs/adr/`）；ADR-014（MVP 表现层 UI 形态与动画期输入策略，`docs/adr/ADR-014-mvp-ui-and-input-gate.md`）
+- 最近决策记录：ADR-001~006（需求/规则类，全文在 `docs/decision-log.md`）；ADR-007~013（架构类，全文在 `docs/adr/`）；ADR-014（MVP 表现层 UI 形态与动画期输入策略，`docs/adr/ADR-014-mvp-ui-and-input-gate.md`）；ADR-015（M3 令牌授予时机：抵达授予、停留不重授，`docs/decision-log.md`）
 - 用户提供的外部材料：无（除仓库内执行包文档外）；并行会话遗留沙箱已更名 `DEMO/`（原 `tmp/`，曾误删并从 opencode 快照库逐字节完整恢复）：**受保护目录，任何代理不得删除/覆盖/移动**，仅排除于门禁（eslint/prettier/gitignore），阶段 09 可参考其 BFS 思路；`test-results/` 为可再生 scratch 已删除
 - 不得遗忘的限制：
   - 无后端、无账号、无在线模型、无 CDN、无远程字体/音频/追踪；发布为单文件离线 H5。
@@ -45,6 +45,8 @@
   - 正式关卡必须通过 Schema、内容校验器和 BFS 求解器。
   - 不得伪造真人试玩、性能、浏览器测试或覆盖率数据；未验证必须标注。
   - 规则 R-01 至 R-07、机制 M0 至 M8 的任何修改必须走 `docs/decision-log.md`。
+  - M3 令牌按 ADR-015"抵达授予、停留不重授"实现；多压板联动同一 doorId 语义未形式化，阶段 09 校验器须禁止或 ADR 定义。
+  - 存档 SAVE_VERSION=2：highestUnlocked 为全局线性序号（ADR-004），v1 旧存档按损坏回退。
 
 ## 运行环境事实（2026-08-22 实测）
 

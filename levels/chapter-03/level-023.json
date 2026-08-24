@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "level-023",
+  "chapter": 3,
+  "order": 23,
+  "title": "暂停压板协作",
+  "grid": { "width": 5, "height": 4 },
+  "blueStart": { "x": 0, "y": 0 },
+  "orangeStart": { "x": 3, "y": 0 },
+  "blueExit": { "x": 0, "y": 0 },
+  "orangeExit": { "x": 3, "y": 3 },
+  "initialMapping": "H_MIRROR",
+  "walls": [
+    { "x": 0, "y": 2 },
+    { "x": 1, "y": 2 },
+    { "x": 2, "y": 2 },
+    { "x": 4, "y": 2 }
+  ],
+  "entities": [
+    { "type": "plate", "id": "p1", "x": 0, "y": 1, "doorId": "d1" },
+    { "type": "door", "id": "d1", "x": 3, "y": 2 },
+    { "type": "pauseTile", "x": 3, "y": 3 }
+  ],
+  "parMoves": 4,
+  "parMovesNote": "阶段07：人工最短解（DOWN×3、UP）经单元测试回放验证；阶段09 由 BFS 求解器复核",
+  "hint": { "focus": "橙穿过门后踩住出口上的暂停格，等蓝回来", "direction": "DOWN" },
+  "tags": ["chapter-3", "M1", "M3", "combo"]
+}

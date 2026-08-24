@@ -34,6 +34,11 @@ export function setLevelLabel(text: string): void {
   getEl('level-label').textContent = text;
 }
 
+/** 映射指示（M4：界面始终显示当前映射）。 */
+export function setMappingLabel(text: string): void {
+  getEl('mapping-label').textContent = text;
+}
+
 export function setStatusText(text: string): void {
   getEl('status').textContent = text;
 }

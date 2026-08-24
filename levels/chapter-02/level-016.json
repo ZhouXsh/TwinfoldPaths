@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "level-016",
+  "chapter": 2,
+  "order": 16,
+  "title": "角色专属门",
+  "grid": { "width": 5, "height": 3 },
+  "blueStart": { "x": 1, "y": 0 },
+  "orangeStart": { "x": 3, "y": 2 },
+  "blueExit": { "x": 4, "y": 0 },
+  "orangeExit": { "x": 0, "y": 2 },
+  "initialMapping": "H_MIRROR",
+  "walls": [],
+  "entities": [
+    { "type": "colorDoor", "x": 2, "y": 0, "color": "BLUE" },
+    { "type": "colorDoor", "x": 2, "y": 2, "color": "ORANGE" }
+  ],
+  "parMoves": 3,
+  "parMovesNote": "阶段07：人工最短解（RIGHT×3）经单元测试回放验证；阶段09 由 BFS 求解器复核",
+  "hint": { "focus": "方框门只认蓝色，菱形门只认橙色：各走各的门", "direction": "RIGHT" },
+  "tags": ["chapter-2", "tutorial", "M2", "color-door"]
+}

@@ -5,7 +5,7 @@
 
 export interface SaveData {
   version: number;
-  /** 已解锁的最高关卡 order（第 1 章；MVP 单章节），初始为 1。 */
+  /** 已解锁的最高线性序号（ADR-004：通关第 N 关解锁第 N+1 关；N 为全局排序位置），初始为 1。 */
   highestUnlocked: number;
   /** levelId -> 最佳步数。 */
   bestMoves: Record<string, number>;
@@ -18,7 +18,8 @@ export interface KeyValueStore {
 
 export const SAVE_KEY_PRIMARY = 'twinfold-paths:save:a';
 export const SAVE_KEY_BACKUP = 'twinfold-paths:save:b';
-export const SAVE_VERSION = 1;
+/** 版本 2（阶段 07）：highestUnlocked 由"章内 order"改为"全局线性序号"，旧存档按损坏处理回退默认值。 */
+export const SAVE_VERSION = 2;
 
 export function defaultSave(): SaveData {
   return { version: SAVE_VERSION, highestUnlocked: 1, bestMoves: {} };
@@ -68,11 +69,16 @@ export function persistSave(store: KeyValueStore, data: SaveData): void {
 }
 
 /** 通关结算：推进解锁、刷新最佳步数；返回新存档（不修改入参）。 */
-export function recordWin(save: SaveData, levelId: string, order: number, moves: number): SaveData {
+export function recordWin(
+  save: SaveData,
+  levelId: string,
+  linearIndex: number,
+  moves: number
+): SaveData {
   const best = save.bestMoves[levelId];
   return {
     version: SAVE_VERSION,
-    highestUnlocked: Math.max(save.highestUnlocked, order + 1),
+    highestUnlocked: Math.max(save.highestUnlocked, linearIndex + 1),
     bestMoves: {
       ...save.bestMoves,
       [levelId]: best === undefined || moves < best ? moves : best

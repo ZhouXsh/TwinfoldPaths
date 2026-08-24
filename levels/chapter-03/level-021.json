@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "level-021",
+  "chapter": 3,
+  "order": 21,
+  "title": "暂停令牌",
+  "grid": { "width": 3, "height": 4 },
+  "blueStart": { "x": 0, "y": 0 },
+  "orangeStart": { "x": 2, "y": 1 },
+  "blueExit": { "x": 0, "y": 3 },
+  "orangeExit": { "x": 1, "y": 3 },
+  "initialMapping": "H_MIRROR",
+  "walls": [{ "x": 2, "y": 2 }],
+  "entities": [{ "type": "pauseTile", "x": 0, "y": 1 }],
+  "parMoves": 4,
+  "parMovesNote": "阶段07：人工最短解（DOWN、RIGHT、DOWN×2）经单元测试回放验证；阶段09 由 BFS 求解器复核",
+  "hint": { "focus": "站上暂停格获得令牌；下一输入蓝原地不动，让橙先走", "direction": "DOWN" },
+  "tags": ["chapter-3", "tutorial", "M3", "pause-token"]
+}

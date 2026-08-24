@@ -38,19 +38,19 @@ ActorState = {
 
 关卡静态数据中的实体统一为 `Entity`，动态可变字段标注（dyn）。
 
-| type          | 机制 | 静态字段                       | 动态字段（dyn） | 语义                                   |
-| ------------- | ---- | ------------------------------ | --------------- | -------------------------------------- |
-| `wall`        | M0   | x,y                            | —               | 阻挡；边界隐式为墙                     |
-| `door`        | M1   | id, x,y                        | open: bool      | 压板联动；回合末按压板占用刷新         |
-| `plate`       | M1   | id, x,y, doorId                | —               | 角色（任一颜色）站在其上 → 联动门开启  |
-| `colorDoor`   | M2   | x,y, color                     | —               | 仅对应颜色角色可通过                   |
-| `pauseTile`   | M3   | x,y                            | —               | 回合末站在其上且无令牌 → 获得令牌      |
-| `switcher`    | M4   | x,y, target: MappingMode       | —               | 回合末站在其上 → 全局映射置为 target   |
-| `oneWay`      | M5   | x,y, arrow: Direction          | —               | 进入不限；离开时方向必须等于 arrow     |
-| `portal`      | M6   | portalId, x,y, end: 'A' \| 'B' | —               | 成对（同 portalId 的 A/B）；回合末传送 |
-| `fragile`     | M7   | x,y                            | collapsed: bool | 角色离开后坍塌为障碍；撤销恢复         |
-| `pulseSwitch` | M8   | pairId, x,y                    | —               | 配对脉冲开关                           |
-| `pulseDoor`   | M8   | pairId, x,y                    | activated: bool | 配对开关同回合触发 → 永久开启（闩锁）  |
+| type          | 机制 | 静态字段                       | 动态字段（dyn） | 语义                                                   |
+| ------------- | ---- | ------------------------------ | --------------- | ------------------------------------------------------ |
+| `wall`        | M0   | x,y                            | —               | 阻挡；边界隐式为墙                                     |
+| `door`        | M1   | id, x,y                        | open: bool      | 压板联动；回合末按压板占用刷新                         |
+| `plate`       | M1   | id, x,y, doorId                | —               | 角色（任一颜色）站在其上 → 联动门开启                  |
+| `colorDoor`   | M2   | x,y, color                     | —               | 仅对应颜色角色可通过                                   |
+| `pauseTile`   | M3   | x,y                            | —               | 本回合新抵达且无令牌 → 获得令牌；停留不重授（ADR-015） |
+| `switcher`    | M4   | x,y, target: MappingMode       | —               | 回合末站在其上 → 全局映射置为 target                   |
+| `oneWay`      | M5   | x,y, arrow: Direction          | —               | 进入不限；离开时方向必须等于 arrow                     |
+| `portal`      | M6   | portalId, x,y, end: 'A' \| 'B' | —               | 成对（同 portalId 的 A/B）；回合末传送                 |
+| `fragile`     | M7   | x,y                            | collapsed: bool | 角色离开后坍塌为障碍；撤销恢复                         |
+| `pulseSwitch` | M8   | pairId, x,y                    | —               | 配对脉冲开关                                           |
+| `pulseDoor`   | M8   | pairId, x,y                    | activated: bool | 配对开关同回合触发 → 永久开启（闩锁）                  |
 
 出口不是实体，是关卡字段：`blueExit`、`orangeExit`（Point）。出口永不锁定（R-05）。
 

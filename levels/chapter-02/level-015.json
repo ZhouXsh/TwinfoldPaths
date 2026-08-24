@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "level-015",
+  "chapter": 2,
+  "order": 15,
+  "title": "墙体与门",
+  "grid": { "width": 7, "height": 5 },
+  "blueStart": { "x": 1, "y": 2 },
+  "orangeStart": { "x": 2, "y": 3 },
+  "blueExit": { "x": 0, "y": 4 },
+  "orangeExit": { "x": 5, "y": 2 },
+  "initialMapping": "H_MIRROR",
+  "walls": [
+    { "x": 3, "y": 0 },
+    { "x": 3, "y": 1 },
+    { "x": 3, "y": 3 },
+    { "x": 3, "y": 4 },
+    { "x": 0, "y": 1 },
+    { "x": 5, "y": 3 }
+  ],
+  "entities": [
+    { "type": "plate", "id": "p1", "x": 0, "y": 2, "doorId": "d1" },
+    { "type": "door", "id": "d1", "x": 3, "y": 2 }
+  ],
+  "parMoves": 7,
+  "parMovesNote": "阶段07：人工最短解（LEFT、UP、LEFT×3、DOWN×2）经单元测试回放验证；阶段09 由 BFS 求解器复核",
+  "hint": { "focus": "墙把橙逼向唯一的门；蓝踩板撑门，直到橙通过", "direction": "LEFT" },
+  "tags": ["chapter-2", "M0", "M1", "combo"]
+}

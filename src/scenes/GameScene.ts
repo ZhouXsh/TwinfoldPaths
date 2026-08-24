@@ -1,20 +1,39 @@
 import Phaser from 'phaser';
-import type { ActorMoveInfo, Direction, GameState, Point } from '../domain/types';
+import type { ActorMoveInfo, Direction, GameState, MappingMode, Point } from '../domain/types';
 import { applyCommand, restart, undo } from '../domain/engine';
 import { createInitialState } from '../domain/level';
 import { DELTA, equalsPoint } from '../domain/point';
 import type { LevelRecord } from '../content/validate';
-import { FIRST_LEVEL_ID, getLevelById, nextLevelId } from '../content/levels';
+import { FIRST_LEVEL_ID, getLevelById, levelLinearIndex, nextLevelId } from '../content/levels';
 import { InputGate } from '../input/gate';
 import { swipeToDirection } from '../input/swipe';
 import { localStorageStore, loadSave, persistSave, recordWin } from '../persistence/save-store';
-import { bindButton, setLevelLabel, setMoveCount, setStatusText, showBars } from './dom-ui';
+import {
+  bindButton,
+  setLevelLabel,
+  setMappingLabel,
+  setMoveCount,
+  setStatusText,
+  showBars
+} from './dom-ui';
 
 /** 移动动画时长（阶段 06 要求 150–220ms）。 */
 const MOVE_ANIM_MS = 180;
 const CANCEL_SHAKE_MS = 120;
 const WIN_DELAY_MS = 700;
 const BOARD_SIZE = 360;
+
+const MAPPING_NAMES: Record<MappingMode, string> = {
+  H_MIRROR: '水平镜像',
+  V_MIRROR: '垂直镜像',
+  ROTATE_CW: '顺时针旋转'
+};
+
+const SWITCHER_TEXTURES: Record<MappingMode, string> = {
+  H_MIRROR: 'switcher-H',
+  V_MIRROR: 'switcher-V',
+  ROTATE_CW: 'switcher-R'
+};
 
 const KEY_DIRECTIONS: ReadonlyArray<readonly [string, Direction]> = [
   ['UP', 'UP'],
@@ -51,6 +70,10 @@ export class GameScene extends Phaser.Scene {
   private blueExit: Phaser.GameObjects.Image | null = null;
   private orangeExit: Phaser.GameObjects.Image | null = null;
   private exitBaseScale = 1;
+  private doorSprites = new Map<string, Phaser.GameObjects.Image>();
+  private plateSprites: Array<{ sprite: Phaser.GameObjects.Image; x: number; y: number }> = [];
+  private blueToken: Phaser.GameObjects.Image | null = null;
+  private orangeToken: Phaser.GameObjects.Image | null = null;
   private cleanupFns: Array<() => void> = [];
 
   constructor() {
@@ -69,12 +92,18 @@ export class GameScene extends Phaser.Scene {
     this.state = createInitialState(level);
     this.wonLocked = false;
     this.gate.reset();
+    this.doorSprites.clear();
+    this.plateSprites = [];
+    this.blueToken = null;
+    this.orangeToken = null;
 
     this.drawBoard(level);
     showBars('bar-hud', 'bar-controls');
     setLevelLabel(`${level.chapter}-${level.order} ${level.title}`);
+    setMappingLabel(`映射：${MAPPING_NAMES[this.state.mapping]}`);
     setMoveCount(0);
     setStatusText(level.hint.focus);
+    this.syncEntityStates(this.state);
     this.bindInputs();
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
@@ -103,6 +132,35 @@ export class GameScene extends Phaser.Scene {
     for (const wall of level.walls) {
       const c = this.cellCenter(wall);
       this.add.image(c.x, c.y, 'wall').setScale(scale);
+    }
+
+    for (const entity of level.entities) {
+      const c = this.cellCenter(entity);
+      switch (entity.type) {
+        case 'plate':
+          this.plateSprites.push({
+            sprite: this.add.image(c.x, c.y, 'plate').setScale(scale),
+            x: entity.x,
+            y: entity.y
+          });
+          break;
+        case 'pauseTile':
+          this.add.image(c.x, c.y, 'pausetile').setScale(scale);
+          break;
+        case 'switcher':
+          this.add.image(c.x, c.y, SWITCHER_TEXTURES[entity.target]).setScale(scale);
+          break;
+        case 'door':
+          this.doorSprites.set(entity.id, this.add.image(c.x, c.y, 'door-closed').setScale(scale));
+          break;
+        case 'colorDoor':
+          this.add
+            .image(c.x, c.y, entity.color === 'BLUE' ? 'colordoor-blue' : 'colordoor-orange')
+            .setScale(scale);
+          break;
+        default:
+          break;
+      }
     }
 
     this.exitBaseScale = (this.tile * 0.92) / 64;
@@ -168,6 +226,7 @@ export class GameScene extends Phaser.Scene {
     const now = this.time.now;
     if (!this.gate.canAccept(now)) return;
 
+    const mappingBefore = state.mapping;
     const { state: next, result } = applyCommand(level, state, dir);
     if (!result.applied) {
       this.feedbackCancel();
@@ -176,17 +235,34 @@ export class GameScene extends Phaser.Scene {
     this.state = next;
     this.gate.lock(now, MOVE_ANIM_MS);
     setMoveCount(next.moveCount);
-    this.animateTurn(result, dir);
+    this.animateTurn(result, dir, mappingBefore);
   }
 
-  private animateTurn(result: ReturnType<typeof applyCommand>['result'], input: Direction): void {
+  private animateTurn(
+    result: ReturnType<typeof applyCommand>['result'],
+    input: Direction,
+    mappingBefore: MappingMode
+  ): void {
     if (this.blueActor)
       this.animateActor(this.blueActor, result.blue, input, result.teleported.blue);
     if (this.orangeActor) {
       this.animateActor(this.orangeActor, result.orange, input, result.teleported.orange);
     }
     this.time.delayedCall(MOVE_ANIM_MS + 30, () => {
+      const state = this.state;
+      const level = this.level;
+      if (!state || !level) return;
       this.refreshExitGlow();
+      this.syncEntityStates(state);
+      this.syncTokens(state);
+      const events: string[] = [];
+      if (result.pauseConsumed.blue) events.push('蓝消耗暂停令牌，原地停留');
+      if (result.pauseConsumed.orange) events.push('橙消耗暂停令牌，原地停留');
+      if (state.mapping !== mappingBefore) {
+        setMappingLabel(`映射：${MAPPING_NAMES[state.mapping]}`);
+        events.push(`映射切换为${MAPPING_NAMES[state.mapping]}`);
+      }
+      setStatusText(events.length > 0 ? events.join('；') : level.hint.focus);
       if (result.won) this.winSequence();
     });
   }
@@ -252,6 +328,49 @@ export class GameScene extends Phaser.Scene {
       .setScale(orangeOn ? this.exitBaseScale * 1.15 : this.exitBaseScale);
   }
 
+  /** 实体表现一律由 GameState 驱动（门开闭不得只存在精灵上）。 */
+  private syncEntityStates(state: GameState): void {
+    for (const [doorId, sprite] of this.doorSprites) {
+      sprite.setTexture(state.doors[doorId] ? 'door-open' : 'door-closed');
+    }
+    for (const plate of this.plateSprites) {
+      const occupied =
+        equalsPoint(state.actors.blue.pos, { x: plate.x, y: plate.y }) ||
+        equalsPoint(state.actors.orange.pos, { x: plate.x, y: plate.y });
+      plate.sprite.setAlpha(occupied ? 1 : 0.72);
+    }
+  }
+
+  /** 暂停令牌指示（M3）：跟随角色，位于格子右上角。 */
+  private syncTokens(state: GameState): void {
+    const sync = (
+      token: Phaser.GameObjects.Image | null,
+      hasToken: boolean,
+      pos: Point
+    ): Phaser.GameObjects.Image | null => {
+      if (!hasToken) {
+        token?.setVisible(false);
+        return token;
+      }
+      const c = this.cellCenter(pos);
+      const scale = (this.tile * 0.34) / 64;
+      if (!token) {
+        token = this.add.image(c.x, c.y, 'token').setScale(scale);
+      }
+      token
+        .setPosition(c.x + this.tile * 0.3, c.y - this.tile * 0.3)
+        .setScale(scale)
+        .setVisible(true);
+      return token;
+    };
+    this.blueToken = sync(this.blueToken, state.actors.blue.hasPauseToken, state.actors.blue.pos);
+    this.orangeToken = sync(
+      this.orangeToken,
+      state.actors.orange.hasPauseToken,
+      state.actors.orange.pos
+    );
+  }
+
   private handleUndo(): void {
     const state = this.state;
     const level = this.level;
@@ -261,6 +380,9 @@ export class GameScene extends Phaser.Scene {
     this.state = prev;
     this.gate.reset();
     this.syncActors();
+    this.syncEntityStates(prev);
+    this.syncTokens(prev);
+    setMappingLabel(`映射：${MAPPING_NAMES[prev.mapping]}`);
     setMoveCount(prev.moveCount);
     this.refreshExitGlow();
     setStatusText(level.hint.focus);
@@ -272,6 +394,9 @@ export class GameScene extends Phaser.Scene {
     this.state = restart(level);
     this.gate.reset();
     this.syncActors();
+    this.syncEntityStates(this.state);
+    this.syncTokens(this.state);
+    setMappingLabel(`映射：${MAPPING_NAMES[this.state.mapping]}`);
     setMoveCount(0);
     this.refreshExitGlow();
     setStatusText(level.hint.focus);
@@ -295,7 +420,10 @@ export class GameScene extends Phaser.Scene {
     this.wonLocked = true;
 
     const store = localStorageStore();
-    persistSave(store, recordWin(loadSave(store), level.id, level.order, state.moveCount));
+    persistSave(
+      store,
+      recordWin(loadSave(store), level.id, levelLinearIndex(level.id), state.moveCount)
+    );
 
     setStatusText('双出口同步达成！');
     for (const sprite of [this.blueActor, this.orangeActor]) {

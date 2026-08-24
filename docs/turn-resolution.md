@@ -64,14 +64,14 @@ else:
 
 ### P6 动态结算（固定子顺序，均基于已提交位置）
 
-| 子阶段        | 内容                                                                                                                                   | 规则出处 |
-| ------------- | -------------------------------------------------------------------------------------------------------------------------------------- | -------- |
-| D1 脆弱格坍塌 | 回合开始时所在格为脆弱格、且该角色**最终位置**（D2 后）不再等于该格、且该格尚未坍塌 → 记入 `fragileCollapsed`；被阻挡而停留不坍塌      | M7       |
-| D2 传送       | 见 §3 传送算法                                                                                                                         | M6       |
-| D3 映射切换   | 传送后仍站在某 `switcher` 上的角色 → `state.mapping = switcher.target`；两角色站在不同 target 的切换器上 → 蓝色优先（ADR-006）         | M4       |
-| D4 压板与门   | 对每个 `plate`：`doors[plate.doorId] = 有角色（传送后）站在该板上`；无板联动的门保持关闭                                               | M1       |
-| D5 同步脉冲   | 若某 `pairId` 的两个 `pulseSwitch` 本回合各被一名角色占用（传送后位置）→ `pulseDoors[pairId] = true`（闩锁，之后不回退，仅撤销可还原） | M8       |
-| D6 令牌授予   | 回合结束时（传送后）站在 `pauseTile` 上且无令牌的角色 → `hasPauseToken = true`；已有令牌不叠加（ADR-005）                              | M3       |
+| 子阶段        | 内容                                                                                                                                                           | 规则出处 |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
+| D1 脆弱格坍塌 | 回合开始时所在格为脆弱格、且该角色**最终位置**（D2 后）不再等于该格、且该格尚未坍塌 → 记入 `fragileCollapsed`；被阻挡而停留不坍塌                              | M7       |
+| D2 传送       | 见 §3 传送算法                                                                                                                                                 | M6       |
+| D3 映射切换   | 传送后仍站在某 `switcher` 上的角色 → `state.mapping = switcher.target`；两角色站在不同 target 的切换器上 → 蓝色优先（ADR-006）                                 | M4       |
+| D4 压板与门   | 对每个 `plate`：`doors[plate.doorId] = 有角色（传送后）站在该板上`；无板联动的门保持关闭                                                                       | M1       |
+| D5 同步脉冲   | 若某 `pairId` 的两个 `pulseSwitch` 本回合各被一名角色占用（传送后位置）→ `pulseDoors[pairId] = true`（闩锁，之后不回退，仅撤销可还原）                         | M8       |
+| D6 令牌授予   | 本回合**新抵达**（移动或传送，最终位置≠回合开始位置）`pauseTile` 且无令牌的角色 → `hasPauseToken = true`；已有令牌不叠加（ADR-005）；原地停留不重授（ADR-015） | M3       |
 
 注意：实现顺序须先 D2 再 D1——D1/D3/D4/D5/D6 全部读取 D2 之后的位置（传送落点可压板、触发脉冲、站切换器、站暂停格）；D1 比较回合开始位置与最终位置（移动离开或传送离开均触发坍塌，被阻挡停留不坍塌）。
 
@@ -148,7 +148,7 @@ function resolveTurn(state, input) -> MoveResult:
   applySwitchers(state)                          // D3
   refreshDoors(state)                            // D4
   latchPulses(state)                             // D5
-  grantPauseTokens(state)                        // D6（已有令牌不叠加）
+  grantPauseTokens(state, 起始位置)               // D6（新抵达且无令牌才授予；不叠加、停留不重授）
   state.status = checkWin(state) ? WON : PLAYING // P7
   if applied: state.history.push(snap); state.moveCount += 1  // P8
   return MoveResult(...)

@@ -47,6 +47,14 @@
         overflow: hidden;
         text-overflow: ellipsis;
       }
+      #mapping-label {
+        font-size: 12px;
+        color: #7fe0d0;
+        border: 1px solid #2c4a44;
+        border-radius: 8px;
+        padding: 2px 8px;
+        white-space: nowrap;
+      }
       #move-box {
         font-size: 14px;
         color: #9fb4c7;
@@ -146,6 +154,7 @@
       <header id="bar-hud" class="bar ui-off">
         <button id="btn-home" data-testid="btn-home" type="button">首页</button>
         <span id="level-label" data-testid="level-label"></span>
+        <span id="mapping-label" data-testid="mapping-label"></span>
         <span id="move-box">步数 <b id="move-count" data-testid="move-count">0</b></span>
         <button id="btn-undo" data-testid="btn-undo" type="button">撤销</button>
         <button id="btn-restart" data-testid="btn-restart" type="button">重开</button>

@@ -95,7 +95,7 @@ async function expectResult(page: Page, moves: number): Promise<void> {
 }
 
 async function shot(page: Page, testInfo: TestInfo, name: string): Promise<void> {
-  await page.screenshot({ path: `artifacts/stage-06/${testInfo.project.name}-${name}.png` });
+  await page.screenshot({ path: `artifacts/stage-07/${testInfo.project.name}-${name}.png` });
 }
 
 test('首页一键进入第1关（FR-01）', async ({ page }, testInfo) => {
@@ -110,7 +110,7 @@ test('首页一键进入第1关（FR-01）', async ({ page }, testInfo) => {
   g.assertClean();
 });
 
-test('按钮+滑动+键盘通关前三关（FR-02/FR-04）', async ({ page }, testInfo) => {
+test('按钮+滑动+键盘通关前三关并进入首个机关关（FR-02/FR-04）', async ({ page }, testInfo) => {
   const g = guard(page);
   await openHome(page);
   await startGame(page);
@@ -136,7 +136,17 @@ test('按钮+滑动+键盘通关前三关（FR-02/FR-04）', async ({ page }, te
   await expectResult(page, 4);
   await shot(page, testInfo, 'level-003-result');
 
-  await expect(page.getByTestId('btn-next')).toBeHidden();
+  await page.getByTestId('btn-next').click();
+  await expect(page.getByTestId('level-label')).toHaveText('2-11 压板开门');
+  await expect(page.getByTestId('mapping-label')).toHaveText('映射：水平镜像');
+  await pressMove(page, 'left', 1);
+  await shot(page, testInfo, 'level-011-door-open');
+  await pressMove(page, 'left', 2);
+  await pressMove(page, 'left', 3);
+  await pressMove(page, 'up', 4);
+  await pressMove(page, 'right', 5);
+  await expectResult(page, 5);
+  await shot(page, testInfo, 'level-011-result');
   await page.getByTestId('btn-result-home').click();
   await expect(page.getByTestId('btn-start')).toBeVisible();
   g.assertClean();
@@ -181,6 +191,59 @@ test('刷新后从最高解锁关继续（FR-07）', async ({ page }, testInfo) 
   await page.getByTestId('btn-start').click();
   await expect(page.getByTestId('level-label')).toHaveText('1-2 左右相反');
   g.assertClean();
+});
+
+test('M2/M3/M4 机关渲染可见且映射标签实时切换（视觉证据）', async ({ browser }, testInfo) => {
+  const cases: Array<{ unlock: number; label: string; name: string }> = [
+    { unlock: 6, label: '2-16 角色专属门', name: 'm2-colordoor' },
+    { unlock: 8, label: '3-21 暂停令牌', name: 'm3-pausetile' },
+    { unlock: 10, label: '3-26 垂直镜像切换', name: 'm4-switcher' },
+    { unlock: 11, label: '3-29 映射决定开门', name: 'm4-plate-switcher' }
+  ];
+  for (const c of cases) {
+    const ctx = await browser.newContext();
+    const page = await ctx.newPage();
+    const g = guard(page);
+    await page.addInitScript((unlock: number) => {
+      localStorage.setItem(
+        'twinfold-paths:save:a',
+        JSON.stringify({ version: 2, highestUnlocked: unlock, bestMoves: {} })
+      );
+    }, c.unlock);
+    await page.goto('/');
+    await expect(page.getByTestId('btn-start')).toBeVisible({ timeout: 20000 });
+    await page.getByTestId('btn-start').click();
+    await expect(page.getByTestId('level-label')).toHaveText(c.label);
+    await expect(page.getByTestId('mapping-label')).toHaveText('映射：水平镜像');
+    await page.screenshot({
+      path: `artifacts/stage-07/${testInfo.project.name}-render-${c.name}.png`
+    });
+    g.assertClean();
+    await ctx.close();
+  }
+});
+
+test('M4 映射切换后界面标签同步更新（M4 验收门）', async ({ browser }) => {
+  const ctx = await browser.newContext();
+  const page = await ctx.newPage();
+  const g = guard(page);
+  await page.addInitScript(() => {
+    localStorage.setItem(
+      'twinfold-paths:save:a',
+      JSON.stringify({ version: 2, highestUnlocked: 10, bestMoves: {} })
+    );
+  });
+  await page.goto('/');
+  await expect(page.getByTestId('btn-start')).toBeVisible({ timeout: 20000 });
+  await page.getByTestId('btn-start').click();
+  await expect(page.getByTestId('level-label')).toHaveText('3-26 垂直镜像切换');
+  await expect(page.getByTestId('mapping-label')).toHaveText('映射：水平镜像');
+  await keyMove(page, 'ArrowUp', 1);
+  await expect(page.getByTestId('mapping-label')).toHaveText('映射：垂直镜像');
+  await page.getByTestId('btn-undo').click();
+  await expect(page.getByTestId('mapping-label')).toHaveText('映射：水平镜像');
+  g.assertClean();
+  await ctx.close();
 });
 
 test('视口内无关键遮挡且触控目标≥44px（NFR-02/NFR-04）', async ({ page }) => {

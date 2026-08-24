@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "level-011",
+  "chapter": 2,
+  "order": 11,
+  "title": "压板开门",
+  "grid": { "width": 6, "height": 3 },
+  "blueStart": { "x": 1, "y": 1 },
+  "orangeStart": { "x": 3, "y": 1 },
+  "blueExit": { "x": 1, "y": 0 },
+  "orangeExit": { "x": 5, "y": 0 },
+  "initialMapping": "H_MIRROR",
+  "walls": [{ "x": 4, "y": 0 }],
+  "entities": [
+    { "type": "plate", "id": "p1", "x": 0, "y": 1, "doorId": "d1" },
+    { "type": "door", "id": "d1", "x": 4, "y": 1 }
+  ],
+  "parMoves": 5,
+  "parMovesNote": "阶段07：人工最短解（LEFT×3、UP、RIGHT）经单元测试回放验证；阶段09 由 BFS 求解器复核",
+  "hint": { "focus": "蓝踩住压板门才开；蓝离开后回合末门关闭", "direction": "LEFT" },
+  "tags": ["chapter-2", "tutorial", "M1", "plate-door"]
+}
