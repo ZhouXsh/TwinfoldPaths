@@ -2,12 +2,12 @@
 
 ## 当前事实
 
-- 当前版本：MVP V0.3（领域引擎 V1.2 含 ADR-016 与 MoveResult.reason；M1–M8 全机制渲染与状态行反馈；19 关；单文件产物 1.19MB）
-- 当前阶段：08 已完成，下一阶段 09（关卡工具链）
+- 当前版本：MVP V0.4（工具链 V1.0：JSON Schema、语义校验器、BFS 求解器、CLI 工具链、关卡编辑器；领域引擎 V1.2 不变；19 关；单文件产物 1.19MB）
+- 当前阶段：09 已完成，下一阶段 10（50 关生产与难度曲线）
 - 最后更新：2026-08-24
-- 最近通过命令：`npm run check`（10 步全过，退出码 0）；`npm run test:e2e`（39/39，chromium+webkit+mobile-320，连跑两轮）；`npm test`（12 文件 158 用例）
+- 最近通过命令：`npm run check`（12 步全过，退出码 0）；`npm run test:e2e`（39/39，chromium+webkit+mobile-320）；`npm test`（16 文件 203 用例）
 - 当前阻塞：无
-- 下一步：执行 `prompts/09_关卡工具链与求解器.md`；M0–M8 语义全部冻结（含 ADR-015/016），`applyCommand`+`stableHash` 为求解器唯一结算入口；出入口=`npm run check` + `npm run test:e2e` 全绿
+- 下一步：执行 `prompts/10_50关生产与难度曲线.md`；使用阶段 09 工具链批量生产 50 关，BFS 求解器复核 par 与难度曲线；出入口=`npm run check` + `npm run test:e2e` 全绿
 
 ## 阶段状态
 
@@ -22,7 +22,7 @@
 | 06 | completed | 2026-08-23 | 2026-08-23 | `reports/stage-06-report.md` | 前三关 MVP 与交互闭环；E2E 18/18 三引擎；ADR-014 |
 | 07 | completed | 2026-08-24 | 2026-08-24 | `reports/stage-07-report.md` | 基础机关 M1–M4；8 教学/组合关；ADR-015；E2E 24/24 |
 | 08 | completed | 2026-08-24 | 2026-08-24 | `reports/stage-08-report.md` | 高级机关 M5–M8；8 教学/组合关（BFS 复核 par）；ADR-016 坍塌对穿精化；37 边界用例；E2E 39/39 |
-| 09 | pending |  |  | `reports/stage-09-report.md` | 关卡 Schema、编辑器、求解器 |
+| 09 | completed | 2026-08-24 | 2026-08-24 | `reports/stage-09-report.md` | 关卡 Schema、编辑器、求解器、CLI 工具链；12 步 check 全绿；E2E 39/39；203 测试 |
 | 10 | pending |  |  | `reports/stage-10-report.md` | 50 关生产与难度曲线 |
 | 11 | pending |  |  | `reports/stage-11-report.md` | 完整 UI、视觉、音频、无障碍 |
 | 12 | pending |  |  | `reports/stage-12-report.md` | 自动化测试体系 |

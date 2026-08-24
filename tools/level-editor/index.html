@@ -1,0 +1,682 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>《双生折线》关卡编辑器</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: system-ui, sans-serif;
+        background: #1a1a2e;
+        color: #eee;
+        padding: 16px;
+      }
+      h1 {
+        text-align: center;
+        margin-bottom: 16px;
+        font-size: 1.4em;
+        color: #e94560;
+      }
+      .container {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      .panel {
+        background: #16213e;
+        border-radius: 8px;
+        padding: 16px;
+      }
+      .grid-panel {
+        flex: 1;
+        min-width: 320px;
+      }
+      .props-panel {
+        width: 340px;
+      }
+      .toolbar {
+        display: flex;
+        gap: 4px;
+        flex-wrap: wrap;
+        margin-bottom: 12px;
+      }
+      .toolbar button {
+        padding: 6px 12px;
+        border: 1px solid #0f3460;
+        background: #0f3460;
+        color: #eee;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+      }
+      .toolbar button:hover {
+        background: #1a5276;
+      }
+      .toolbar button.active {
+        background: #e94560;
+        border-color: #e94560;
+      }
+      .toolbar .sep {
+        width: 1px;
+        background: #333;
+        margin: 0 4px;
+      }
+      canvas {
+        display: block;
+        border: 2px solid #0f3460;
+        border-radius: 4px;
+        cursor: crosshair;
+      }
+      .props {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+        font-size: 13px;
+      }
+      .props label {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .props input,
+      .props select,
+      .props textarea {
+        background: #0f3460;
+        border: 1px solid #1a5276;
+        color: #eee;
+        padding: 4px 8px;
+        border-radius: 3px;
+        font-size: 12px;
+      }
+      .props textarea {
+        grid-column: 1 / -1;
+        min-height: 60px;
+        font-family: monospace;
+      }
+      .props .full {
+        grid-column: 1 / -1;
+      }
+      .action-bar {
+        display: flex;
+        gap: 6px;
+        margin-top: 8px;
+        flex-wrap: wrap;
+      }
+      .action-bar button {
+        padding: 6px 16px;
+        border: 1px solid #e94560;
+        background: #e94560;
+        color: #fff;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 13px;
+      }
+      .action-bar button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      .action-bar button.secondary {
+        background: #0f3460;
+        border-color: #1a5276;
+      }
+      .output {
+        margin-top: 8px;
+        font-size: 12px;
+      }
+      .output pre {
+        background: #0f3460;
+        padding: 8px;
+        border-radius: 4px;
+        max-height: 180px;
+        overflow: auto;
+        font-size: 11px;
+      }
+      .output .ok {
+        color: #2ecc71;
+      }
+      .output .err {
+        color: #e74c3c;
+      }
+      .output .info {
+        color: #f39c12;
+      }
+      .output .section-title {
+        color: #aaa;
+        margin-top: 6px;
+        margin-bottom: 2px;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>《双生折线》关卡编辑器</h1>
+    <div class="container">
+      <div class="panel grid-panel">
+        <div class="toolbar">
+          <button data-tool="select" class="active">选择</button>
+          <button data-tool="wall">墙</button>
+          <button data-tool="blueStart">蓝起点</button>
+          <button data-tool="orangeStart">橙起点</button>
+          <button data-tool="blueExit">蓝出口</button>
+          <button data-tool="orangeExit">橙出口</button>
+          <span class="sep"></span>
+          <button data-tool="door">门</button>
+          <button data-tool="plate">压板</button>
+          <button data-tool="colorDoor">专属门</button>
+          <button data-tool="pauseTile">暂停格</button>
+          <button data-tool="switcher">切换器</button>
+          <button data-tool="oneWay">单向格</button>
+          <button data-tool="portal">传送门</button>
+          <button data-tool="fragile">脆弱格</button>
+          <button data-tool="pulseSwitch">脉冲开关</button>
+          <button data-tool="pulseDoor">脉冲门</button>
+          <span class="sep"></span>
+          <button data-tool="clear">🗑 清空</button>
+        </div>
+        <canvas id="gridCanvas"></canvas>
+      </div>
+      <div class="panel props-panel">
+        <div class="props">
+          <label>关卡 ID <input id="levelId" value="custom-001" /></label>
+          <label>章节 <input id="chapter" type="number" value="1" /></label>
+          <label>序号 <input id="order" type="number" value="1" /></label>
+          <label>标题 <input id="title" value="自定义关卡" /></label>
+          <label>网格宽 <input id="gridW" type="number" value="5" /></label>
+          <label>网格高 <input id="gridH" type="number" value="5" /></label>
+          <label class="full"
+            >初始映射
+            <select id="initialMapping">
+              <option>H_MIRROR</option>
+              <option>V_MIRROR</option>
+              <option>ROTATE_CW</option>
+            </select>
+          </label>
+          <label class="full">目标步数 <input id="parMoves" type="number" value="1" /></label>
+          <label class="full">提示 <input id="hintFocus" value="" /></label>
+          <label class="full">标签 <input id="tags" value="chapter-1, M0" /></label>
+          <label class="full"
+            >选中实体属性
+            <textarea
+              id="entityProps"
+              placeholder='JSON 属性（如 {"id":"d1","doorId":"d1"}）'
+            ></textarea>
+          </label>
+        </div>
+        <div class="action-bar">
+          <button id="btnValidate">✅ 验证</button>
+          <button id="btnSolve">🚀 求解</button>
+          <label
+            class="secondary"
+            style="
+              display: inline-flex;
+              align-items: center;
+              gap: 4px;
+              cursor: pointer;
+              padding: 6px 16px;
+              border: 1px solid #1a5276;
+              background: #0f3460;
+              border-radius: 4px;
+              font-size: 13px;
+            "
+          >
+            📂 导入 JSON
+            <input type="file" id="fileInput" accept=".json" style="display: none" />
+          </label>
+          <button id="btnExport" class="secondary">💾 导出 (Ctrl+S)</button>
+        </div>
+        <div class="output">
+          <div id="validationResult"></div>
+          <div id="solveResult"></div>
+          <pre id="jsonOutput"></pre>
+        </div>
+      </div>
+    </div>
+    <script type="module">
+      import {
+        createDefaultState,
+        buildLevelJSON,
+        exportLevelText,
+        importLevelText,
+        validateState,
+        solveState
+      } from './level-io.ts';
+
+      // ===== 编辑器状态 =====
+      const state = createDefaultState();
+      let editorState = { ...state };
+
+      const canvas = document.getElementById('gridCanvas');
+      const ctx = canvas.getContext('2d');
+      const CELL = 48;
+
+      function syncStateFromDOM() {
+        editorState.levelId = document.getElementById('levelId').value || 'custom-001';
+        editorState.chapter = parseInt(document.getElementById('chapter').value) || 1;
+        editorState.order = parseInt(document.getElementById('order').value) || 1;
+        editorState.title = document.getElementById('title').value || '自定义关卡';
+        editorState.grid.width = parseInt(document.getElementById('gridW').value) || 5;
+        editorState.grid.height = parseInt(document.getElementById('gridH').value) || 5;
+        editorState.initialMapping = document.getElementById('initialMapping').value;
+        editorState.parMoves = parseInt(document.getElementById('parMoves').value) || 1;
+        editorState.hint.focus = document.getElementById('hintFocus').value || '';
+        const tagsRaw = document.getElementById('tags').value;
+        editorState.tags = tagsRaw
+          .split(',')
+          .map((t) => t.trim())
+          .filter(Boolean);
+      }
+
+      function syncDOMFromState() {
+        document.getElementById('levelId').value = editorState.levelId;
+        document.getElementById('chapter').value = editorState.chapter;
+        document.getElementById('order').value = editorState.order;
+        document.getElementById('title').value = editorState.title;
+        document.getElementById('gridW').value = editorState.grid.width;
+        document.getElementById('gridH').value = editorState.grid.height;
+        document.getElementById('initialMapping').value = editorState.initialMapping;
+        document.getElementById('parMoves').value = editorState.parMoves;
+        document.getElementById('hintFocus').value = editorState.hint.focus;
+        document.getElementById('tags').value = editorState.tags.join(', ');
+      }
+
+      function resizeCanvas() {
+        canvas.width = editorState.grid.width * CELL;
+        canvas.height = editorState.grid.height * CELL;
+      }
+
+      // ===== 渲染 =====
+      function draw() {
+        resizeCanvas();
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // 网格
+        ctx.strokeStyle = '#333';
+        ctx.lineWidth = 0.5;
+        for (let x = 0; x <= editorState.grid.width; x++) {
+          ctx.beginPath();
+          ctx.moveTo(x * CELL, 0);
+          ctx.lineTo(x * CELL, canvas.height);
+          ctx.stroke();
+        }
+        for (let y = 0; y <= editorState.grid.height; y++) {
+          ctx.beginPath();
+          ctx.moveTo(0, y * CELL);
+          ctx.lineTo(canvas.width, y * CELL);
+          ctx.stroke();
+        }
+
+        // 墙
+        for (const w of editorState.walls) {
+          ctx.fillStyle = '#555';
+          ctx.fillRect(w.x * CELL + 1, w.y * CELL + 1, CELL - 2, CELL - 2);
+        }
+
+        // 实体
+        for (const e of editorState.entities) {
+          const cx = e.x * CELL + CELL / 2;
+          const cy = e.y * CELL + CELL / 2;
+          ctx.font = '10px system-ui';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          switch (e.type) {
+            case 'door':
+              ctx.fillStyle = '#8B4513';
+              ctx.fillRect(e.x * CELL + 4, e.y * CELL + 4, CELL - 8, CELL - 8);
+              break;
+            case 'plate':
+              ctx.fillStyle = '#DAA520';
+              ctx.beginPath();
+              ctx.arc(cx, cy, 12, 0, Math.PI * 2);
+              ctx.fill();
+              break;
+            case 'colorDoor':
+              ctx.fillStyle = e.color === 'BLUE' ? '#3498db' : '#e67e22';
+              ctx.fillRect(e.x * CELL + 6, e.y * CELL + 6, CELL - 12, CELL - 12);
+              break;
+            case 'pauseTile':
+              ctx.fillStyle = '#9b59b6';
+              ctx.beginPath();
+              ctx.arc(cx, cy, 10, 0, Math.PI * 2);
+              ctx.fill();
+              break;
+            case 'switcher':
+              ctx.fillStyle = '#2ecc71';
+              ctx.beginPath();
+              ctx.moveTo(cx, cy - 10);
+              ctx.lineTo(cx + 10, cy + 6);
+              ctx.lineTo(cx - 10, cy + 6);
+              ctx.closePath();
+              ctx.fill();
+              break;
+            case 'oneWay':
+              ctx.fillStyle = '#f39c12';
+              ctx.beginPath();
+              ctx.moveTo(cx - 8, cy - 6);
+              ctx.lineTo(cx + 8, cy);
+              ctx.lineTo(cx - 8, cy + 6);
+              ctx.closePath();
+              ctx.fill();
+              break;
+            case 'portal':
+              ctx.fillStyle = '#00bcd4';
+              ctx.beginPath();
+              ctx.arc(cx, cy, 14, 0, Math.PI * 2);
+              ctx.strokeStyle = '#fff';
+              ctx.lineWidth = 2;
+              ctx.stroke();
+              ctx.fill();
+              ctx.fillStyle = '#fff';
+              ctx.font = 'bold 10px system-ui';
+              ctx.fillText(e.end || '?', cx, cy);
+              break;
+            case 'fragile':
+              ctx.fillStyle = '#795548';
+              ctx.beginPath();
+              ctx.moveTo(cx, cy - 10);
+              ctx.lineTo(cx + 10, cy + 6);
+              ctx.lineTo(cx - 10, cy + 6);
+              ctx.closePath();
+              ctx.fill();
+              break;
+            case 'pulseSwitch':
+              ctx.fillStyle = '#e91e63';
+              ctx.beginPath();
+              ctx.arc(cx, cy, 8, 0, Math.PI * 2);
+              ctx.fill();
+              break;
+            case 'pulseDoor':
+              ctx.fillStyle = '#9c27b0';
+              ctx.fillRect(e.x * CELL + 4, e.y * CELL + 4, CELL - 8, CELL - 8);
+              break;
+          }
+        }
+
+        // 起点/出口
+        const markers = [
+          { pos: editorState.blueStart, color: '#3498db', label: 'B' },
+          { pos: editorState.orangeStart, color: '#e67e22', label: 'O' },
+          { pos: editorState.blueExit, color: '#3498db', label: 'B!' },
+          { pos: editorState.orangeExit, color: '#e67e22', label: 'O!' }
+        ];
+        for (const m of markers) {
+          const cx = m.pos.x * CELL + CELL / 2;
+          const cy = m.pos.y * CELL + CELL / 2;
+          ctx.strokeStyle = m.color;
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.arc(cx, cy, 16, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.fillStyle = m.color;
+          ctx.font = 'bold 12px system-ui';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(m.label, cx, cy);
+        }
+
+        // 选中高亮
+        if (editorState.selectedCell) {
+          ctx.strokeStyle = '#fff';
+          ctx.lineWidth = 2;
+          ctx.setLineDash([4, 4]);
+          ctx.strokeRect(
+            editorState.selectedCell.x * CELL,
+            editorState.selectedCell.y * CELL,
+            CELL,
+            CELL
+          );
+          ctx.setLineDash([]);
+        }
+      }
+
+      // ===== 事件处理 =====
+      function cellFromEvent(e) {
+        const rect = canvas.getBoundingClientRect();
+        const x = Math.floor((e.clientX - rect.left) / CELL);
+        const y = Math.floor((e.clientY - rect.top) / CELL);
+        if (x < 0 || x >= editorState.grid.width || y < 0 || y >= editorState.grid.height)
+          return null;
+        return { x, y };
+      }
+
+      function findEntity(x, y) {
+        return editorState.entities.find((e) => e.x === x && e.y === y);
+      }
+
+      canvas.addEventListener('click', (e) => {
+        const cell = cellFromEvent(e);
+        if (!cell) return;
+        editorState.selectedCell = cell;
+
+        switch (editorState.tool) {
+          case 'select': {
+            const ent = findEntity(cell.x, cell.y);
+            if (ent) {
+              document.getElementById('entityProps').value = JSON.stringify(ent, null, 2);
+            } else {
+              document.getElementById('entityProps').value = '';
+            }
+            break;
+          }
+          case 'wall': {
+            const idx = editorState.walls.findIndex((w) => w.x === cell.x && w.y === cell.y);
+            if (idx >= 0) editorState.walls.splice(idx, 1);
+            else editorState.walls.push({ ...cell });
+            break;
+          }
+          case 'blueStart':
+            editorState.blueStart = { ...cell };
+            break;
+          case 'orangeStart':
+            editorState.orangeStart = { ...cell };
+            break;
+          case 'blueExit':
+            editorState.blueExit = { ...cell };
+            break;
+          case 'orangeExit':
+            editorState.orangeExit = { ...cell };
+            break;
+          case 'clear': {
+            const idx = editorState.walls.findIndex((w) => w.x === cell.x && w.y === cell.y);
+            if (idx >= 0) editorState.walls.splice(idx, 1);
+            const existing = findEntity(cell.x, cell.y);
+            if (existing) editorState.entities = editorState.entities.filter((e) => e !== existing);
+            break;
+          }
+          default: {
+            const existing = findEntity(cell.x, cell.y);
+            if (existing) {
+              editorState.entities = editorState.entities.filter((e) => e !== existing);
+            } else {
+              const entity = { type: editorState.tool, x: cell.x, y: cell.y };
+              if (editorState.tool === 'door' || editorState.tool === 'plate') {
+                entity.id =
+                  editorState.tool === 'door'
+                    ? `d${editorState.entities.filter((e) => e.type === 'door').length + 1}`
+                    : `p${editorState.entities.filter((e) => e.type === 'plate').length + 1}`;
+                if (editorState.tool === 'plate') entity.doorId = 'd1';
+              }
+              if (editorState.tool === 'portal') {
+                const portalCount = editorState.entities.filter((e) => e.type === 'portal').length;
+                entity.portalId = `tp${Math.floor(portalCount / 2) + 1}`;
+                entity.end = portalCount % 2 === 0 ? 'A' : 'B';
+              }
+              if (editorState.tool === 'colorDoor') entity.color = 'BLUE';
+              if (editorState.tool === 'switcher') entity.target = 'V_MIRROR';
+              if (editorState.tool === 'oneWay') entity.arrow = 'UP';
+              if (editorState.tool === 'pulseSwitch' || editorState.tool === 'pulseDoor') {
+                entity.pairId = `pp${Math.floor(editorState.entities.filter((e) => e.type === 'pulseSwitch' || e.type === 'pulseDoor').length / 2) + 1}`;
+              }
+              editorState.entities.push(entity);
+              document.getElementById('entityProps').value = JSON.stringify(entity, null, 2);
+            }
+            break;
+          }
+        }
+        draw();
+        updateOutput();
+      });
+
+      // 工具栏按钮
+      document.querySelectorAll('[data-tool]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          if (btn.dataset.tool === 'clear') {
+            editorState.walls = [];
+            editorState.entities = [];
+            draw();
+            updateOutput();
+            return;
+          }
+          document.querySelectorAll('[data-tool]').forEach((b) => b.classList.remove('active'));
+          btn.classList.add('active');
+          editorState.tool = btn.dataset.tool;
+        });
+      });
+
+      // 属性面板变更
+      document.getElementById('gridW').addEventListener('change', () => {
+        syncStateFromDOM();
+        draw();
+      });
+      document.getElementById('gridH').addEventListener('change', () => {
+        syncStateFromDOM();
+        draw();
+      });
+      document.getElementById('initialMapping').addEventListener('change', () => {
+        syncStateFromDOM();
+      });
+
+      // ===== 输出与验证 =====
+      function updateOutput() {
+        syncStateFromDOM();
+        const json = buildLevelJSON(editorState);
+        document.getElementById('jsonOutput').textContent = JSON.stringify(json, null, 2);
+      }
+
+      function renderValidation() {
+        syncStateFromDOM();
+        const result = validateState(editorState);
+        const el = document.getElementById('validationResult');
+        if (result.valid) {
+          el.innerHTML = '<div class="ok">✅ 校验通过</div>';
+        } else {
+          const items = result.errors
+            .map((e) => `<div class="err">${e.path}: ${e.message}</div>`)
+            .join('');
+          el.innerHTML = `<div class="err">❌ 校验失败 (${result.errors.length} 项)</div>${items}`;
+        }
+      }
+
+      async function renderSolve() {
+        syncStateFromDOM();
+        const btn = document.getElementById('btnSolve');
+        const el = document.getElementById('solveResult');
+        btn.disabled = true;
+        btn.textContent = '⏳ 求解中...';
+        el.innerHTML = '<div class="info">⏳ 求解中，请稍候...</div>';
+
+        // 使用 setTimeout 让 UI 先更新
+        await new Promise((r) => setTimeout(r, 50));
+
+        let resultHtml = '';
+        try {
+          const result = solveState(editorState);
+          if (result === null) {
+            resultHtml =
+              '<div class="err">❌ 求解失败：关卡校验不通过</div><div class="info">请先点击"验证"查看错误</div>';
+          } else if (result.solvable) {
+            resultHtml = `<div class="ok">✅ 可解</div>`;
+            resultHtml += `<div class="info">最短步数: ${result.optimalSteps}</div>`;
+            resultHtml += `<div class="info">解序列: ${result.solution.join(' ')}</div>`;
+            resultHtml += `<div class="info">最短解数量: ${result.solutionCount}</div>`;
+            resultHtml += `<div class="info">访问状态数: ${result.statesVisited}</div>`;
+            resultHtml += `<div class="info">耗时: ${result.elapsedMs}ms</div>`;
+          } else if (result.budgetExhausted) {
+            resultHtml = `<div class="err">❌ 超预算: ${result.reason || '未知'}</div>`;
+            resultHtml += `<div class="info">访问状态数: ${result.statesVisited}</div>`;
+            resultHtml += `<div class="info">到达深度: ${result.reachedDepth}</div>`;
+          } else {
+            resultHtml = `<div class="err">❌ 不可解: ${result.reason || '状态空间穷尽'}</div>`;
+            resultHtml += `<div class="info">访问状态数: ${result.statesVisited}</div>`;
+          }
+        } catch (e) {
+          resultHtml = `<div class="err">❌ 求解异常: ${e.message}</div>`;
+        }
+        el.innerHTML = resultHtml;
+        btn.disabled = false;
+        btn.textContent = '🚀 求解';
+      }
+
+      // 验证按钮
+      document.getElementById('btnValidate').addEventListener('click', renderValidation);
+
+      // 求解按钮
+      document.getElementById('btnSolve').addEventListener('click', renderSolve);
+
+      // ===== 导入/导出 =====
+      document.getElementById('btnExport').addEventListener('click', () => {
+        syncStateFromDOM();
+        const text = exportLevelText(editorState);
+        const blob = new Blob([text], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${editorState.levelId}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+      });
+
+      document.getElementById('fileInput').addEventListener('change', (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          const text = ev.target?.result;
+          if (typeof text !== 'string') return;
+          const result = importLevelText(text);
+          const valEl = document.getElementById('validationResult');
+          if (result.success) {
+            editorState = result.state;
+            syncDOMFromState();
+            draw();
+            updateOutput();
+            if (result.semanticErrors.length > 0) {
+              const items = result.semanticErrors
+                .map((e) => `<div class="err">${e.path}: ${e.message}</div>`)
+                .join('');
+              valEl.innerHTML = `<div class="err">⚠️ 导入成功，但有语义警告 (${result.semanticErrors.length} 项)</div>${items}`;
+            } else {
+              valEl.innerHTML = '<div class="ok">✅ 导入成功</div>';
+            }
+          } else {
+            valEl.innerHTML = `<div class="err">❌ 导入失败: ${result.error}</div>`;
+          }
+        };
+        reader.readAsText(file);
+        // 重置 input 以便重复选择同一文件
+        e.target.value = '';
+      });
+
+      // Ctrl+S 导出
+      document.addEventListener('keydown', (e) => {
+        if (e.ctrlKey && e.key === 's') {
+          e.preventDefault();
+          document.getElementById('btnExport').click();
+        }
+      });
+
+      // ===== 初始化 =====
+      function init() {
+        draw();
+        updateOutput();
+      }
+      init();
+    </script>
+  </body>
+</html>

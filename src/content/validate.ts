@@ -1,5 +1,6 @@
 import type { ActorColor, Direction, Entity, LevelDef, MappingMode, Point } from '../domain/types';
 import { DIRECTIONS } from '../domain/types';
+import { equalsPoint, pointKey } from '../domain/point';
 
 /** 关卡记录 = 领域 LevelDef + 展示元数据（title 不属于领域状态）。 */
 export interface LevelRecord extends LevelDef {
@@ -213,4 +214,176 @@ export function parseLevel(input: unknown): LevelRecord {
     hint: { focus: input.hint.focus, direction },
     tags
   };
+}
+
+// ===== 语义校验（在 parseLevel 结构校验之后调用） =====
+
+/** 语义校验错误信息 */
+export interface SemanticError {
+  path: string;
+  message: string;
+}
+
+/**
+ * 关卡语义校验。在 parseLevel 通过后调用，检查：
+ * - door.id、plate.id 唯一
+ * - plate.doorId 引用已存在 door
+ * - 禁止多压板同一 doorId
+ * - portal 成对（每个 portalId 恰好一个 end=A 和一个 end=B）
+ * - 禁止同格多个传送入口
+ * - pulseSwitch 同一 pairId 数量恰为 2
+ * - 禁止 oneWay/portal 压在 blueExit/orangeExit 上
+ * - tags 必须包含 chapter-{chapter}
+ * - 实体与墙/起点/出口的重叠合法性
+ */
+export function validateLevelSemantics(level: LevelDef): SemanticError[] {
+  const errors: SemanticError[] = [];
+
+  // 1. 收集所有 door.id 和 plate.id
+  const doorIds = new Set<string>();
+  const plateIds = new Set<string>();
+  const plateDoorIds = new Map<string, number>(); // doorId -> count of plates
+  const portalEnds = new Map<string, Set<string>>(); // portalId -> Set<'A'|'B'>
+  const portalPositions = new Map<string, string>(); // pointKey -> portalId (for overlap check)
+  const pulseSwitchCounts = new Map<string, number>(); // pairId -> count
+
+  const occupiedPoints = new Set<string>();
+  // 起点、出口、墙占用的格子
+  for (const p of [level.blueStart, level.orangeStart, level.blueExit, level.orangeExit]) {
+    occupiedPoints.add(pointKey(p));
+  }
+  for (const w of level.walls) {
+    occupiedPoints.add(pointKey(w));
+  }
+
+  for (let i = 0; i < level.entities.length; i++) {
+    const entity = level.entities[i];
+    if (!entity) continue;
+    const path = `entities[${i}]`;
+
+    // 检查实体与墙/起点/出口的重叠
+    // 允许：起点/出口上可以有 pauseTile, switcher, fragile, pulseSwitch（引擎不禁止）
+    // 禁止：oneWay/portal 压在 blueExit/orangeExit 上
+    if (entity.type === 'oneWay' || entity.type === 'portal') {
+      if (equalsPoint(entity, level.blueExit) || equalsPoint(entity, level.orangeExit)) {
+        errors.push({
+          path,
+          message: `${entity.type} 不可压在出口上: (${entity.x},${entity.y})`
+        });
+      }
+    }
+
+    // 检查实体与墙重叠（任何实体都不可在墙上）
+    if (level.walls.some((w) => equalsPoint(w, entity))) {
+      errors.push({
+        path,
+        message: `${entity.type} 与墙重叠: (${entity.x},${entity.y})`
+      });
+    }
+
+    // 检查实体与起点重叠（特殊：允许起点上放东西，但需记录）
+    // 这里不禁止，但记录
+
+    switch (entity.type) {
+      case 'door': {
+        if (doorIds.has(entity.id)) {
+          errors.push({ path, message: `door.id 重复: ${entity.id}` });
+        }
+        doorIds.add(entity.id);
+        break;
+      }
+      case 'plate': {
+        if (plateIds.has(entity.id)) {
+          errors.push({ path, message: `plate.id 重复: ${entity.id}` });
+        }
+        plateIds.add(entity.id);
+        plateDoorIds.set(entity.doorId, (plateDoorIds.get(entity.doorId) ?? 0) + 1);
+        break;
+      }
+      case 'portal': {
+        const ends = portalEnds.get(entity.portalId);
+        if (ends) {
+          ends.add(entity.end);
+        } else {
+          portalEnds.set(entity.portalId, new Set([entity.end]));
+        }
+
+        // 检查同格多个传送入口
+        const portalKey = pointKey(entity);
+        if (portalPositions.has(portalKey)) {
+          errors.push({
+            path,
+            message: `同格多个传送入口: (${entity.x},${entity.y}) (portalId: ${portalPositions.get(portalKey)} 和 ${entity.portalId})`
+          });
+        }
+        portalPositions.set(portalKey, entity.portalId);
+
+        // 检查 portal 是否压在出口上（已在上方检查）
+        break;
+      }
+      case 'pulseSwitch': {
+        pulseSwitchCounts.set(entity.pairId, (pulseSwitchCounts.get(entity.pairId) ?? 0) + 1);
+        break;
+      }
+      default:
+        break;
+    }
+  }
+
+  // 2. plate.doorId 必须引用已存在 door
+  for (const [doorId, count] of plateDoorIds) {
+    if (!doorIds.has(doorId)) {
+      errors.push({
+        path: 'entities',
+        message: `plate 引用了不存在的 doorId: ${doorId}`
+      });
+    }
+    // 禁止多压板同一 doorId（M1–M4 手册遗留项）
+    if (count > 1) {
+      errors.push({
+        path: 'entities',
+        message: `多个压板 (${count}个) 联动同一 doorId: ${doorId}`
+      });
+    }
+  }
+
+  // 3. portal 成对检查
+  for (const [portalId, ends] of portalEnds) {
+    if (ends.size !== 2 || !ends.has('A') || !ends.has('B')) {
+      errors.push({
+        path: 'entities',
+        message: `portal 不成对: portalId=${portalId} (有 end: ${[...ends].join(',')})`
+      });
+    }
+  }
+
+  // 4. pulseSwitch 同一 pairId 数量恰为 2
+  for (const [pairId, count] of pulseSwitchCounts) {
+    if (count !== 2) {
+      errors.push({
+        path: 'entities',
+        message: `pulseSwitch 数量不为 2: pairId=${pairId} (数量=${count})`
+      });
+    }
+  }
+
+  // 5. tags 必须包含章节标签
+  const chapterTag = `chapter-${level.chapter}`;
+  if (!level.tags.includes(chapterTag)) {
+    errors.push({
+      path: 'tags',
+      message: `缺少章节标签: ${chapterTag}`
+    });
+  }
+
+  // 6. 检查是否有机制标签 (以 M 开头)
+  const hasMechanismTag = level.tags.some((t) => /^M\d$/.test(t));
+  if (!hasMechanismTag) {
+    errors.push({
+      path: 'tags',
+      message: '缺少机制标签 (M0-M8)'
+    });
+  }
+
+  return errors;
 }

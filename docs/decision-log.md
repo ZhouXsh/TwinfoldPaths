@@ -313,4 +313,5 @@ D1 原文只规定"回合开始时所在格为脆弱格、且该角色最终位�
 
 ## 未决事项
 
+- 阶段 09 已实现：校验器禁止 portal 不成对/同格入口重叠、多压板同 doorId、oneWay/portal 压出口、pulseSwitch 配对数量 ≠ 2。`pulseDoor` 同一 pairId 的数量不做约束（引擎允许多个 pulseDoor 共享同一闩锁）。
 - 暂无 P0 冲突待确认。其余开放问题见 `docs/requirements.md` §10。

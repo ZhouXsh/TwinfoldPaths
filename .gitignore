@@ -1,7 +1,9 @@
 node_modules/
 dist/
+tools-dist/
 coverage/
 test-results/
 playwright-report/
+artifacts/difficulty-report.txt
 *.log
 .DS_Store

@@ -1,21 +1,20 @@
 #!/usr/bin/env node
-// 关卡求解（阶段 04 桩）：无引擎可解时仅报告关卡数量。
-// BFS 求解器在阶段 09 实现（ADR-013），届时本文件替换为真实求解入口。
-import { readdirSync, existsSync, statSync } from 'node:fs';
-import { join, resolve } from 'node:path';
+// 关卡求解 CLI：调用 Vite 构建的 solver bundle 执行求解。
+// 构建由 package.json 的 solve:level/solve:levels 脚本前置执行。
+import { spawnSync } from 'node:child_process';
+import { resolve, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const dir = resolve(process.cwd(), 'levels');
-let count = 0;
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const bundlePath = resolve(__dirname, '..', 'tools-dist', 'solver.mjs');
 
-function walk(d) {
-  if (!existsSync(d)) return;
-  for (const name of readdirSync(d)) {
-    const p = join(d, name);
-    if (statSync(p).isDirectory()) walk(p);
-    else if (name.endsWith('.json')) count++;
-  }
+const { existsSync } = await import('node:fs');
+if (!existsSync(bundlePath)) {
+  console.error('未找到工具链构建产物。请先运行: npm run build:tools');
+  process.exit(1);
 }
-walk(dir);
 
-console.log(`关卡文件: ${count} 个`);
-console.log('注：BFS 求解与回放在阶段 09 实现（ADR-013）。');
+// 获取除命令本身外的所有参数
+const args = process.argv.slice(2);
+const r = spawnSync('node', [bundlePath, ...args], { stdio: 'inherit', shell: true });
+process.exit(r.status ?? 1);

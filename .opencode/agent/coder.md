@@ -5,11 +5,11 @@ model: learnings_campus/deepseek-v4-flash
 permission:
   edit: allow
   bash:
-    "*": allow
-    "git commit*": ask
-    "git push*": ask
-    "git reset*": ask
-    "git clean*": ask
+    '*': allow
+    'git commit*': ask
+    'git push*': ask
+    'git reset*': ask
+    'git clean*': ask
 ---
 
 你是《双生折线》（TwinfoldPaths）项目的编程实现子代理，负责执行主代理分派的具体编码任务。

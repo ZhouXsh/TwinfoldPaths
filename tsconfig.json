@@ -15,5 +15,13 @@
     "noEmit": true,
     "types": ["vite/client", "node"]
   },
-  "include": ["src", "tests", "vite.config.ts", "playwright.config.ts"]
+  "include": [
+    "src",
+    "tests",
+    "vite.config.ts",
+    "vite.tools.config.ts",
+    "playwright.config.ts",
+    "tools/solver",
+    "tools/level-editor"
+  ]
 }
