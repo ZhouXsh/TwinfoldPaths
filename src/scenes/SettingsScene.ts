@@ -64,6 +64,7 @@ export class SettingsScene extends Phaser.Scene {
 
       const toggle = document.createElement('button');
       toggle.className = `toggle-switch ${this.settings[item.id] ? 'on' : ''}`;
+      toggle.setAttribute('data-testid', `toggle-${item.id}`);
       toggle.setAttribute(
         'aria-label',
         `${item.label} ${this.settings[item.id] ? '开启' : '关闭'}`

@@ -38,6 +38,7 @@ export class ChapterSelectScene extends Phaser.Scene {
     for (const ch of CHAPTERS) {
       const card = document.createElement('div');
       card.className = 'chapter-card';
+      card.setAttribute('data-testid', `chapter-${ch.num}`);
       card.setAttribute('role', 'button');
       card.setAttribute('tabindex', '0');
       card.setAttribute('aria-label', `第${ch.num}章：${ch.title}`);

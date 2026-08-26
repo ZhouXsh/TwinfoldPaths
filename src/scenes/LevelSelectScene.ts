@@ -58,6 +58,7 @@ export class LevelSelectScene extends Phaser.Scene {
 
       const cell = document.createElement('div');
       cell.className = 'level-cell';
+      cell.setAttribute('data-testid', `level-${level.id}`);
       cell.setAttribute('role', 'button');
       cell.setAttribute('tabindex', isUnlocked ? '0' : '-1');
       cell.setAttribute(

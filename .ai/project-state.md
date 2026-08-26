@@ -2,12 +2,12 @@
 
 ## 当前事实
 
-- 当前版本：MVP V0.6（完整 UI 体验层：5 章选关、设置、音效、无障碍、响应式；领域引擎 V1.2 不变；单文件产物 1.29MB 342KB gzip）
-- 当前阶段：11 已完成，下一阶段 12（自动化测试体系）
+- 当前版本：MVP V0.6 + 测试体系强化（单元 255 测试 + 集成 + 属性 + 内容 + E2E 63 测试 × 3 项目；领域层 100% 分支覆盖；50 关全部自动回放胜利）
+- 当前阶段：12 已完成，下一阶段 13（浏览器兼容、性能、离线）
 - 最后更新：2026-08-26
-- 最近通过命令：`npm run check`（12 步全过，退出码 0）；`npm test`（16 文件 204 用例）；`npm run validate:levels`（50/50 通过）；`npm run solve:levels`（50/50 可解，0 par 错误）；`npm run test:e2e`（39/39，chromium+webkit+mobile-320）；视口截图 24 张（320×568/390×844/430×932/desktop）
+- 最近通过命令：`npm run check`（12 步全过，退出码 0，连续 3 次稳定）；`npm test`（18 文件 255 用例）；`npm run coverage`（领域层 100% 分支，阈值 ≥90%）；`npm run validate:levels`（50/50 通过）；`npm run solve:levels`（50/50 可解，0 par 错误）；`npm run test:e2e`（63/63，chromium+webkit+mobile-320）
 - 当前阻塞：无
-- 下一步：执行 `prompts/12_自动化测试体系.md`；建立针对阶段 11 新增 UI 的 E2E 测试覆盖
+- 下一步：执行 `prompts/13_浏览器兼容性能离线.md`；浏览器兼容性验证、性能基准、离线可用性验证
 
 ## 阶段状态
 
@@ -25,7 +25,7 @@
 | 09 | completed | 2026-08-24 | 2026-08-24 | `reports/stage-09-report.md` | 关卡 Schema、编辑器、求解器、CLI 工具链；12 步 check 全绿；E2E 39/39；203 测试 |
 | 10 | completed | 2026-08-24 | 2026-08-25 | `reports/stage-10-report.md` | 50 关生产与难度曲线；3 轮重设计后全部通过审计/相似度/求解；单方向解仅限 6 冻结教学关；048 M8 脉冲门检测限于审计首轮限制；204 测试全绿；check 12 步全过 |
 | 11 | completed | 2026-08-26 | 2026-08-26 | `reports/stage-11-report.md` | 完整 UI、视觉、音频、无障碍；check 12 步全过，E2E 39/39，截图 24 张 |
-| 12 | pending |  |  | `reports/stage-12-report.md` | 自动化测试体系 |
+| 12 | completed | 2026-08-26 | 2026-08-26 | `reports/stage-12-report.md` | 自动化测试体系；ADR-018 振动 API 未实现 |
 | 13 | pending |  |  | `reports/stage-13-report.md` | 浏览器兼容、性能、离线 |
 | 14 | pending |  |  | `reports/stage-14-report.md` | 试玩测试与 AI 迭代 |
 | 15 | pending |  |  | `reports/stage-15-report.md` | 发布候选与参赛材料 |
@@ -37,7 +37,7 @@
 ## 关键路径与决策
 
 - 当前发布候选：无（MVP 可玩，未进入 RC）
-- 最近决策记录：ADR-001~006（需求/规则类，全文在 `docs/decision-log.md`）；ADR-007~013（架构类，全文在 `docs/adr/`）；ADR-014（MVP 表现层 UI 形态与动画期输入策略，`docs/adr/ADR-014-mvp-ui-and-input-gate.md`）；ADR-015（M3 令牌授予时机：抵达授予、停留不重授，`docs/decision-log.md`）；ADR-016（M7 坍塌对穿精化：D2 后格上有角色则不坍塌，`docs/decision-log.md`）
+- 最近决策记录：ADR-001~006（需求/规则类，全文在 `docs/decision-log.md`）；ADR-007~013（架构类，全文在 `docs/adr/`）；ADR-014（MVP 表现层 UI 形态与动画期输入策略，`docs/adr/ADR-014-mvp-ui-and-input-gate.md`）；ADR-015（M3 令牌授予时机：抵达授予、停留不重授，`docs/decision-log.md`）；ADR-016（M7 坍塌对穿精化：D2 后格上有角色则不坍塌，`docs/decision-log.md`）；ADR-017（存档版本升级至 3，新增 settings 字段，`docs/decision-log.md`）；ADR-018（振动 API 未集成到 GameScene 反馈，不属于阶段 12 范围，`docs/decision-log.md`）
 - 用户提供的外部材料：无（除仓库内执行包文档外）；并行会话遗留沙箱已更名 `DEMO/`（原 `tmp/`，曾误删并从 opencode 快照库逐字节完整恢复）：**受保护目录，任何代理不得删除/覆盖/移动**，仅排除于门禁（eslint/prettier/gitignore），阶段 09 可参考其 BFS 思路；`test-results/` 为可再生 scratch 已删除
 - 不得遗忘的限制：
   - 无后端、无账号、无在线模型、无 CDN、无远程字体/音频/追踪；发布为单文件离线 H5。

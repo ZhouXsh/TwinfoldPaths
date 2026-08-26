@@ -13,6 +13,18 @@ export default defineConfig({
   },
   test: {
     environment: 'node',
-    include: ['tests/unit/**/*.test.ts']
+    include: ['tests/unit/**/*.test.ts'],
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'html'],
+      reportsDirectory: 'coverage',
+      include: ['src/domain/**'],
+      thresholds: {
+        branches: 90,
+        functions: 90,
+        lines: 95,
+        statements: 95
+      }
+    }
   }
 });
