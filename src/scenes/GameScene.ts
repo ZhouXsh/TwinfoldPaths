@@ -25,6 +25,7 @@ import {
   showDirectionPreview,
   hideDirectionPreview
 } from './dom-ui';
+import { recordEvent } from '../telemetry/telemetry';
 
 /** 移动动画时长（阶段 06 要求 150–220ms）。 */
 const MOVE_ANIM_MS = 180;
@@ -140,6 +141,9 @@ export class GameScene extends Phaser.Scene {
     setStatusText(level.hint.focus);
     this.syncEntityStates(this.state);
     this.bindInputs();
+
+    // 遥测：关卡开始
+    recordEvent('level_start', level.id, 0);
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       for (const fn of this.cleanupFns) fn();
@@ -311,6 +315,7 @@ export class GameScene extends Phaser.Scene {
     this.cleanupFns.push(
       bindButton('btn-home', () => {
         audioManager.play('uiTap');
+        recordEvent('quit', this.level?.id ?? '', this.state?.moveCount ?? 0);
         this.scene.start('Home');
       })
     );
@@ -330,11 +335,13 @@ export class GameScene extends Phaser.Scene {
     if (!result.applied) {
       audioManager.play('cancel');
       this.feedbackCancel();
+      recordEvent('invalid', level.id, state.moveCount, dir);
       return;
     }
     this.state = next;
     this.gate.lock(now, this.reducedAnim ? 30 : MOVE_ANIM_MS);
     setMoveCount(next.moveCount);
+    recordEvent('move', level.id, next.moveCount, dir);
     this.animateTurn(result, dir, mappingBefore, collapsedBefore, pulseBefore);
   }
 
@@ -589,6 +596,7 @@ export class GameScene extends Phaser.Scene {
     this.refreshExitGlow();
     setStatusText(level.hint.focus);
     audioManager.play('uiTap');
+    recordEvent('undo', level.id, prev.moveCount);
   }
 
   private handleRestart(): void {
@@ -604,6 +612,7 @@ export class GameScene extends Phaser.Scene {
     this.refreshExitGlow();
     setStatusText(level.hint.focus);
     audioManager.play('uiTap');
+    recordEvent('restart', level.id, 0);
   }
 
   private syncActors(): void {
@@ -622,6 +631,8 @@ export class GameScene extends Phaser.Scene {
     const level = this.level;
     if (!state || !level || this.wonLocked) return;
     this.wonLocked = true;
+
+    recordEvent('complete', level.id, state.moveCount);
 
     const store = localStorageStore();
     persistSave(

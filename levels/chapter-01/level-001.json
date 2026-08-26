@@ -14,6 +14,9 @@
   "entities": [],
   "parMoves": 1,
   "parMovesNote": "MVP：人工最短解（LEFT）经单元测试回放验证；阶段09 由 BFS 求解器复核",
-  "hint": { "focus": "按 ← ：蓝向左走，橙被墙挡住", "direction": "LEFT" },
+  "hint": {
+    "focus": "← 键：蓝→左，橙→右（被墙挡住）。两个角色都响应方向指令。",
+    "direction": "LEFT"
+  },
   "tags": ["chapter-1", "tutorial", "M0", "single-block"]
 }

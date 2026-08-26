@@ -1,0 +1,12 @@
+type,timestamp,levelId,moveCount,payload
+level_start,2026-08-26T12:00:00.000Z,level-001,0,
+move,2026-08-26T12:00:05.000Z,level-001,1,UP
+move,2026-08-26T12:00:07.000Z,level-001,2,RIGHT
+invalid,2026-08-26T12:00:10.000Z,level-001,2,UP
+undo,2026-08-26T12:00:12.000Z,level-001,1,
+move,2026-08-26T12:00:15.000Z,level-001,2,LEFT
+complete,2026-08-26T12:00:20.000Z,level-001,2,
+level_start,2026-08-26T12:00:25.000Z,level-002,0,
+move,2026-08-26T12:00:30.000Z,level-002,1,UP
+restart,2026-08-26T12:00:35.000Z,level-002,0,
+quit,2026-08-26T12:01:00.000Z,level-002,0,

@@ -14,6 +14,9 @@
   "entities": [],
   "parMoves": 4,
   "parMovesNote": "MVP：人工最短解（DOWN×4，橙靠墙等待）经单元测试回放验证；阶段09 由 BFS 求解器复核",
-  "hint": { "focus": "出口不锁定：先到的人等另一人", "direction": "DOWN" },
+  "hint": {
+    "focus": "出口不锁定：先到的人等待另一人。橙向下2步到出口后会被墙挡住，蓝继续向下4步",
+    "direction": "DOWN"
+  },
   "tags": ["chapter-1", "tutorial", "M0", "sync-exit", "exit-no-lock"]
 }

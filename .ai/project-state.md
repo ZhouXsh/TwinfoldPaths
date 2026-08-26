@@ -2,12 +2,12 @@
 
 ## 当前事实
 
-- 当前版本：MVP V0.7 + 浏览器兼容 + 性能基线 + 离线验证 + 内存趋势（单元 255 测试 + 集成 + 属性 + 内容 + E2E 96 测试 × 3 项目；领域层 100% 分支覆盖；50 关全部自动回放胜利；4 视口兼容；离线单文件验证通过；10 关 CDP 内存趋势无泄漏；verify:dist 默认含启动检查）
-- 当前阶段：13 已完成，下一阶段 14（试玩测试与 AI 迭代）
+- 当前版本：MVP V0.7 + 浏览器兼容 + 性能基线 + 离线验证 + 内存趋势 + 遥测 + 认知走查 + AI 迭代（单元 265 测试 + 集成 + 属性 + 内容 + 遥测 + E2E 96 测试 × 3 项目；领域层 100% 分支覆盖；50 关全部自动回放胜利；4 视口兼容；离线单文件验证通过；10 关 CDP 内存趋势无泄漏；verify:dist 默认含启动检查；首 3 关教学提示增强；开发版匿名遥测就绪）
+- 当前阶段：14 已完成，下一阶段 15（发布候选与参赛材料）
 - 最后更新：2026-08-26
-- 最近通过命令：`npm run check`（12 步全过，退出码 0，含 verify:dist 默认启动检查）；`npm test`（18 文件 255 用例）；`npm run coverage`（领域层 100% 分支，阈值 ≥90%）；`npm run validate:levels`（50/50 通过）；`npm run solve:levels`（50/50 可解，0 par 错误）；`npm run test:e2e`（96/96，chromium+webkit+mobile-320，含 33 新增兼容测试）；`node scripts/measure-perf.mjs`（连续 10 关 CDP 内存趋势：6.229→6.865 MB，后半程/前半程=107.3%≤130%，退出码 0）
+- 最近通过命令：`npm run check`（12 步全过，退出码 0，含 27 文件依赖检查）；`npm test`（19 文件 265 用例，含 10 新增遥测测试）；`npm run coverage`（领域层 100% 分支，阈值 ≥90%）；`npm run validate:levels`（50/50 通过）；`npm run solve:levels`（50/50 可解，0 par 错误）；`npm run test:e2e`（96/96，chromium+webkit+mobile-320）；`npm run build`（1.29MB）；`npm run verify:dist`（零外部请求/零密钥/零 source map）
 - 当前阻塞：无
-- 下一步：执行 `prompts/14_试玩测试与AI迭代.md`；真人试玩、认知走查、AI 迭代优化
+- 下一步：执行 `prompts/15_发布候选与参赛材料.md`；基于阶段 14 真人试玩反馈和认知走查结论，形成发布候选（RC）
 
 ## 阶段状态
 
@@ -27,7 +27,7 @@
 | 11 | completed | 2026-08-26 | 2026-08-26 | `reports/stage-11-report.md` | 完整 UI、视觉、音频、无障碍；check 12 步全过，E2E 39/39，截图 24 张 |
 | 12 | completed | 2026-08-26 | 2026-08-26 | `reports/stage-12-report.md` | 自动化测试体系；ADR-018 振动 API 未实现 |
 | 13 | completed | 2026-08-26 | 2026-08-26 | `reports/stage-13-report.md` | 浏览器兼容、性能、离线；96 E2E 全过；Firefox 环境缺失；帧率未可测 |
-| 14 | pending |  |  | `reports/stage-14-report.md` | 试玩测试与 AI 迭代 |
+| 14 | completed | 2026-08-26 | 2026-08-26 | `reports/stage-14-report.md` | 试玩测试与 AI 迭代；遥测就绪、认知走查完成、首 3 关提示优化、AI 迭代文档生成 |
 | 15 | pending |  |  | `reports/stage-15-report.md` | 发布候选与参赛材料 |
 | 16 | pending |  |  | `reports/stage-16-report.md` | 独立最终验收与缺陷清零 |
 | 17 | pending |  |  | `reports/stage-17-report.md` | 交付归档与维护手册 |
@@ -39,6 +39,12 @@
 - 当前发布候选：无（MVP 可玩，未进入 RC）
 - 最近决策记录：ADR-001~006（需求/规则类，全文在 `docs/decision-log.md`）；ADR-007~013（架构类，全文在 `docs/adr/`）；ADR-014（MVP 表现层 UI 形态与动画期输入策略，`docs/adr/ADR-014-mvp-ui-and-input-gate.md`）；ADR-015（M3 令牌授予时机：抵达授予、停留不重授，`docs/decision-log.md`）；ADR-016（M7 坍塌对穿精化：D2 后格上有角色则不坍塌，`docs/decision-log.md`）；ADR-017（存档版本升级至 3，新增 settings 字段，`docs/decision-log.md`）；ADR-018（振动 API 未集成到 GameScene 反馈，不属于阶段 12 范围，`docs/decision-log.md`）
 - 用户提供的外部材料：无（除仓库内执行包文档外）；并行会话遗留沙箱已更名 `DEMO/`（原 `tmp/`，曾误删并从 opencode 快照库逐字节完整恢复）：**受保护目录，任何代理不得删除/覆盖/移动**，仅排除于门禁（eslint/prettier/gitignore），阶段 09 可参考其 BFS 思路；`test-results/` 为可再生 scratch 已删除
+- 阶段 14 新增事实：
+  - 遥测模块 `src/telemetry/telemetry.ts`：开发版默认开启，生产版默认关闭；URL 参数 `?telemetry=0/1` 覆盖；localStorage 存储，最多 5000 条；CSV 导出。
+  - 首 3 关教学提示已增强（level-001/002/003 hint.focus 更新）。
+  - 认知走查报告已生成：`reports/cognitive-walkthrough.md`（标注"非真人试玩"）。
+  - AI 迭代文档已生成：`docs/AI协作与迭代优化过程.md`。
+  - 真人试玩数据：无（尚未开展）。
 - 不得遗忘的限制：
   - 无后端、无账号、无在线模型、无 CDN、无远程字体/音频/追踪；发布为单文件离线 H5。
   - 领域层为纯 TypeScript，不得导入 Phaser、DOM、localStorage、音频 API。
@@ -47,6 +53,7 @@
   - 规则 R-01 至 R-07、机制 M0 至 M8 的任何修改必须走 `docs/decision-log.md`。
   - M3 令牌按 ADR-015"抵达授予、停留不重授"实现；M7 坍塌按 ADR-016 追加占位条件（D2 后格上有角色不坍塌）；M8 为占用语义（同时占用即闩锁，不限本回合抵达）；多压板联动同一 doorId、同格多传送入口、oneWay/portal 压出口均未形式化，阶段 09 校验器须禁止或以 ADR 定义。
   - 存档 SAVE_VERSION=3（阶段 11 升级）：highestUnlocked 为全局线性序号（ADR-004），v1 旧存档按损坏回退，v2 旧存档兼容读取（新增 settings 字段，读取时容错）。
+  - 遥测模块 `src/telemetry/telemetry.ts` 属于表现层/基础设施，不得放入 `src/domain/`。正式版（生产构建）默认关闭，仅开发版启用。现有开关：URL 参数 `?telemetry=0/1` 和构建环境变量。
 
 ## 运行环境事实（2026-08-22 实测）
 

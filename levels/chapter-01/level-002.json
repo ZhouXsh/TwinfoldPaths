@@ -14,6 +14,6 @@
   "entities": [],
   "parMoves": 3,
   "parMovesNote": "MVP：人工最短解（UP、UP、LEFT 任意序）经单元测试回放验证；阶段09 由 BFS 求解器复核",
-  "hint": { "focus": "上下一致，左右相反", "direction": null },
+  "hint": { "focus": "上下一致，左右相反：蓝→左时橙→右，蓝→右时橙→左", "direction": null },
   "tags": ["chapter-1", "tutorial", "M0", "mirror"]
 }
