@@ -2,12 +2,12 @@
 
 ## 当前事实
 
-- 当前版本：MVP V0.6 + 测试体系强化（单元 255 测试 + 集成 + 属性 + 内容 + E2E 63 测试 × 3 项目；领域层 100% 分支覆盖；50 关全部自动回放胜利）
-- 当前阶段：12 已完成，下一阶段 13（浏览器兼容、性能、离线）
+- 当前版本：MVP V0.7 + 浏览器兼容 + 性能基线 + 离线验证 + 内存趋势（单元 255 测试 + 集成 + 属性 + 内容 + E2E 96 测试 × 3 项目；领域层 100% 分支覆盖；50 关全部自动回放胜利；4 视口兼容；离线单文件验证通过；10 关 CDP 内存趋势无泄漏；verify:dist 默认含启动检查）
+- 当前阶段：13 已完成，下一阶段 14（试玩测试与 AI 迭代）
 - 最后更新：2026-08-26
-- 最近通过命令：`npm run check`（12 步全过，退出码 0，连续 3 次稳定）；`npm test`（18 文件 255 用例）；`npm run coverage`（领域层 100% 分支，阈值 ≥90%）；`npm run validate:levels`（50/50 通过）；`npm run solve:levels`（50/50 可解，0 par 错误）；`npm run test:e2e`（63/63，chromium+webkit+mobile-320）
+- 最近通过命令：`npm run check`（12 步全过，退出码 0，含 verify:dist 默认启动检查）；`npm test`（18 文件 255 用例）；`npm run coverage`（领域层 100% 分支，阈值 ≥90%）；`npm run validate:levels`（50/50 通过）；`npm run solve:levels`（50/50 可解，0 par 错误）；`npm run test:e2e`（96/96，chromium+webkit+mobile-320，含 33 新增兼容测试）；`node scripts/measure-perf.mjs`（连续 10 关 CDP 内存趋势：6.229→6.865 MB，后半程/前半程=107.3%≤130%，退出码 0）
 - 当前阻塞：无
-- 下一步：执行 `prompts/13_浏览器兼容性能离线.md`；浏览器兼容性验证、性能基准、离线可用性验证
+- 下一步：执行 `prompts/14_试玩测试与AI迭代.md`；真人试玩、认知走查、AI 迭代优化
 
 ## 阶段状态
 
@@ -26,7 +26,7 @@
 | 10 | completed | 2026-08-24 | 2026-08-25 | `reports/stage-10-report.md` | 50 关生产与难度曲线；3 轮重设计后全部通过审计/相似度/求解；单方向解仅限 6 冻结教学关；048 M8 脉冲门检测限于审计首轮限制；204 测试全绿；check 12 步全过 |
 | 11 | completed | 2026-08-26 | 2026-08-26 | `reports/stage-11-report.md` | 完整 UI、视觉、音频、无障碍；check 12 步全过，E2E 39/39，截图 24 张 |
 | 12 | completed | 2026-08-26 | 2026-08-26 | `reports/stage-12-report.md` | 自动化测试体系；ADR-018 振动 API 未实现 |
-| 13 | pending |  |  | `reports/stage-13-report.md` | 浏览器兼容、性能、离线 |
+| 13 | completed | 2026-08-26 | 2026-08-26 | `reports/stage-13-report.md` | 浏览器兼容、性能、离线；96 E2E 全过；Firefox 环境缺失；帧率未可测 |
 | 14 | pending |  |  | `reports/stage-14-report.md` | 试玩测试与 AI 迭代 |
 | 15 | pending |  |  | `reports/stage-15-report.md` | 发布候选与参赛材料 |
 | 16 | pending |  |  | `reports/stage-16-report.md` | 独立最终验收与缺陷清零 |
