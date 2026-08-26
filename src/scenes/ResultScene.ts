@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { audioManager } from '../audio/audio-manager';
 import { bindButton, setResultText, showBars } from './dom-ui';
 
 interface ResultSceneData {
@@ -23,18 +24,33 @@ export class ResultScene extends Phaser.Scene {
 
     showBars('bar-result');
     const { width, height } = this.scale;
+
     this.add
       .text(width / 2, height * 0.28, '通关！', {
         fontSize: '40px',
         color: '#7fe0a7'
       })
       .setOrigin(0.5);
+
+    // 星级计算
+    const starsEl = document.getElementById('result-stars');
+    if (starsEl) {
+      if (moves <= par) {
+        starsEl.textContent = '★★★';
+      } else if (moves <= par * 1.5) {
+        starsEl.textContent = '★★';
+      } else {
+        starsEl.textContent = '★';
+      }
+    }
+
     this.add
       .text(width / 2, height * 0.28 + 54, `本关步数 ${moves} ／ 目标步数 ${par}`, {
         fontSize: '18px',
         color: '#e8f1f8'
       })
       .setOrigin(0.5);
+
     if (moves <= par) {
       this.add
         .text(width / 2, height * 0.28 + 84, '达到目标步数！', {
@@ -43,9 +59,10 @@ export class ResultScene extends Phaser.Scene {
         })
         .setOrigin(0.5);
     }
+
     if (!nextId) {
       this.add
-        .text(width / 2, height * 0.62, '演示关卡已全部通关', {
+        .text(width / 2, height * 0.62, '所有关卡已通关！', {
           fontSize: '16px',
           color: '#9fb4c7'
         })
@@ -57,12 +74,21 @@ export class ResultScene extends Phaser.Scene {
     if (nextBtn) nextBtn.hidden = !nextId;
 
     this.cleanupFns.push(
-      bindButton('btn-replay', () => this.scene.start('Game', { levelId })),
-      bindButton('btn-result-home', () => this.scene.start('Home'))
+      bindButton('btn-replay', () => {
+        audioManager.play('uiTap');
+        this.scene.start('Game', { levelId });
+      }),
+      bindButton('btn-result-home', () => {
+        audioManager.play('uiTap');
+        this.scene.start('Home');
+      })
     );
     if (nextId) {
       this.cleanupFns.push(
-        bindButton('btn-next', () => this.scene.start('Game', { levelId: nextId }))
+        bindButton('btn-next', () => {
+          audioManager.play('uiTap');
+          this.scene.start('Game', { levelId: nextId });
+        })
       );
     }
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {

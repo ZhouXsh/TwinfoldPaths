@@ -7,14 +7,23 @@ import type { LevelRecord } from '../content/validate';
 import { FIRST_LEVEL_ID, getLevelById, levelLinearIndex, nextLevelId } from '../content/levels';
 import { InputGate } from '../input/gate';
 import { swipeToDirection } from '../input/swipe';
-import { localStorageStore, loadSave, persistSave, recordWin } from '../persistence/save-store';
+import {
+  localStorageStore,
+  loadSave,
+  loadSettings,
+  persistSave,
+  recordWin
+} from '../persistence/save-store';
+import { audioManager } from '../audio/audio-manager';
 import {
   bindButton,
   setLevelLabel,
   setMappingLabel,
   setMoveCount,
   setStatusText,
-  showBars
+  showBars,
+  showDirectionPreview,
+  hideDirectionPreview
 } from './dom-ui';
 
 /** 移动动画时长（阶段 06 要求 150–220ms）。 */
@@ -22,6 +31,7 @@ const MOVE_ANIM_MS = 180;
 const CANCEL_SHAKE_MS = 120;
 const WIN_DELAY_MS = 700;
 const BOARD_SIZE = 360;
+const DIR_PREVIEW_MIN_MS = 80;
 
 const MAPPING_NAMES: Record<MappingMode, string> = {
   H_MIRROR: '水平镜像',
@@ -86,6 +96,10 @@ export class GameScene extends Phaser.Scene {
   private blueToken: Phaser.GameObjects.Image | null = null;
   private orangeToken: Phaser.GameObjects.Image | null = null;
   private cleanupFns: Array<() => void> = [];
+  private reducedAnim = false;
+  private pointerDownPos: { x: number; y: number } | null = null;
+  private pointerDownTime = 0;
+  private dirPreviewTimer: Phaser.Time.TimerEvent | null = null;
 
   constructor() {
     super('Game');
@@ -110,6 +124,13 @@ export class GameScene extends Phaser.Scene {
     this.pulseSwitchSprites = [];
     this.blueToken = null;
     this.orangeToken = null;
+    this.pointerDownPos = null;
+    this.pointerDownTime = 0;
+
+    // 加载设置
+    const settings = loadSettings(localStorageStore());
+    this.reducedAnim = settings.reducedAnim;
+    audioManager.setState({ music: settings.music, sfx: settings.sfx });
 
     this.drawBoard(level);
     showBars('bar-hud', 'bar-controls');
@@ -244,9 +265,40 @@ export class GameScene extends Phaser.Scene {
       }
     }
 
+    // 滑动方向预览：指针按下时记录位置
+    const onPointerDown = (pointer: Phaser.Input.Pointer): void => {
+      this.pointerDownPos = { x: pointer.x, y: pointer.y };
+      this.pointerDownTime = this.time.now;
+    };
+    this.input.on('pointerdown', onPointerDown);
+    this.cleanupFns.push(() => this.input.off('pointerdown', onPointerDown));
+
+    // 滑动方向预览：移动时显示方向
+    const onPointerMove = (pointer: Phaser.Input.Pointer): void => {
+      if (!this.pointerDownPos) return;
+      if (this.time.now - this.pointerDownTime < DIR_PREVIEW_MIN_MS) return;
+      const dx = pointer.x - this.pointerDownPos.x;
+      const dy = pointer.y - this.pointerDownPos.y;
+      const dir = swipeToDirection(dx, dy, 15);
+      if (dir) {
+        showDirectionPreview(dir);
+      } else {
+        hideDirectionPreview();
+      }
+    };
+    this.input.on('pointermove', onPointerMove);
+    this.cleanupFns.push(() => this.input.off('pointermove', onPointerMove));
+
+    // 滑动方向预览：释放时
     const onPointerUp = (pointer: Phaser.Input.Pointer): void => {
-      const dir = swipeToDirection(pointer.upX - pointer.downX, pointer.upY - pointer.downY);
-      if (dir) this.handleDirection(dir);
+      hideDirectionPreview();
+      if (this.pointerDownPos) {
+        const dx = pointer.upX - this.pointerDownPos.x;
+        const dy = pointer.upY - this.pointerDownPos.y;
+        const dir = swipeToDirection(dx, dy);
+        if (dir) this.handleDirection(dir);
+      }
+      this.pointerDownPos = null;
     };
     this.input.on('pointerup', onPointerUp);
     this.cleanupFns.push(() => this.input.off('pointerup', onPointerUp));
@@ -256,7 +308,12 @@ export class GameScene extends Phaser.Scene {
     }
     this.cleanupFns.push(bindButton('btn-undo', () => this.handleUndo()));
     this.cleanupFns.push(bindButton('btn-restart', () => this.handleRestart()));
-    this.cleanupFns.push(bindButton('btn-home', () => this.scene.start('Home')));
+    this.cleanupFns.push(
+      bindButton('btn-home', () => {
+        audioManager.play('uiTap');
+        this.scene.start('Home');
+      })
+    );
   }
 
   private handleDirection(dir: Direction): void {
@@ -271,11 +328,12 @@ export class GameScene extends Phaser.Scene {
     const pulseBefore = { ...state.pulseDoors };
     const { state: next, result } = applyCommand(level, state, dir);
     if (!result.applied) {
+      audioManager.play('cancel');
       this.feedbackCancel();
       return;
     }
     this.state = next;
-    this.gate.lock(now, MOVE_ANIM_MS);
+    this.gate.lock(now, this.reducedAnim ? 30 : MOVE_ANIM_MS);
     setMoveCount(next.moveCount);
     this.animateTurn(result, dir, mappingBefore, collapsedBefore, pulseBefore);
   }
@@ -287,12 +345,31 @@ export class GameScene extends Phaser.Scene {
     collapsedBefore: number,
     pulseBefore: Record<string, boolean>
   ): void {
-    if (this.blueActor)
-      this.animateActor(this.blueActor, result.blue, input, result.teleported.blue);
-    if (this.orangeActor) {
-      this.animateActor(this.orangeActor, result.orange, input, result.teleported.orange);
+    const animDuration = this.reducedAnim ? 30 : MOVE_ANIM_MS;
+
+    // 播放音效
+    if (result.teleported.blue || result.teleported.orange) {
+      audioManager.play('teleport');
+    } else if (result.blue.blocked || result.orange.blocked) {
+      audioManager.play('block');
+    } else {
+      audioManager.play('move');
     }
-    this.time.delayedCall(MOVE_ANIM_MS + 30, () => {
+
+    if (this.blueActor)
+      this.animateActor(this.blueActor, result.blue, input, result.teleported.blue, animDuration);
+    if (this.orangeActor) {
+      this.animateActor(
+        this.orangeActor,
+        result.orange,
+        input,
+        result.teleported.orange,
+        animDuration
+      );
+    }
+
+    const delay = animDuration + 30;
+    this.time.delayedCall(delay, () => {
       const state = this.state;
       const level = this.level;
       if (!state || !level) return;
@@ -302,9 +379,13 @@ export class GameScene extends Phaser.Scene {
       const events: string[] = [];
       if (result.teleported.blue) events.push('蓝被传送');
       if (result.teleported.orange) events.push('橙被传送');
-      if (state.fragileCollapsed.length > collapsedBefore) events.push('脆弱格坍塌');
+      if (state.fragileCollapsed.length > collapsedBefore) {
+        events.push('脆弱格坍塌');
+        audioManager.play('collapse');
+      }
       if (Object.keys(state.pulseDoors).some((k) => state.pulseDoors[k] && !pulseBefore[k])) {
         events.push('同步脉冲达成，脉冲门开启');
+        audioManager.play('pulse');
       }
       if (result.blue.reason === 'oneWay' || result.orange.reason === 'oneWay') {
         events.push('单向格只能顺箭头离开');
@@ -316,6 +397,20 @@ export class GameScene extends Phaser.Scene {
       if (state.mapping !== mappingBefore) {
         setMappingLabel(`映射：${MAPPING_NAMES[state.mapping]}`);
         events.push(`映射切换为${MAPPING_NAMES[state.mapping]}`);
+        audioManager.play('switch');
+      }
+      // 暂停令牌获得
+      if (state.actors.blue.hasPauseToken && !result.pauseConsumed.blue) {
+        const prev = this.state?.history?.[this.state.history.length - 1];
+        if (prev && !prev.actors.blue.hasPauseToken) {
+          audioManager.play('token');
+        }
+      }
+      if (state.actors.orange.hasPauseToken && !result.pauseConsumed.orange) {
+        const prev = this.state?.history?.[this.state.history.length - 1];
+        if (prev && !prev.actors.orange.hasPauseToken) {
+          audioManager.play('token');
+        }
       }
       setStatusText(events.length > 0 ? events.join('；') : level.hint.focus);
       if (result.won) this.winSequence();
@@ -326,55 +421,68 @@ export class GameScene extends Phaser.Scene {
     sprite: Phaser.GameObjects.Image,
     info: ActorMoveInfo,
     input: Direction,
-    teleported: boolean
+    teleported: boolean,
+    duration: number
   ): void {
     const toPx = this.cellCenter(info.to);
     if (teleported) {
       sprite.setPosition(toPx.x, toPx.y);
       sprite.setAlpha(0.35);
-      this.tweens.add({
-        targets: sprite,
-        alpha: 1,
-        duration: MOVE_ANIM_MS,
-        ease: 'Quad.easeOut'
-      });
+      if (!this.reducedAnim) {
+        this.tweens.add({
+          targets: sprite,
+          alpha: 1,
+          duration,
+          ease: 'Quad.easeOut'
+        });
+      } else {
+        sprite.setAlpha(1);
+      }
       return;
     }
     if (info.blocked) {
       if (info.reason === 'oneWay') {
-        // M5：单向格阻挡反馈与墙不同——原地短促左右抖动（不朝输入方向冲撞）
-        this.tweens.add({
-          targets: sprite,
-          x: sprite.x + 4,
-          duration: MOVE_ANIM_MS / 4,
-          yoyo: true,
-          repeat: 1
-        });
+        if (!this.reducedAnim) {
+          this.tweens.add({
+            targets: sprite,
+            x: sprite.x + 4,
+            duration: duration / 4,
+            yoyo: true,
+            repeat: 1
+          });
+        }
         return;
       }
       const delta = DELTA[input];
       const bump = this.tile * 0.22;
-      this.tweens.add({
-        targets: sprite,
-        x: sprite.x + delta.x * bump,
-        y: sprite.y + delta.y * bump,
-        duration: MOVE_ANIM_MS / 2,
-        yoyo: true,
-        ease: 'Quad.easeOut'
-      });
+      if (!this.reducedAnim) {
+        this.tweens.add({
+          targets: sprite,
+          x: sprite.x + delta.x * bump,
+          y: sprite.y + delta.y * bump,
+          duration: duration / 2,
+          yoyo: true,
+          ease: 'Quad.easeOut'
+        });
+      }
       return;
     }
-    this.tweens.add({
-      targets: sprite,
-      x: toPx.x,
-      y: toPx.y,
-      duration: MOVE_ANIM_MS,
-      ease: 'Quad.easeOut'
-    });
+    if (!this.reducedAnim) {
+      this.tweens.add({
+        targets: sprite,
+        x: toPx.x,
+        y: toPx.y,
+        duration,
+        ease: 'Quad.easeOut'
+      });
+    } else {
+      sprite.setPosition(toPx.x, toPx.y);
+    }
   }
 
   /** 同格取消（R-04）反馈：双方短促抖动，不消耗步数。 */
   private feedbackCancel(): void {
+    if (this.reducedAnim) return;
     for (const sprite of [this.blueActor, this.orangeActor]) {
       if (!sprite) continue;
       this.tweens.add({
@@ -467,7 +575,10 @@ export class GameScene extends Phaser.Scene {
     const level = this.level;
     if (!state || !level || this.wonLocked) return;
     const { state: prev, undone } = undo(state);
-    if (!undone) return;
+    if (!undone) {
+      audioManager.play('block');
+      return;
+    }
     this.state = prev;
     this.gate.reset();
     this.syncActors();
@@ -477,6 +588,7 @@ export class GameScene extends Phaser.Scene {
     setMoveCount(prev.moveCount);
     this.refreshExitGlow();
     setStatusText(level.hint.focus);
+    audioManager.play('uiTap');
   }
 
   private handleRestart(): void {
@@ -491,6 +603,7 @@ export class GameScene extends Phaser.Scene {
     setMoveCount(0);
     this.refreshExitGlow();
     setStatusText(level.hint.focus);
+    audioManager.play('uiTap');
   }
 
   private syncActors(): void {
@@ -516,18 +629,23 @@ export class GameScene extends Phaser.Scene {
       recordWin(loadSave(store), level.id, levelLinearIndex(level.id), state.moveCount)
     );
 
+    audioManager.play('win');
     setStatusText('双出口同步达成！');
-    for (const sprite of [this.blueActor, this.orangeActor]) {
-      if (!sprite) continue;
-      this.tweens.add({
-        targets: sprite,
-        scale: sprite.scale * 1.25,
-        duration: 180,
-        yoyo: true,
-        repeat: 1,
-        ease: 'Sine.easeInOut'
-      });
+
+    if (!this.reducedAnim) {
+      for (const sprite of [this.blueActor, this.orangeActor]) {
+        if (!sprite) continue;
+        this.tweens.add({
+          targets: sprite,
+          scale: sprite.scale * 1.25,
+          duration: 180,
+          yoyo: true,
+          repeat: 1,
+          ease: 'Sine.easeInOut'
+        });
+      }
     }
+
     this.time.delayedCall(WIN_DELAY_MS, () => {
       this.scene.start('Result', {
         levelId: level.id,

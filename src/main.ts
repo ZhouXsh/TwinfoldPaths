@@ -3,6 +3,9 @@ import { BootScene } from './scenes/BootScene';
 import { HomeScene } from './scenes/HomeScene';
 import { GameScene } from './scenes/GameScene';
 import { ResultScene } from './scenes/ResultScene';
+import { ChapterSelectScene } from './scenes/ChapterSelectScene';
+import { LevelSelectScene } from './scenes/LevelSelectScene';
+import { SettingsScene } from './scenes/SettingsScene';
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -14,7 +17,18 @@ const config: Phaser.Types.Core.GameConfig = {
     width: 360,
     height: 360
   },
-  scene: [BootScene, HomeScene, GameScene, ResultScene]
+  scene: [
+    BootScene,
+    HomeScene,
+    ChapterSelectScene,
+    LevelSelectScene,
+    SettingsScene,
+    GameScene,
+    ResultScene
+  ],
+  input: {
+    activePointers: 1
+  }
 };
 
 new Phaser.Game(config);

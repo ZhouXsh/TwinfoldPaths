@@ -315,3 +315,40 @@ D1 原文只规定"回合开始时所在格为脆弱格、且该角色最终位�
 
 - 阶段 09 已实现：校验器禁止 portal 不成对/同格入口重叠、多压板同 doorId、oneWay/portal 压出口、pulseSwitch 配对数量 ≠ 2。`pulseDoor` 同一 pairId 的数量不做约束（引擎允许多个 pulseDoor 共享同一闩锁）。
 - 暂无 P0 冲突待确认。其余开放问题见 `docs/requirements.md` §10。
+
+---
+
+# ADR-017：存档版本升级至 3——新增 settings 字段并兼容 v2 读取
+
+- 日期：2026-08-26
+- 状态：accepted
+- 影响需求：FR-07、FR-10、ADR-001
+- 影响阶段：11
+
+## 背景
+
+阶段 11 需实现音乐/音效/振动/弱化动画四个开关并持久化（FR-10）。现有存档为 SAVE_VERSION=2（ADR-004 全局线性序号），无设置字段。
+
+## 候选方案
+
+1. 存档版本升至 3，新增 `settings` 字段；`parseSave` 兼容 v2 读取（缺省容错为默认设置），下次写入自然迁移至 v3。
+2. 设置存入独立 localStorage 键，存档版本不变。
+3. v2 存档按损坏回退（沿用 v1→v2 的处理）。
+
+## 决策
+
+方案 1，并同时镜像写入独立键 `twinfold-paths:settings`（读取兜底）。v1 存档仍按损坏回退不变。
+
+## 理由与论证
+
+- 方案 3 会清空老玩家全部进度与最佳步数，违反 FR-07"损坏时安全回退"的用户预期（v2→v3 只是增量字段，并非不可迁移的结构变更）。
+- 方案 2 使进度与设置分裂在两处，双槽备份（ADR-001）无法覆盖设置，损坏恢复语义复杂化。
+- 方案 1 保持单槽双备份完整性；`settings` 为可选字段，v2 存档解析后取默认值，无数据丢失。
+
+## 后果
+
+`src/persistence/save-store.ts` SAVE_VERSION=3，`parseSave` 接受 version 2/3；新增 `loadSettings`/`persistSettings`；`recordWin` 透传 settings。阶段 12 需补 v2→v3 迁移与设置持久化单测。`.ai/project-state.md` "存档 SAVE_VERSION=3"。
+
+## 复查条件
+
+若阶段 12/13 发现 WebKit 隐私模式写入失败导致设置丢失，重开 ADR 评估降级策略。

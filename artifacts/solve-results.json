@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-25T10:54:43.361Z",
+  "generatedAt": "2026-08-26T07:06:55.781Z",
   "total": 50,
   "solvable": 50,
   "unsolvable": 0,
@@ -26,7 +26,7 @@
       "solution": "UP UP LEFT",
       "solutionCount": 1,
       "statesVisited": 9,
-      "elapsedMs": 2,
+      "elapsedMs": 1,
       "budgetExhausted": false,
       "parMoves": 3,
       "parConsistent": true
@@ -65,7 +65,7 @@
       "solution": "UP RIGHT UP UP LEFT DOWN DOWN UP",
       "solutionCount": 1,
       "statesVisited": 97,
-      "elapsedMs": 4,
+      "elapsedMs": 3,
       "budgetExhausted": false,
       "parMoves": 8,
       "parConsistent": true
@@ -78,7 +78,7 @@
       "solution": "RIGHT UP UP UP UP LEFT",
       "solutionCount": 1,
       "statesVisited": 9,
-      "elapsedMs": 1,
+      "elapsedMs": 0,
       "budgetExhausted": false,
       "parMoves": 6,
       "parConsistent": true
@@ -91,7 +91,7 @@
       "solution": "UP RIGHT UP UP UP LEFT",
       "solutionCount": 1,
       "statesVisited": 28,
-      "elapsedMs": 1,
+      "elapsedMs": 0,
       "budgetExhausted": false,
       "parMoves": 6,
       "parConsistent": true
@@ -104,7 +104,7 @@
       "solution": "UP UP RIGHT RIGHT RIGHT UP UP LEFT UP LEFT LEFT",
       "solutionCount": 1,
       "statesVisited": 205,
-      "elapsedMs": 9,
+      "elapsedMs": 8,
       "budgetExhausted": false,
       "parMoves": 11,
       "parConsistent": true
@@ -117,7 +117,7 @@
       "solution": "RIGHT UP UP UP UP LEFT",
       "solutionCount": 1,
       "statesVisited": 7,
-      "elapsedMs": 0,
+      "elapsedMs": 1,
       "budgetExhausted": false,
       "parMoves": 6,
       "parConsistent": true
@@ -130,7 +130,7 @@
       "solution": "UP RIGHT UP UP UP UP RIGHT",
       "solutionCount": 1,
       "statesVisited": 23,
-      "elapsedMs": 1,
+      "elapsedMs": 0,
       "budgetExhausted": false,
       "parMoves": 7,
       "parConsistent": true
@@ -195,7 +195,7 @@
       "solution": "LEFT UP LEFT DOWN DOWN LEFT LEFT",
       "solutionCount": 1,
       "statesVisited": 126,
-      "elapsedMs": 5,
+      "elapsedMs": 6,
       "budgetExhausted": false,
       "parMoves": 7,
       "parConsistent": true
@@ -208,7 +208,7 @@
       "solution": "RIGHT RIGHT RIGHT",
       "solutionCount": 1,
       "statesVisited": 20,
-      "elapsedMs": 1,
+      "elapsedMs": 0,
       "budgetExhausted": false,
       "parMoves": 3,
       "parConsistent": true
@@ -260,7 +260,7 @@
       "solution": "UP RIGHT UP UP UP LEFT",
       "solutionCount": 1,
       "statesVisited": 11,
-      "elapsedMs": 0,
+      "elapsedMs": 1,
       "budgetExhausted": false,
       "parMoves": 6,
       "parConsistent": true
@@ -273,7 +273,7 @@
       "solution": "DOWN RIGHT DOWN DOWN",
       "solutionCount": 1,
       "statesVisited": 38,
-      "elapsedMs": 1,
+      "elapsedMs": 2,
       "budgetExhausted": false,
       "parMoves": 4,
       "parConsistent": true
@@ -312,7 +312,7 @@
       "solution": "UP RIGHT UP UP UP UP LEFT",
       "solutionCount": 1,
       "statesVisited": 17,
-      "elapsedMs": 1,
+      "elapsedMs": 0,
       "budgetExhausted": false,
       "parMoves": 8,
       "parConsistent": false
@@ -338,7 +338,7 @@
       "solution": "UP UP UP UP",
       "solutionCount": 1,
       "statesVisited": 39,
-      "elapsedMs": 2,
+      "elapsedMs": 1,
       "budgetExhausted": false,
       "parMoves": 4,
       "parConsistent": true
@@ -351,7 +351,7 @@
       "solution": "RIGHT UP UP RIGHT UP UP UP UP LEFT",
       "solutionCount": 1,
       "statesVisited": 227,
-      "elapsedMs": 8,
+      "elapsedMs": 9,
       "budgetExhausted": false,
       "parMoves": 9,
       "parConsistent": true
@@ -416,7 +416,7 @@
       "solution": "RIGHT UP UP UP UP LEFT",
       "solutionCount": 1,
       "statesVisited": 8,
-      "elapsedMs": 1,
+      "elapsedMs": 0,
       "budgetExhausted": false,
       "parMoves": 6,
       "parConsistent": true
@@ -494,7 +494,7 @@
       "solution": "RIGHT RIGHT UP",
       "solutionCount": 1,
       "statesVisited": 9,
-      "elapsedMs": 1,
+      "elapsedMs": 0,
       "budgetExhausted": false,
       "parMoves": 3,
       "parConsistent": true
@@ -520,7 +520,7 @@
       "solution": "RIGHT UP UP UP UP LEFT",
       "solutionCount": 1,
       "statesVisited": 99,
-      "elapsedMs": 3,
+      "elapsedMs": 2,
       "budgetExhausted": false,
       "parMoves": 7,
       "parConsistent": false
@@ -533,7 +533,7 @@
       "solution": "UP RIGHT UP UP LEFT",
       "solutionCount": 1,
       "statesVisited": 15,
-      "elapsedMs": 1,
+      "elapsedMs": 0,
       "budgetExhausted": false,
       "parMoves": 5,
       "parConsistent": true
@@ -546,7 +546,7 @@
       "solution": "RIGHT UP UP UP UP LEFT",
       "solutionCount": 1,
       "statesVisited": 12,
-      "elapsedMs": 1,
+      "elapsedMs": 0,
       "budgetExhausted": false,
       "parMoves": 6,
       "parConsistent": true
@@ -572,7 +572,7 @@
       "solution": "UP UP RIGHT UP UP LEFT",
       "solutionCount": 3,
       "statesVisited": 43,
-      "elapsedMs": 3,
+      "elapsedMs": 2,
       "budgetExhausted": false,
       "parMoves": 6,
       "parConsistent": true
@@ -585,7 +585,7 @@
       "solution": "RIGHT UP UP RIGHT UP UP UP UP LEFT",
       "solutionCount": 1,
       "statesVisited": 228,
-      "elapsedMs": 10,
+      "elapsedMs": 9,
       "budgetExhausted": false,
       "parMoves": 9,
       "parConsistent": true
@@ -624,7 +624,7 @@
       "solution": "RIGHT DOWN UP LEFT RIGHT UP LEFT",
       "solutionCount": 1,
       "statesVisited": 241,
-      "elapsedMs": 10,
+      "elapsedMs": 8,
       "budgetExhausted": false,
       "parMoves": 7,
       "parConsistent": true

@@ -6,6 +6,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
     />
+    <meta name="theme-color" content="#101418" />
     <link rel="icon" href="data:," />
     <title>双生折线 Twinfold Paths</title>
     <style>
@@ -17,25 +18,34 @@
         overflow: hidden;
         background: #101418;
         color: #dbe7f3;
-        font-family: system-ui, sans-serif;
+        font-family:
+          system-ui,
+          -apple-system,
+          sans-serif;
+        -webkit-tap-highlight-color: transparent;
       }
       #app {
         height: 100vh;
         height: 100dvh;
         display: flex;
         flex-direction: column;
+        padding-top: env(safe-area-inset-top, 0px);
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+        padding-left: env(safe-area-inset-left, 0px);
+        padding-right: env(safe-area-inset-right, 0px);
       }
       .bar {
         display: flex;
         align-items: center;
         gap: 8px;
         padding: 6px 8px;
+        padding-left: max(8px, env(safe-area-inset-left, 8px));
+        padding-right: max(8px, env(safe-area-inset-right, 8px));
       }
       #bar-hud {
         min-height: 44px;
         flex-wrap: wrap;
       }
-      /* HUD/控制条始终占位（保持 Phaser 父容器尺寸稳定），只切换可见性 */
       .ui-off {
         visibility: hidden !important;
         pointer-events: none !important;
@@ -46,6 +56,8 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        flex: 1;
+        min-width: 0;
       }
       #mapping-label {
         font-size: 12px;
@@ -58,7 +70,6 @@
       #move-box {
         font-size: 14px;
         color: #9fb4c7;
-        margin-left: auto;
         white-space: nowrap;
       }
       #move-count {
@@ -76,20 +87,63 @@
         position: absolute;
         inset: 0;
       }
+
+      /* ===== 方向预览指示 ===== */
+      #dir-preview {
+        position: absolute;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        font-weight: bold;
+        color: rgba(255, 255, 255, 0.5);
+        pointer-events: none;
+        z-index: 10;
+        width: 60px;
+        height: 60px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+      #dir-preview.visible {
+        display: flex;
+      }
+
+      /* ===== 叠加层（首页、选关、设置、结算） ===== */
       .overlay {
         position: absolute;
         inset: 0;
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: flex-end;
-        gap: 10px;
-        padding-bottom: 12%;
+        justify-content: center;
+        gap: 12px;
+        padding: 20px;
+        padding-top: max(20px, env(safe-area-inset-top, 20px));
+        padding-bottom: max(20px, env(safe-area-inset-bottom, 20px));
         pointer-events: none;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
       }
       .overlay > * {
         pointer-events: auto;
       }
+      .overlay-scroll {
+        justify-content: flex-start;
+        padding-top: max(16px, env(safe-area-inset-top, 16px));
+      }
+
+      .screen-title {
+        font-size: 28px;
+        color: #e8f1f8;
+        margin: 8px 0;
+      }
+      .screen-subtitle {
+        font-size: 14px;
+        color: #9fb4c7;
+        margin: 0 0 12px 0;
+      }
+
       #result-text {
         font-size: 14px;
         color: #9fb4c7;
@@ -98,6 +152,8 @@
         font-size: 14px;
         color: #7fa8c9;
       }
+
+      /* ===== 通用按钮 ===== */
       button {
         min-width: 48px;
         min-height: 48px;
@@ -111,6 +167,8 @@
         user-select: none;
         -webkit-user-select: none;
         cursor: pointer;
+        font-family: inherit;
+        transition: background 0.1s;
       }
       button:active {
         background: #2a3a4d;
@@ -120,9 +178,36 @@
         min-height: 44px;
         padding: 4px 10px;
       }
+      button:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+      .btn-primary {
+        background: #2a4a6a;
+        border-color: #4aa3ff;
+        color: #e8f1f8;
+      }
+      .btn-primary:active {
+        background: #3a5a7a;
+      }
+      .btn-danger {
+        background: #4a2a2a;
+        border-color: #ff6b4a;
+        color: #ffd0c0;
+      }
+      .btn-danger:active {
+        background: #5a3a3a;
+      }
+      .btn-small {
+        font-size: 13px;
+        min-height: 36px;
+        padding: 4px 10px;
+      }
+
+      /* ===== 方向键 ===== */
       #bar-controls {
         justify-content: center;
-        padding-bottom: max(8px, env(safe-area-inset-bottom));
+        padding-bottom: max(8px, env(safe-area-inset-bottom, 8px));
       }
       #dpad {
         display: grid;
@@ -136,44 +221,445 @@
         font-size: 22px;
         padding: 0;
       }
+
+      /* ===== 状态栏 ===== */
       #status {
         padding: 4px 8px;
+        padding-left: max(8px, env(safe-area-inset-left, 8px));
+        padding-right: max(8px, env(safe-area-inset-right, 8px));
         text-align: center;
         font-size: 12px;
         line-height: 1.4;
         color: #5d7285;
         min-height: 18px;
       }
+
       [hidden] {
         display: none !important;
+      }
+
+      /* ===== 章节网格 ===== */
+      .chapter-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        width: 100%;
+        max-width: 360px;
+      }
+      .chapter-grid .chapter-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        min-height: 100px;
+        background: #1c2733;
+        border: 1px solid #33455a;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: background 0.1s;
+        padding: 12px;
+      }
+      .chapter-grid .chapter-card:active {
+        background: #2a3a4d;
+      }
+      .chapter-grid .chapter-card.locked {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+      .chapter-grid .chapter-card.completed {
+        border-color: #5a9a7a;
+      }
+      .chapter-name {
+        font-size: 16px;
+        color: #e8f1f8;
+      }
+      .chapter-sub {
+        font-size: 12px;
+        color: #9fb4c7;
+      }
+      .chapter-star {
+        color: #ffd479;
+        font-size: 14px;
+      }
+
+      /* ===== 关卡网格 ===== */
+      .level-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 8px;
+        width: 100%;
+        max-width: 360px;
+      }
+      .level-grid .level-cell {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 56px;
+        background: #1c2733;
+        border: 1px solid #33455a;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.1s;
+        padding: 4px;
+        font-size: 14px;
+        color: #e8f1f8;
+      }
+      .level-grid .level-cell:active {
+        background: #2a3a4d;
+      }
+      .level-grid .level-cell.locked {
+        opacity: 0.35;
+        cursor: not-allowed;
+      }
+      .level-grid .level-cell.current {
+        border-color: #4aa3ff;
+        background: #1a2a40;
+      }
+      .level-grid .level-cell.completed {
+        border-color: #5a9a7a;
+      }
+      .level-grid .level-cell .star-row {
+        font-size: 10px;
+        color: #ffd479;
+        line-height: 1;
+      }
+      .level-grid .level-cell .best-row {
+        font-size: 9px;
+        color: #7fa8c9;
+        line-height: 1;
+      }
+
+      /* ===== 设置面板 ===== */
+      .settings-group {
+        width: 100%;
+        max-width: 360px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .settings-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 12px;
+        background: #1c2733;
+        border: 1px solid #33455a;
+        border-radius: 10px;
+      }
+      .settings-label {
+        font-size: 15px;
+        color: #dbe7f3;
+      }
+      .settings-desc {
+        font-size: 11px;
+        color: #5d7285;
+      }
+      .toggle-switch {
+        position: relative;
+        width: 48px;
+        height: 28px;
+        background: #2a3a4d;
+        border-radius: 14px;
+        cursor: pointer;
+        transition: background 0.15s;
+        border: none;
+        padding: 0;
+        min-width: 48px;
+        min-height: 28px;
+      }
+      .toggle-switch.on {
+        background: #4aa3ff;
+      }
+      .toggle-switch::after {
+        content: '';
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 22px;
+        height: 22px;
+        background: #fff;
+        border-radius: 50%;
+        transition: transform 0.15s;
+      }
+      .toggle-switch.on::after {
+        transform: translateX(20px);
+      }
+
+      /* ===== 横屏提示 ===== */
+      #landscape-warning {
+        position: fixed;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        background: #101418;
+        z-index: 9999;
+        color: #e8f1f8;
+        font-size: 18px;
+        text-align: center;
+        padding: 40px;
+      }
+      #landscape-warning.visible {
+        display: flex;
+      }
+      .landscape-icon {
+        font-size: 48px;
+        margin-bottom: 16px;
+      }
+
+      /* ===== 确认对话框 ===== */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 100;
+      }
+      .modal-overlay.visible {
+        display: flex;
+      }
+      .modal-box {
+        background: #1c2733;
+        border: 1px solid #33455a;
+        border-radius: 14px;
+        padding: 24px;
+        max-width: 300px;
+        width: 80%;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      .modal-title {
+        font-size: 18px;
+        color: #e8f1f8;
+      }
+      .modal-text {
+        font-size: 14px;
+        color: #9fb4c7;
+        line-height: 1.4;
+      }
+      .modal-buttons {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+      }
+
+      /* ===== 进度指示器 ===== */
+      .progress-row {
+        width: 100%;
+        max-width: 360px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 4px 0;
+      }
+      .progress-bar-bg {
+        flex: 1;
+        height: 6px;
+        background: #1c2733;
+        border-radius: 3px;
+        overflow: hidden;
+      }
+      .progress-bar-fill {
+        height: 100%;
+        background: #4aa3ff;
+        border-radius: 3px;
+        transition: width 0.3s;
+      }
+      .progress-text {
+        font-size: 12px;
+        color: #9fb4c7;
+        white-space: nowrap;
+      }
+
+      /* ===== 响应式调整 ===== */
+      @media (orientation: landscape) and (max-height: 500px) {
+        #landscape-warning.visible {
+          display: flex;
+        }
+      }
+      @media (orientation: portrait), (min-height: 501px) {
+        #landscape-warning.visible {
+          display: none;
+        }
+      }
+      @media (max-width: 360px) {
+        .level-grid {
+          grid-template-columns: repeat(4, 1fr);
+        }
+        .chapter-grid {
+          grid-template-columns: 1fr;
+        }
+        .screen-title {
+          font-size: 24px;
+        }
+      }
+      @media (min-width: 600px) {
+        .level-grid {
+          grid-template-columns: repeat(5, 1fr);
+          max-width: 420px;
+        }
+        #dpad {
+          gap: 8px;
+        }
+        #dpad button {
+          min-width: 64px;
+          min-height: 64px;
+          font-size: 26px;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          animation-duration: 0.01ms !important;
+          transition-duration: 0.01ms !important;
+        }
       }
     </style>
   </head>
   <body>
+    <!-- 横屏警告 -->
+    <div id="landscape-warning" role="alert" aria-live="polite">
+      <div>
+        <div class="landscape-icon">📱</div>
+        <div>请将手机竖屏使用</div>
+        <div style="font-size: 13px; color: #9fb4c7; margin-top: 8px">
+          Please rotate to portrait mode
+        </div>
+      </div>
+    </div>
+
     <div id="app">
+      <!-- HUD 条 -->
       <header id="bar-hud" class="bar ui-off">
-        <button id="btn-home" data-testid="btn-home" type="button">首页</button>
+        <button id="btn-home" data-testid="btn-home" type="button" aria-label="返回首页">🏠</button>
         <span id="level-label" data-testid="level-label"></span>
         <span id="mapping-label" data-testid="mapping-label"></span>
         <span id="move-box">步数 <b id="move-count" data-testid="move-count">0</b></span>
-        <button id="btn-undo" data-testid="btn-undo" type="button">撤销</button>
-        <button id="btn-restart" data-testid="btn-restart" type="button">重开</button>
+        <button id="btn-undo" data-testid="btn-undo" type="button" aria-label="撤销">↩</button>
+        <button id="btn-restart" data-testid="btn-restart" type="button" aria-label="重开">
+          ↻
+        </button>
       </header>
+
+      <!-- 游戏舞台 -->
       <div id="stage">
         <div id="game" data-testid="board"></div>
+        <div id="dir-preview" data-testid="dir-preview"></div>
+
+        <!-- 首页 -->
         <div id="bar-home" class="overlay" hidden>
-          <div id="home-continue" data-testid="home-continue"></div>
-          <button id="btn-start" data-testid="btn-start" type="button">开始游戏</button>
+          <div class="screen-title">双生折线</div>
+          <div class="screen-subtitle">Twinfold Paths</div>
+          <div
+            id="home-continue"
+            data-testid="home-continue"
+            style="font-size: 14px; color: #7fa8c9"
+          ></div>
+          <button
+            id="btn-start"
+            data-testid="btn-start"
+            type="button"
+            class="btn-primary"
+            style="min-width: 180px; font-size: 20px; padding: 12px 24px"
+          >
+            开始游戏
+          </button>
+          <div style="display: flex; gap: 12px; margin-top: 4px">
+            <button
+              id="btn-chapter-select"
+              data-testid="btn-chapter-select"
+              type="button"
+              class="btn-small"
+            >
+              选章节
+            </button>
+            <button
+              id="btn-level-select"
+              data-testid="btn-level-select"
+              type="button"
+              class="btn-small"
+            >
+              选关卡
+            </button>
+            <button id="btn-settings" data-testid="btn-settings" type="button" class="btn-small">
+              设置
+            </button>
+          </div>
+          <div style="margin-top: 8px; display: flex; gap: 8px; align-items: center">
+            <button
+              id="btn-clear-progress"
+              data-testid="btn-clear-progress"
+              type="button"
+              class="btn-small btn-danger"
+            >
+              清除进度
+            </button>
+          </div>
         </div>
+
+        <!-- 章节选择 -->
+        <div id="bar-chapter-select" class="overlay overlay-scroll ui-off">
+          <div class="screen-title">选择章节</div>
+          <div id="chapter-grid" class="chapter-grid" data-testid="chapter-grid"></div>
+          <button
+            id="btn-chapter-back"
+            data-testid="btn-chapter-back"
+            type="button"
+            class="btn-small"
+          >
+            返回首页
+          </button>
+        </div>
+
+        <!-- 关卡选择 -->
+        <div id="bar-level-select" class="overlay overlay-scroll ui-off">
+          <div id="level-select-title" class="screen-title" style="font-size: 20px"></div>
+          <div class="progress-row" id="progress-row" hidden>
+            <div class="progress-bar-bg">
+              <div id="progress-fill" class="progress-bar-fill" style="width: 0%"></div>
+            </div>
+            <span id="progress-text" class="progress-text">0/10</span>
+          </div>
+          <div id="level-grid" class="level-grid" data-testid="level-grid"></div>
+          <button id="btn-level-back" data-testid="btn-level-back" type="button" class="btn-small">
+            返回章节
+          </button>
+        </div>
+
+        <!-- 设置 -->
+        <div id="bar-settings" class="overlay overlay-scroll ui-off">
+          <div class="screen-title">设置</div>
+          <div class="settings-group" id="settings-group"></div>
+          <button
+            id="btn-settings-back"
+            data-testid="btn-settings-back"
+            type="button"
+            class="btn-small"
+            style="margin-top: 8px"
+          >
+            返回
+          </button>
+        </div>
+
+        <!-- 结算 -->
         <div id="bar-result" class="overlay" hidden>
+          <div class="screen-title" style="color: #7fe0a7">通关！</div>
+          <div id="result-stars" style="font-size: 32px; color: #ffd479; letter-spacing: 6px"></div>
           <div id="result-text" data-testid="result-text"></div>
           <div class="bar" style="padding: 0">
             <button id="btn-replay" data-testid="btn-replay" type="button">重玩</button>
             <button id="btn-next" data-testid="btn-next" type="button">下一关</button>
-            <button id="btn-result-home" data-testid="btn-result-home" type="button">首页</button>
+            <button id="btn-result-home" data-testid="btn-result-home" type="button">选关</button>
           </div>
         </div>
       </div>
+
+      <!-- 控制条 -->
       <div id="bar-controls" class="bar ui-off">
         <div id="dpad">
           <span></span>
@@ -184,8 +670,38 @@
           <button id="btn-right" data-testid="btn-right" type="button" aria-label="右">→</button>
         </div>
       </div>
+
+      <!-- 状态栏 -->
       <div id="status" data-testid="status">初始化中…</div>
     </div>
+
+    <!-- 确认对话框 -->
+    <div
+      id="confirm-modal"
+      class="modal-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-title"
+    >
+      <div class="modal-box">
+        <div id="modal-title" class="modal-title">确认</div>
+        <div id="modal-text" class="modal-text"></div>
+        <div class="modal-buttons">
+          <button id="modal-cancel" data-testid="modal-cancel" type="button" class="btn-small">
+            取消
+          </button>
+          <button
+            id="modal-confirm"
+            data-testid="modal-confirm"
+            type="button"
+            class="btn-small btn-danger"
+          >
+            确认
+          </button>
+        </div>
+      </div>
+    </div>
+
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

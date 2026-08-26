@@ -2,12 +2,12 @@
 
 ## 当前事实
 
-- 当前版本：MVP V0.5（50 关完整版：5 章 50 关全部通过验证/求解/回放/审计/相似度；领域引擎 V1.2 不变；单文件产物 1.26MB）
-- 当前阶段：10 已完成，下一阶段 11（完整 UI、视觉、音频、无障碍）
-- 最后更新：2026-08-24
-- 最近通过命令：`npm run check`（12 步全过，退出码 0）；`npm test`（16 文件 204 用例）；`npm run validate:levels`（50/50 通过）；`npm run solve:levels`（50/50 可解，0 par 错误）；`node tools/solve-levels.mjs audit`（50 关审计：49 通过 + 1 冻结例外，0 未激活装饰实体）；`node tools/solve-levels.mjs similarity`（45 相邻对全部通过，0 重复）；`npm run test:e2e`（39/39，chromium+webkit+mobile-320）
+- 当前版本：MVP V0.6（完整 UI 体验层：5 章选关、设置、音效、无障碍、响应式；领域引擎 V1.2 不变；单文件产物 1.29MB 342KB gzip）
+- 当前阶段：11 已完成，下一阶段 12（自动化测试体系）
+- 最后更新：2026-08-26
+- 最近通过命令：`npm run check`（12 步全过，退出码 0）；`npm test`（16 文件 204 用例）；`npm run validate:levels`（50/50 通过）；`npm run solve:levels`（50/50 可解，0 par 错误）；`npm run test:e2e`（39/39，chromium+webkit+mobile-320）；视口截图 24 张（320×568/390×844/430×932/desktop）
 - 当前阻塞：无
-- 下一步：执行 `prompts/11_完整UI视觉音频无障碍.md`；使用阶段 10 的 50 关和难度报告完成体验层
+- 下一步：执行 `prompts/12_自动化测试体系.md`；建立针对阶段 11 新增 UI 的 E2E 测试覆盖
 
 ## 阶段状态
 
@@ -24,7 +24,7 @@
 | 08 | completed | 2026-08-24 | 2026-08-24 | `reports/stage-08-report.md` | 高级机关 M5–M8；8 教学/组合关（BFS 复核 par）；ADR-016 坍塌对穿精化；37 边界用例；E2E 39/39 |
 | 09 | completed | 2026-08-24 | 2026-08-24 | `reports/stage-09-report.md` | 关卡 Schema、编辑器、求解器、CLI 工具链；12 步 check 全绿；E2E 39/39；203 测试 |
 | 10 | completed | 2026-08-24 | 2026-08-25 | `reports/stage-10-report.md` | 50 关生产与难度曲线；3 轮重设计后全部通过审计/相似度/求解；单方向解仅限 6 冻结教学关；048 M8 脉冲门检测限于审计首轮限制；204 测试全绿；check 12 步全过 |
-| 11 | pending |  |  | `reports/stage-11-report.md` | 完整 UI、视觉、音频、无障碍 |
+| 11 | completed | 2026-08-26 | 2026-08-26 | `reports/stage-11-report.md` | 完整 UI、视觉、音频、无障碍；check 12 步全过，E2E 39/39，截图 24 张 |
 | 12 | pending |  |  | `reports/stage-12-report.md` | 自动化测试体系 |
 | 13 | pending |  |  | `reports/stage-13-report.md` | 浏览器兼容、性能、离线 |
 | 14 | pending |  |  | `reports/stage-14-report.md` | 试玩测试与 AI 迭代 |
@@ -46,7 +46,7 @@
   - 不得伪造真人试玩、性能、浏览器测试或覆盖率数据；未验证必须标注。
   - 规则 R-01 至 R-07、机制 M0 至 M8 的任何修改必须走 `docs/decision-log.md`。
   - M3 令牌按 ADR-015"抵达授予、停留不重授"实现；M7 坍塌按 ADR-016 追加占位条件（D2 后格上有角色不坍塌）；M8 为占用语义（同时占用即闩锁，不限本回合抵达）；多压板联动同一 doorId、同格多传送入口、oneWay/portal 压出口均未形式化，阶段 09 校验器须禁止或以 ADR 定义。
-  - 存档 SAVE_VERSION=2：highestUnlocked 为全局线性序号（ADR-004），v1 旧存档按损坏回退。
+  - 存档 SAVE_VERSION=3（阶段 11 升级）：highestUnlocked 为全局线性序号（ADR-004），v1 旧存档按损坏回退，v2 旧存档兼容读取（新增 settings 字段，读取时容错）。
 
 ## 运行环境事实（2026-08-22 实测）
 
