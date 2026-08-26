@@ -2,12 +2,12 @@
 
 ## 当前事实
 
-- 当前版本：MVP V0.4（工具链 V1.0：JSON Schema、语义校验器、BFS 求解器、CLI 工具链、关卡编辑器；领域引擎 V1.2 不变；19 关；单文件产物 1.19MB）
-- 当前阶段：09 已完成，下一阶段 10（50 关生产与难度曲线）
+- 当前版本：MVP V0.5（50 关完整版：5 章 50 关全部通过验证/求解/回放/审计/相似度；领域引擎 V1.2 不变；单文件产物 1.26MB）
+- 当前阶段：10 已完成，下一阶段 11（完整 UI、视觉、音频、无障碍）
 - 最后更新：2026-08-24
-- 最近通过命令：`npm run check`（12 步全过，退出码 0）；`npm run test:e2e`（39/39，chromium+webkit+mobile-320）；`npm test`（16 文件 203 用例）
+- 最近通过命令：`npm run check`（12 步全过，退出码 0）；`npm test`（16 文件 204 用例）；`npm run validate:levels`（50/50 通过）；`npm run solve:levels`（50/50 可解，0 par 错误）；`node tools/solve-levels.mjs audit`（50 关审计：49 通过 + 1 冻结例外，0 未激活装饰实体）；`node tools/solve-levels.mjs similarity`（45 相邻对全部通过，0 重复）；`npm run test:e2e`（39/39，chromium+webkit+mobile-320）
 - 当前阻塞：无
-- 下一步：执行 `prompts/10_50关生产与难度曲线.md`；使用阶段 09 工具链批量生产 50 关，BFS 求解器复核 par 与难度曲线；出入口=`npm run check` + `npm run test:e2e` 全绿
+- 下一步：执行 `prompts/11_完整UI视觉音频无障碍.md`；使用阶段 10 的 50 关和难度报告完成体验层
 
 ## 阶段状态
 
@@ -23,7 +23,7 @@
 | 07 | completed | 2026-08-24 | 2026-08-24 | `reports/stage-07-report.md` | 基础机关 M1–M4；8 教学/组合关；ADR-015；E2E 24/24 |
 | 08 | completed | 2026-08-24 | 2026-08-24 | `reports/stage-08-report.md` | 高级机关 M5–M8；8 教学/组合关（BFS 复核 par）；ADR-016 坍塌对穿精化；37 边界用例；E2E 39/39 |
 | 09 | completed | 2026-08-24 | 2026-08-24 | `reports/stage-09-report.md` | 关卡 Schema、编辑器、求解器、CLI 工具链；12 步 check 全绿；E2E 39/39；203 测试 |
-| 10 | pending |  |  | `reports/stage-10-report.md` | 50 关生产与难度曲线 |
+| 10 | completed | 2026-08-24 | 2026-08-25 | `reports/stage-10-report.md` | 50 关生产与难度曲线；3 轮重设计后全部通过审计/相似度/求解；单方向解仅限 6 冻结教学关；048 M8 脉冲门检测限于审计首轮限制；204 测试全绿；check 12 步全过 |
 | 11 | pending |  |  | `reports/stage-11-report.md` | 完整 UI、视觉、音频、无障碍 |
 | 12 | pending |  |  | `reports/stage-12-report.md` | 自动化测试体系 |
 | 13 | pending |  |  | `reports/stage-13-report.md` | 浏览器兼容、性能、离线 |

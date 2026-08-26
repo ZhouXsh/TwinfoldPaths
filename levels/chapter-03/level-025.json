@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "id": "level-025",
+  "chapter": 3,
+  "order": 25,
+  "title": "专属门与暂停",
+  "initialMapping": "H_MIRROR",
+  "grid": {
+    "width": 7,
+    "height": 5
+  },
+  "blueStart": {
+    "x": 0,
+    "y": 4
+  },
+  "orangeStart": {
+    "x": 6,
+    "y": 4
+  },
+  "blueExit": {
+    "x": 0,
+    "y": 0
+  },
+  "orangeExit": {
+    "x": 6,
+    "y": 0
+  },
+  "walls": [
+    { "x": 0, "y": 1 },
+    { "x": 0, "y": 2 },
+    { "x": 0, "y": 3 },
+    { "x": 6, "y": 1 },
+    { "x": 6, "y": 2 },
+    { "x": 6, "y": 3 },
+    { "x": 2, "y": 0 },
+    { "x": 2, "y": 1 },
+    { "x": 2, "y": 2 },
+    { "x": 2, "y": 3 },
+    { "x": 4, "y": 0 },
+    { "x": 4, "y": 1 },
+    { "x": 4, "y": 2 },
+    { "x": 4, "y": 3 }
+  ],
+  "entities": [
+    {
+      "type": "colorDoor",
+      "x": 1,
+      "y": 3,
+      "color": "BLUE"
+    },
+    {
+      "type": "colorDoor",
+      "x": 5,
+      "y": 3,
+      "color": "ORANGE"
+    },
+    {
+      "type": "pauseTile",
+      "x": 1,
+      "y": 2
+    }
+  ],
+  "parMoves": 7,
+  "parMovesNote": "BFS 最短步数=6",
+  "hint": {
+    "focus": "蓝通过专属门，橙也需要通过专属门，利用暂停调节先后"
+  },
+  "tags": ["chapter-3", "M2", "M3", "colordoor-pause"]
+}

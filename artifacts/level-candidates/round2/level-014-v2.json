@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "id": "level-014",
+  "chapter": 2,
+  "order": 14,
+  "title": "压板二次利用",
+  "initialMapping": "H_MIRROR",
+  "grid": {
+    "width": 6,
+    "height": 5
+  },
+  "blueStart": {
+    "x": 0,
+    "y": 4
+  },
+  "orangeStart": {
+    "x": 5,
+    "y": 4
+  },
+  "blueExit": {
+    "x": 0,
+    "y": 0
+  },
+  "orangeExit": {
+    "x": 5,
+    "y": 0
+  },
+  "walls": [
+    { "x": 2, "y": 0 },
+    { "x": 2, "y": 1 },
+    { "x": 2, "y": 2 },
+    { "x": 2, "y": 3 },
+    { "x": 3, "y": 0 },
+    { "x": 3, "y": 1 },
+    { "x": 3, "y": 2 },
+    { "x": 3, "y": 3 },
+    { "x": 0, "y": 2 },
+    { "x": 5, "y": 2 }
+  ],
+  "entities": [
+    {
+      "type": "plate",
+      "id": "p1",
+      "x": 1,
+      "y": 4,
+      "doorId": "d1"
+    },
+    {
+      "type": "door",
+      "id": "d1",
+      "x": 2,
+      "y": 4
+    },
+    {
+      "type": "plate",
+      "id": "p2",
+      "x": 4,
+      "y": 4,
+      "doorId": "d2"
+    },
+    {
+      "type": "door",
+      "id": "d2",
+      "x": 3,
+      "y": 4
+    }
+  ],
+  "parMoves": 7,
+  "parMovesNote": "BFS 最短步数=7",
+  "hint": {
+    "focus": "蓝方先踩板开左门让橙方穿过，橙方再踩板开右门让蓝方穿过——同一块压板可以被反复利用。"
+  },
+  "tags": ["chapter-2", "tutorial", "M1", "reuse-plate"]
+}

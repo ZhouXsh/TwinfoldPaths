@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "id": "level-007",
+  "chapter": 1,
+  "order": 7,
+  "title": "两次解耦",
+  "initialMapping": "H_MIRROR",
+  "grid": {
+    "width": 6,
+    "height": 5
+  },
+  "blueStart": {
+    "x": 0,
+    "y": 4
+  },
+  "orangeStart": {
+    "x": 5,
+    "y": 4
+  },
+  "blueExit": {
+    "x": 0,
+    "y": 0
+  },
+  "orangeExit": {
+    "x": 5,
+    "y": 0
+  },
+  "walls": [
+    { "x": 2, "y": 0 },
+    { "x": 2, "y": 1 },
+    { "x": 2, "y": 2 },
+    { "x": 2, "y": 3 },
+    { "x": 3, "y": 0 },
+    { "x": 3, "y": 1 },
+    { "x": 3, "y": 2 },
+    { "x": 3, "y": 3 }
+  ],
+  "entities": [],
+  "parMoves": 8,
+  "parMovesNote": "BFS 求解器验证最短步数=8",
+  "hint": {
+    "focus": "两道墙把棋盘分成三列通道。蓝方需要先向右绕开第一道墙，再向左回到左边出口。橙方同理。"
+  },
+  "tags": ["chapter-1", "M0", "double-decouple"]
+}

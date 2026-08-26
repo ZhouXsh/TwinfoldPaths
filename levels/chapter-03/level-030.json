@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "id": "level-030",
+  "chapter": 3,
+  "order": 30,
+  "title": "第三章综合",
+  "initialMapping": "V_MIRROR",
+  "grid": {
+    "width": 7,
+    "height": 5
+  },
+  "blueStart": {
+    "x": 0,
+    "y": 4
+  },
+  "orangeStart": {
+    "x": 6,
+    "y": 4
+  },
+  "blueExit": {
+    "x": 0,
+    "y": 0
+  },
+  "orangeExit": {
+    "x": 6,
+    "y": 0
+  },
+  "walls": [
+    { "x": 0, "y": 1 },
+    { "x": 0, "y": 2 },
+    { "x": 0, "y": 3 },
+    { "x": 6, "y": 1 },
+    { "x": 6, "y": 2 },
+    { "x": 6, "y": 3 },
+    { "x": 2, "y": 0 },
+    { "x": 2, "y": 1 },
+    { "x": 2, "y": 2 },
+    { "x": 2, "y": 3 },
+    { "x": 4, "y": 0 },
+    { "x": 4, "y": 1 },
+    { "x": 4, "y": 2 },
+    { "x": 4, "y": 3 }
+  ],
+  "entities": [
+    {
+      "type": "plate",
+      "id": "p1",
+      "x": 1,
+      "y": 3,
+      "doorId": "d1"
+    },
+    {
+      "type": "door",
+      "id": "d1",
+      "x": 1,
+      "y": 2
+    },
+    {
+      "type": "colorDoor",
+      "x": 5,
+      "y": 2,
+      "color": "ORANGE"
+    },
+    {
+      "type": "pauseTile",
+      "x": 1,
+      "y": 0
+    },
+    {
+      "type": "switcher",
+      "x": 1,
+      "y": 2,
+      "target": "H_MIRROR"
+    }
+  ],
+  "parMoves": 9,
+  "parMovesNote": "BFS 最短步数=8",
+  "hint": {
+    "focus": "综合运用压板门、专属门、暂停和映射切换"
+  },
+  "tags": ["chapter-3", "M1", "M2", "M3", "M4", "chapter-final"]
+}

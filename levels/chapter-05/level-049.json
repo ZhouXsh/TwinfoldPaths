@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "id": "level-049",
+  "chapter": 5,
+  "order": 49,
+  "title": "终极预演",
+  "initialMapping": "H_MIRROR",
+  "grid": {
+    "width": 7,
+    "height": 5
+  },
+  "blueStart": {
+    "x": 0,
+    "y": 4
+  },
+  "orangeStart": {
+    "x": 6,
+    "y": 4
+  },
+  "blueExit": {
+    "x": 0,
+    "y": 0
+  },
+  "orangeExit": {
+    "x": 6,
+    "y": 0
+  },
+  "walls": [
+    { "x": 0, "y": 1 },
+    { "x": 0, "y": 2 },
+    { "x": 0, "y": 3 },
+    { "x": 6, "y": 1 },
+    { "x": 6, "y": 2 },
+    { "x": 6, "y": 3 },
+    { "x": 2, "y": 0 },
+    { "x": 2, "y": 1 },
+    { "x": 2, "y": 2 },
+    { "x": 2, "y": 3 },
+    { "x": 4, "y": 0 },
+    { "x": 4, "y": 1 },
+    { "x": 4, "y": 2 },
+    { "x": 4, "y": 3 }
+  ],
+  "entities": [
+    {
+      "type": "colorDoor",
+      "x": 1,
+      "y": 2,
+      "color": "BLUE"
+    },
+    {
+      "type": "colorDoor",
+      "x": 5,
+      "y": 2,
+      "color": "ORANGE"
+    },
+    {
+      "type": "fragile",
+      "x": 1,
+      "y": 3
+    },
+    {
+      "type": "pauseTile",
+      "x": 5,
+      "y": 3
+    }
+  ],
+  "parMoves": 7,
+  "parMovesNote": "BFS 最短步数=7",
+  "hint": {
+    "focus": "专属门、暂停和脆弱格的终极组合"
+  },
+  "tags": ["chapter-5", "M2", "M3", "M7", "final-preview"]
+}

@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "id": "level-008",
+  "chapter": 1,
+  "order": 8,
+  "title": "非对称解法",
+  "initialMapping": "H_MIRROR",
+  "grid": {
+    "width": 5,
+    "height": 5
+  },
+  "blueStart": {
+    "x": 0,
+    "y": 4
+  },
+  "orangeStart": {
+    "x": 4,
+    "y": 4
+  },
+  "blueExit": {
+    "x": 0,
+    "y": 0
+  },
+  "orangeExit": {
+    "x": 4,
+    "y": 0
+  },
+  "walls": [
+    {
+      "x": 0,
+      "y": 2
+    },
+    {
+      "x": 1,
+      "y": 2
+    },
+    {
+      "x": 2,
+      "y": 2
+    }
+  ],
+  "entities": [],
+  "parMoves": 11,
+  "parMovesNote": "BFS 最短步数=11",
+  "hint": {
+    "focus": "蓝方的路被墙挡住，橙方畅通：不对称的路径"
+  },
+  "tags": ["chapter-1", "M0", "asymmetric"]
+}

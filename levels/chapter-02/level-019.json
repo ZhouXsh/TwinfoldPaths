@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "id": "level-019",
+  "chapter": 2,
+  "order": 19,
+  "title": "双压板双门",
+  "initialMapping": "H_MIRROR",
+  "grid": {
+    "width": 7,
+    "height": 5
+  },
+  "blueStart": {
+    "x": 0,
+    "y": 4
+  },
+  "orangeStart": {
+    "x": 6,
+    "y": 4
+  },
+  "blueExit": {
+    "x": 0,
+    "y": 0
+  },
+  "orangeExit": {
+    "x": 6,
+    "y": 0
+  },
+  "walls": [
+    { "x": 0, "y": 1 },
+    { "x": 0, "y": 2 },
+    { "x": 0, "y": 3 },
+    { "x": 6, "y": 1 },
+    { "x": 6, "y": 2 },
+    { "x": 6, "y": 3 },
+    { "x": 2, "y": 0 },
+    { "x": 2, "y": 1 },
+    { "x": 2, "y": 2 },
+    { "x": 2, "y": 3 },
+    { "x": 4, "y": 0 },
+    { "x": 4, "y": 1 },
+    { "x": 4, "y": 2 },
+    { "x": 4, "y": 3 }
+  ],
+  "entities": [
+    {
+      "type": "plate",
+      "id": "p1",
+      "x": 1,
+      "y": 2,
+      "doorId": "d1"
+    },
+    {
+      "type": "door",
+      "id": "d1",
+      "x": 1,
+      "y": 1
+    },
+    {
+      "type": "colorDoor",
+      "x": 5,
+      "y": 2,
+      "color": "ORANGE"
+    }
+  ],
+  "parMoves": 6,
+  "parMovesNote": "BFS 求解器验证最短步数=6",
+  "hint": {
+    "focus": "蓝方踩板开门，橙方通过专属门，然后各自向上到达出口。双门需交替使用。"
+  },
+  "tags": ["chapter-2", "M1", "M2", "key-position"]
+}

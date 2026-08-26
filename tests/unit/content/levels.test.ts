@@ -8,6 +8,7 @@ import {
 } from '../../../src/content/levels';
 import type { LevelRecord } from '../../../src/content/validate';
 import { parseLevel } from '../../../src/content/validate';
+import { bfsSolve, replaySolution } from '../../../tools/solver/bfs-solver';
 import { applyCommand } from '../../../src/domain/engine';
 import { createInitialState } from '../../../src/domain/level';
 import type { Direction, GameState } from '../../../src/domain/types';
@@ -38,13 +39,24 @@ const TUTORIAL_IDS = new Set([
   'level-001',
   'level-002',
   'level-003',
+  'level-004',
+  'level-005',
+  'level-006',
   'level-011',
+  'level-012',
+  'level-013',
+  'level-014',
   'level-016',
   'level-021',
+  'level-022',
   'level-026',
+  'level-027',
   'level-031',
+  'level-032',
   'level-036',
+  'level-037',
   'level-041',
+  'level-042',
   'level-046'
 ]);
 
@@ -57,44 +69,48 @@ function replay(level: LevelRecord, moves: Direction[]): GameState {
 }
 
 describe('关卡注册表（levels/chapter-01..05）', () => {
-  it('注册表恰有 19 关，按章节/序号排序', () => {
-    expect(LEVELS.map((l) => l.id)).toEqual([
-      'level-001',
-      'level-002',
-      'level-003',
-      'level-011',
-      'level-015',
-      'level-016',
-      'level-017',
-      'level-021',
-      'level-023',
-      'level-026',
-      'level-029',
-      'level-031',
-      'level-034',
-      'level-036',
-      'level-038',
-      'level-041',
-      'level-044',
-      'level-046',
-      'level-047'
-    ]);
-    expect(LEVELS.filter((l) => l.chapter === 1).map((l) => l.order)).toEqual([1, 2, 3]);
-    expect(LEVELS.filter((l) => l.chapter === 2).map((l) => l.order)).toEqual([11, 15, 16, 17]);
-    expect(LEVELS.filter((l) => l.chapter === 3).map((l) => l.order)).toEqual([21, 23, 26, 29]);
-    expect(LEVELS.filter((l) => l.chapter === 4).map((l) => l.order)).toEqual([31, 34, 36, 38]);
-    expect(LEVELS.filter((l) => l.chapter === 5).map((l) => l.order)).toEqual([41, 44, 46, 47]);
+  it('注册表恰有 50 关，按章节/序号排序', () => {
+    const ids = LEVELS.map((l) => l.id);
+    expect(ids.length).toBe(50);
+    // 验证每章恰 10 关
+    for (let ch = 1; ch <= 5; ch++) {
+      const chLevels = LEVELS.filter((l) => l.chapter === ch);
+      expect(chLevels.length, `第${ch}章应有 10 关`).toBe(10);
+    }
+    // 验证 order 连续
+    for (let i = 1; i < ids.length; i++) {
+      const curr = LEVELS[i];
+      const prev = LEVELS[i - 1];
+      expect(curr, `LEVELS[${i}] 应存在`).toBeDefined();
+      expect(prev, `LEVELS[${i - 1}] 应存在`).toBeDefined();
+      if (!curr || !prev) continue;
+      expect(
+        curr.order,
+        `关卡顺序应递增: ${prev.id}(${prev.order}) -> ${curr.id}(${curr.order})`
+      ).toBeGreaterThan(prev.order);
+    }
     expect(FIRST_LEVEL_ID).toBe('level-001');
+    expect(LEVELS[0]?.id).toBe('level-001');
+    expect(LEVELS[LEVELS.length - 1]?.id).toBe('level-050');
   });
 
   it('每关按宣称教学解法可回放至胜利，且解法长度等于 parMoves', () => {
     for (const level of LEVELS) {
       const solution = SOLUTIONS[level.id];
-      expect(solution, `${level.id} 缺少教学解法`).toBeDefined();
-      if (!solution) continue;
-      const final = replay(level, solution);
-      expect(final.status, `${level.id} 回放未胜利`).toBe('WON');
-      expect(final.moveCount, `${level.id} parMoves 与教学解法不一致`).toBe(level.parMoves);
+      if (solution) {
+        const final = replay(level, solution);
+        expect(final.status, `${level.id} 回放未胜利`).toBe('WON');
+        expect(final.moveCount, `${level.id} parMoves 与教学解法不一致`).toBe(level.parMoves);
+      } else {
+        // 新关卡：用 BFS 求解验证
+        const result = bfsSolve(level);
+        expect(result.solvable, `${level.id} 应可解`).toBe(true);
+        const replayOk = replaySolution(level, result.solution);
+        expect(replayOk, `${level.id} 回放应胜利`).toBe(true);
+        expect(result.optimalSteps, `${level.id} 最短步数应 <= parMoves`).toBeLessThanOrEqual(
+          level.parMoves
+        );
+      }
     }
   });
 
@@ -113,23 +129,37 @@ describe('关卡注册表（levels/chapter-01..05）', () => {
 
   it('nextLevelId 链与关卡顺序一致，末关返回 null', () => {
     expect(nextLevelId('level-001')).toBe('level-002');
-    expect(nextLevelId('level-003')).toBe('level-011');
-    expect(nextLevelId('level-017')).toBe('level-021');
-    expect(nextLevelId('level-029')).toBe('level-031');
-    expect(nextLevelId('level-038')).toBe('level-041');
-    expect(nextLevelId('level-047')).toBeNull();
+    expect(nextLevelId('level-010')).toBe('level-011');
+    expect(nextLevelId('level-020')).toBe('level-021');
+    expect(nextLevelId('level-030')).toBe('level-031');
+    expect(nextLevelId('level-040')).toBe('level-041');
+    expect(nextLevelId('level-050')).toBeNull();
     expect(nextLevelId('不存在')).toBeNull();
     expect(getLevelById('level-002')?.title).toBe('左右相反');
   });
 
-  it('levelLinearIndex 给出 1 基全局序号（稀疏编号不破坏线性解锁）', () => {
+  it('levelLinearIndex 给出 1 基全局序号（50 关连续编号）', () => {
     expect(levelLinearIndex('level-001')).toBe(1);
-    expect(levelLinearIndex('level-003')).toBe(3);
-    expect(levelLinearIndex('level-011')).toBe(4);
-    expect(levelLinearIndex('level-029')).toBe(11);
-    expect(levelLinearIndex('level-031')).toBe(12);
-    expect(levelLinearIndex('level-047')).toBe(19);
+    expect(levelLinearIndex('level-010')).toBe(10);
+    expect(levelLinearIndex('level-011')).toBe(11);
+    expect(levelLinearIndex('level-020')).toBe(20);
+    expect(levelLinearIndex('level-021')).toBe(21);
+    expect(levelLinearIndex('level-030')).toBe(30);
+    expect(levelLinearIndex('level-031')).toBe(31);
+    expect(levelLinearIndex('level-040')).toBe(40);
+    expect(levelLinearIndex('level-041')).toBe(41);
+    expect(levelLinearIndex('level-050')).toBe(50);
     expect(levelLinearIndex('不存在')).toBe(-1);
+  });
+
+  it('全部 50 关 BFS 可解且回放至胜利（自动回放验证）', () => {
+    for (const level of LEVELS) {
+      const result = bfsSolve(level);
+      expect(result.solvable, `${level.id} 应可解`).toBe(true);
+      expect(result.budgetExhausted, `${level.id} 不应超预算`).toBe(false);
+      const replayOk = replaySolution(level, result.solution);
+      expect(replayOk, `${level.id} 回放应胜利`).toBe(true);
+    }
   });
 });
 

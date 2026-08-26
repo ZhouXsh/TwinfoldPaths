@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "id": "level-042",
+  "chapter": 5,
+  "order": 42,
+  "title": "脆弱格变临时墙",
+  "initialMapping": "H_MIRROR",
+  "grid": {
+    "width": 7,
+    "height": 5
+  },
+  "blueStart": {
+    "x": 0,
+    "y": 4
+  },
+  "orangeStart": {
+    "x": 6,
+    "y": 4
+  },
+  "blueExit": {
+    "x": 0,
+    "y": 0
+  },
+  "orangeExit": {
+    "x": 6,
+    "y": 0
+  },
+  "walls": [
+    { "x": 0, "y": 1 },
+    { "x": 0, "y": 2 },
+    { "x": 0, "y": 3 },
+    { "x": 6, "y": 1 },
+    { "x": 6, "y": 2 },
+    { "x": 6, "y": 3 },
+    { "x": 2, "y": 0 },
+    { "x": 2, "y": 1 },
+    { "x": 2, "y": 2 },
+    { "x": 2, "y": 3 },
+    { "x": 4, "y": 0 },
+    { "x": 4, "y": 1 },
+    { "x": 4, "y": 2 },
+    { "x": 4, "y": 3 }
+  ],
+  "entities": [
+    {
+      "type": "fragile",
+      "x": 1,
+      "y": 2
+    },
+    {
+      "type": "fragile",
+      "x": 5,
+      "y": 2
+    }
+  ],
+  "parMoves": 6,
+  "parMovesNote": "BFS 最短步数=6",
+  "hint": {
+    "focus": "脆弱格离开即坍塌"
+  },
+  "tags": ["chapter-5", "tutorial", "M7", "fragile-wall"]
+}

@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "id": "level-020",
+  "chapter": 2,
+  "order": 20,
+  "title": "第二章综合",
+  "initialMapping": "H_MIRROR",
+  "grid": {
+    "width": 7,
+    "height": 5
+  },
+  "blueStart": {
+    "x": 0,
+    "y": 4
+  },
+  "orangeStart": {
+    "x": 6,
+    "y": 4
+  },
+  "blueExit": {
+    "x": 0,
+    "y": 0
+  },
+  "orangeExit": {
+    "x": 6,
+    "y": 0
+  },
+  "walls": [
+    { "x": 2, "y": 1 },
+    { "x": 2, "y": 2 },
+    { "x": 2, "y": 3 },
+    { "x": 4, "y": 1 },
+    { "x": 4, "y": 2 },
+    { "x": 4, "y": 3 },
+    { "x": 3, "y": 4 }
+  ],
+  "entities": [
+    {
+      "type": "plate",
+      "id": "p1",
+      "x": 1,
+      "y": 4,
+      "doorId": "d1"
+    },
+    {
+      "type": "door",
+      "id": "d1",
+      "x": 2,
+      "y": 4
+    },
+    {
+      "type": "colorDoor",
+      "x": 3,
+      "y": 2,
+      "color": "ORANGE"
+    },
+    {
+      "type": "colorDoor",
+      "x": 3,
+      "y": 4,
+      "color": "BLUE"
+    }
+  ],
+  "parMoves": 7,
+  "parMovesNote": "BFS 最短步数=7",
+  "hint": {
+    "focus": "综合运用墙、压板门和专属门规划路径——蓝方和橙方需要交替为对方开路。"
+  },
+  "tags": ["chapter-2", "M0", "M1", "M2", "chapter-final"]
+}

@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "id": "level-050",
+  "chapter": 5,
+  "order": 50,
+  "title": "最终对称合流",
+  "initialMapping": "H_MIRROR",
+  "grid": {
+    "width": 7,
+    "height": 5
+  },
+  "blueStart": {
+    "x": 0,
+    "y": 4
+  },
+  "orangeStart": {
+    "x": 6,
+    "y": 4
+  },
+  "blueExit": {
+    "x": 0,
+    "y": 0
+  },
+  "orangeExit": {
+    "x": 6,
+    "y": 0
+  },
+  "walls": [
+    { "x": 0, "y": 1 },
+    { "x": 0, "y": 2 },
+    { "x": 0, "y": 3 },
+    { "x": 6, "y": 1 },
+    { "x": 6, "y": 2 },
+    { "x": 6, "y": 3 },
+    { "x": 2, "y": 0 },
+    { "x": 2, "y": 1 },
+    { "x": 2, "y": 2 },
+    { "x": 2, "y": 3 },
+    { "x": 4, "y": 0 },
+    { "x": 4, "y": 1 },
+    { "x": 4, "y": 2 },
+    { "x": 4, "y": 3 }
+  ],
+  "entities": [
+    {
+      "type": "plate",
+      "id": "p1",
+      "x": 1,
+      "y": 3,
+      "doorId": "d1"
+    },
+    {
+      "type": "door",
+      "id": "d1",
+      "x": 1,
+      "y": 2
+    },
+    {
+      "type": "oneWay",
+      "x": 5,
+      "y": 2,
+      "arrow": "UP"
+    },
+    {
+      "type": "pulseSwitch",
+      "pairId": "p1",
+      "x": 1,
+      "y": 2
+    },
+    {
+      "type": "pulseSwitch",
+      "pairId": "p1",
+      "x": 5,
+      "y": 2
+    },
+    {
+      "type": "pulseDoor",
+      "pairId": "p1",
+      "x": 3,
+      "y": 1
+    }
+  ],
+  "parMoves": 6,
+  "parMovesNote": "BFS 最短步数=6",
+  "hint": {
+    "focus": "压板门、单向格和脉冲同步的完美配合"
+  },
+  "tags": ["chapter-5", "M1", "M5", "M8", "final-symmetry"]
+}

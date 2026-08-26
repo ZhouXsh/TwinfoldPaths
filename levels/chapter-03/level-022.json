@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "initialMapping": "H_MIRROR",
+  "id": "level-022",
+  "title": "主动消耗暂停",
+  "chapter": 3,
+  "order": 22,
+  "grid": {
+    "width": 6,
+    "height": 5
+  },
+  "blueStart": {
+    "x": 0,
+    "y": 4
+  },
+  "orangeStart": {
+    "x": 5,
+    "y": 4
+  },
+  "blueExit": {
+    "x": 0,
+    "y": 0
+  },
+  "orangeExit": {
+    "x": 5,
+    "y": 0
+  },
+  "walls": [
+    { "x": 0, "y": 1 },
+    { "x": 0, "y": 2 },
+    { "x": 0, "y": 3 },
+    { "x": 5, "y": 1 },
+    { "x": 5, "y": 2 },
+    { "x": 5, "y": 3 },
+    { "x": 2, "y": 0 },
+    { "x": 2, "y": 1 },
+    { "x": 2, "y": 2 },
+    { "x": 2, "y": 3 },
+    { "x": 3, "y": 0 },
+    { "x": 3, "y": 1 },
+    { "x": 3, "y": 2 },
+    { "x": 3, "y": 3 }
+  ],
+  "entities": [
+    {
+      "type": "pauseTile",
+      "x": 1,
+      "y": 2
+    }
+  ],
+  "hint": {
+    "focus": "蓝方踩暂停格获得令牌，暂停让橙先走一步再跟上"
+  },
+  "tags": ["chapter-3", "tutorial", "M3", "pause-active"],
+  "parMoves": 7
+}

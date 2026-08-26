@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "initialMapping": "H_MIRROR",
+  "id": "level-012",
+  "title": "离板关门时序",
+  "chapter": 2,
+  "order": 12,
+  "grid": {
+    "width": 6,
+    "height": 4
+  },
+  "blueStart": {
+    "x": 0,
+    "y": 2
+  },
+  "orangeStart": {
+    "x": 5,
+    "y": 2
+  },
+  "blueExit": {
+    "x": 0,
+    "y": 0
+  },
+  "orangeExit": {
+    "x": 5,
+    "y": 0
+  },
+  "walls": [{ "x": 5, "y": 1 }],
+  "entities": [
+    {
+      "type": "plate",
+      "id": "p1",
+      "x": 1,
+      "y": 2,
+      "doorId": "d1"
+    },
+    {
+      "type": "door",
+      "id": "d1",
+      "x": 4,
+      "y": 2
+    }
+  ],
+  "hint": {
+    "focus": "蓝方先走到压板上为橙方开门，橙方穿过门后再让蓝方离开——注意门只会在压板被踩时打开。"
+  },
+  "tags": ["chapter-2", "tutorial", "M1", "plate-door-timing"],
+  "parMoves": 6,
+  "parMovesNote": "BFS 求解器验证最短步数=6"
+}

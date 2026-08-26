@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "initialMapping": "H_MIRROR",
+  "id": "level-018",
+  "title": "关键位置管理",
+  "chapter": 2,
+  "order": 18,
+  "grid": {
+    "width": 7,
+    "height": 4
+  },
+  "blueStart": {
+    "x": 0,
+    "y": 2
+  },
+  "orangeStart": {
+    "x": 4,
+    "y": 2
+  },
+  "blueExit": {
+    "x": 0,
+    "y": 0
+  },
+  "orangeExit": {
+    "x": 6,
+    "y": 0
+  },
+  "walls": [
+    { "x": 4, "y": 0 },
+    { "x": 4, "y": 1 },
+    { "x": 5, "y": 0 },
+    { "x": 5, "y": 1 }
+  ],
+  "entities": [
+    {
+      "type": "plate",
+      "id": "p1",
+      "x": 1,
+      "y": 2,
+      "doorId": "d1"
+    },
+    {
+      "type": "door",
+      "id": "d1",
+      "x": 4,
+      "y": 2
+    },
+    {
+      "type": "colorDoor",
+      "x": 5,
+      "y": 2,
+      "color": "ORANGE"
+    }
+  ],
+  "hint": {
+    "focus": "蓝方踩压板开门，橙方穿过门后还要通过专属门——谁站在什么位置决定了门的开关。"
+  },
+  "tags": ["chapter-2", "M1", "M2", "key-position"],
+  "parMoves": 5,
+  "parMovesNote": "BFS 求解器验证最短步数=5"
+}

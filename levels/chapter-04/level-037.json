@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "initialMapping": "H_MIRROR",
+  "id": "level-037",
+  "title": "单方传送",
+  "chapter": 4,
+  "order": 37,
+  "grid": {
+    "width": 6,
+    "height": 5
+  },
+  "blueStart": {
+    "x": 0,
+    "y": 4
+  },
+  "orangeStart": {
+    "x": 5,
+    "y": 4
+  },
+  "blueExit": {
+    "x": 0,
+    "y": 0
+  },
+  "orangeExit": {
+    "x": 5,
+    "y": 0
+  },
+  "walls": [
+    {
+      "x": 0,
+      "y": 2
+    },
+    {
+      "x": 1,
+      "y": 2
+    },
+    {
+      "x": 2,
+      "y": 2
+    },
+    {
+      "x": 3,
+      "y": 2
+    },
+    {
+      "x": 4,
+      "y": 2
+    },
+    {
+      "x": 5,
+      "y": 2
+    }
+  ],
+  "entities": [
+    {
+      "type": "portal",
+      "portalId": "p",
+      "x": 1,
+      "y": 4,
+      "end": "A"
+    },
+    {
+      "type": "portal",
+      "portalId": "p",
+      "x": 1,
+      "y": 1,
+      "end": "B"
+    }
+  ],
+  "hint": {
+    "focus": "只有蓝能传送到墙的另一侧，橙需要绕路"
+  },
+  "tags": ["chapter-4", "tutorial", "M6", "single-portal"],
+  "parMoves": 9,
+  "parMovesNote": "BFS 最短步数=9"
+}

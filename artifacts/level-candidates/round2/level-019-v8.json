@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "id": "level-019",
+  "chapter": 2,
+  "order": 19,
+  "title": "双压板双门",
+  "initialMapping": "H_MIRROR",
+  "grid": {
+    "width": 7,
+    "height": 4
+  },
+  "blueStart": {
+    "x": 0,
+    "y": 2
+  },
+  "orangeStart": {
+    "x": 6,
+    "y": 2
+  },
+  "blueExit": {
+    "x": 0,
+    "y": 0
+  },
+  "orangeExit": {
+    "x": 6,
+    "y": 0
+  },
+  "walls": [
+    { "x": 2, "y": 0 },
+    { "x": 2, "y": 1 },
+    { "x": 4, "y": 0 },
+    { "x": 4, "y": 1 },
+    { "x": 6, "y": 1 },
+    { "x": 1, "y": 0 }
+  ],
+  "entities": [
+    {
+      "type": "plate",
+      "id": "p1",
+      "x": 1,
+      "y": 2,
+      "doorId": "d1"
+    },
+    {
+      "type": "door",
+      "id": "d1",
+      "x": 1,
+      "y": 1
+    },
+    {
+      "type": "colorDoor",
+      "x": 5,
+      "y": 2,
+      "color": "ORANGE"
+    }
+  ],
+  "parMoves": 5,
+  "parMovesNote": "BFS 最短步数=5",
+  "hint": {
+    "focus": "蓝方踩板为橙方开门，橙方通过专属门后踩板为蓝方开门——双压板双门需交替配合。"
+  },
+  "tags": ["chapter-2", "M1", "M2", "key-position"]
+}

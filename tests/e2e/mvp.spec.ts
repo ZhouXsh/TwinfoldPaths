@@ -110,7 +110,7 @@ test('首页一键进入第1关（FR-01）', async ({ page }, testInfo) => {
   g.assertClean();
 });
 
-test('按钮+滑动+键盘通关前三关并进入首个机关关（FR-02/FR-04）', async ({ page }, testInfo) => {
+test('按钮+滑动+键盘通关前三关并进入下一关（FR-02/FR-04）', async ({ page }, testInfo) => {
   const g = guard(page);
   await openHome(page);
   await startGame(page);
@@ -137,17 +137,8 @@ test('按钮+滑动+键盘通关前三关并进入首个机关关（FR-02/FR-04�
   await shot(page, testInfo, 'level-003-result');
 
   await page.getByTestId('btn-next').click();
-  await expect(page.getByTestId('level-label')).toHaveText('2-11 压板开门');
-  await expect(page.getByTestId('mapping-label')).toHaveText('映射：水平镜像');
-  await pressMove(page, 'left', 1);
-  await shot(page, testInfo, 'level-011-door-open');
-  await pressMove(page, 'left', 2);
-  await pressMove(page, 'left', 3);
-  await pressMove(page, 'up', 4);
-  await pressMove(page, 'right', 5);
-  await expectResult(page, 5);
-  await shot(page, testInfo, 'level-011-result');
-  await page.getByTestId('btn-result-home').click();
+  await expect(page.getByTestId('level-label')).toHaveText('1-4 墙体解耦');
+  await page.getByTestId('btn-home').click();
   await expect(page.getByTestId('btn-start')).toBeVisible();
   g.assertClean();
 });
@@ -191,14 +182,15 @@ test('刷新后从最高解锁关继续（FR-07）', async ({ page }, testInfo) 
   await page.getByTestId('btn-start').click();
   await expect(page.getByTestId('level-label')).toHaveText('1-2 左右相反');
   g.assertClean();
+  g.assertClean();
 });
 
 test('M2/M3/M4 机关渲染可见且映射标签实时切换（视觉证据）', async ({ browser }, testInfo) => {
   const cases: Array<{ unlock: number; label: string; name: string }> = [
-    { unlock: 6, label: '2-16 角色专属门', name: 'm2-colordoor' },
-    { unlock: 8, label: '3-21 暂停令牌', name: 'm3-pausetile' },
-    { unlock: 10, label: '3-26 垂直镜像切换', name: 'm4-switcher' },
-    { unlock: 11, label: '3-29 映射决定开门', name: 'm4-plate-switcher' }
+    { unlock: 16, label: '2-16 角色专属门', name: 'm2-colordoor' },
+    { unlock: 21, label: '3-21 暂停令牌', name: 'm3-pausetile' },
+    { unlock: 26, label: '3-26 垂直镜像切换', name: 'm4-switcher' },
+    { unlock: 29, label: '3-29 映射决定开门', name: 'm4-plate-switcher' }
   ];
   for (const c of cases) {
     const ctx = await browser.newContext();
@@ -230,7 +222,7 @@ test('M4 映射切换后界面标签同步更新（M4 验收门）', async ({ br
   await page.addInitScript(() => {
     localStorage.setItem(
       'twinfold-paths:save:a',
-      JSON.stringify({ version: 2, highestUnlocked: 10, bestMoves: {} })
+      JSON.stringify({ version: 2, highestUnlocked: 26, bestMoves: {} })
     );
   });
   await page.goto('/');
@@ -248,14 +240,14 @@ test('M4 映射切换后界面标签同步更新（M4 验收门）', async ({ br
 
 test('M5–M8 教学关渲染可见（视觉证据）', async ({ browser }, testInfo) => {
   const cases: Array<{ unlock: number; label: string; name: string }> = [
-    { unlock: 12, label: '4-31 顺箭而行', name: 'm5-oneway' },
-    { unlock: 13, label: '4-34 映射与离向', name: 'm4m5-switcher-oneway' },
-    { unlock: 14, label: '4-36 穿墙之门', name: 'm6-portal' },
-    { unlock: 15, label: '4-38 传送接单向', name: 'm5m6-portal-oneway' },
-    { unlock: 16, label: '5-41 脆弱之桥', name: 'm7-fragile' },
-    { unlock: 17, label: '5-44 不可回头路', name: 'm5m7-noreturn' },
-    { unlock: 18, label: '5-46 同步脉冲', name: 'm8-pulse' },
-    { unlock: 19, label: '5-47 暂停调节同步', name: 'm3m8-pausesync' }
+    { unlock: 31, label: '4-31 顺箭而行', name: 'm5-oneway' },
+    { unlock: 34, label: '4-34 映射与离向', name: 'm4m5-switcher-oneway' },
+    { unlock: 36, label: '4-36 穿墙之门', name: 'm6-portal' },
+    { unlock: 38, label: '4-38 传送接单向', name: 'm5m6-portal-oneway' },
+    { unlock: 41, label: '5-41 脆弱之桥', name: 'm7-fragile' },
+    { unlock: 44, label: '5-44 不可回头路', name: 'm5m7-noreturn' },
+    { unlock: 46, label: '5-46 同步脉冲', name: 'm8-pulse' },
+    { unlock: 47, label: '5-47 暂停调节同步', name: 'm3m8-pausesync' }
   ];
   for (const c of cases) {
     const ctx = await browser.newContext();
@@ -286,7 +278,7 @@ test('M5 单向格教学关 4-31：阻挡反馈区分于墙且可通关（M5 验
   await page.addInitScript(() => {
     localStorage.setItem(
       'twinfold-paths:save:a',
-      JSON.stringify({ version: 2, highestUnlocked: 12, bestMoves: {} })
+      JSON.stringify({ version: 2, highestUnlocked: 31, bestMoves: {} })
     );
   });
   await page.goto('/');
@@ -317,7 +309,7 @@ test('M6 传送教学关 4-36 通关且传送状态行可见（M6 验收门）',
   await page.addInitScript(() => {
     localStorage.setItem(
       'twinfold-paths:save:a',
-      JSON.stringify({ version: 2, highestUnlocked: 14, bestMoves: {} })
+      JSON.stringify({ version: 2, highestUnlocked: 36, bestMoves: {} })
     );
   });
   await page.goto('/');
@@ -340,7 +332,7 @@ test('M7 脆弱格教学关 5-41：坍塌与撤销恢复（M7 验收门）', asy
   await page.addInitScript(() => {
     localStorage.setItem(
       'twinfold-paths:save:a',
-      JSON.stringify({ version: 2, highestUnlocked: 16, bestMoves: {} })
+      JSON.stringify({ version: 2, highestUnlocked: 41, bestMoves: {} })
     );
   });
   await page.goto('/');
@@ -370,7 +362,7 @@ test('M8 同步脉冲教学关 4-46 通关（闩锁开启脉冲门）', async ({
   await page.addInitScript(() => {
     localStorage.setItem(
       'twinfold-paths:save:a',
-      JSON.stringify({ version: 2, highestUnlocked: 18, bestMoves: {} })
+      JSON.stringify({ version: 2, highestUnlocked: 46, bestMoves: {} })
     );
   });
   await page.goto('/');
