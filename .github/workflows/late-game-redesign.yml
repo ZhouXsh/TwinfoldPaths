@@ -23,6 +23,8 @@ jobs:
       - name: Wire generators to reusable solver API
         run: |
           sed -i 's#../tools-dist/solver.mjs#../tools-dist/solverApi.mjs#g' tools/redesign-late-game.mjs tools/sync-par.mjs
+      - name: Diversify repeated optimal routes
+        run: node tools/patch-redesign-specs.mjs
       - name: Rebuild levels 21-50
         run: npm run redesign:late-game
       - name: Make BFS authoritative for all parMoves
