@@ -22,17 +22,10 @@ export class ResultScene extends Phaser.Scene {
     const par = data.par ?? 0;
     const nextId = data.nextId ?? null;
 
+    // 结算页完全交给 DOM overlay 排版。不要再在 Phaser 画布中重复绘制
+    // “通关/步数/达标”文本，否则两套坐标系会在短屏上叠在一起。
     showBars('bar-result');
-    const { width, height } = this.scale;
 
-    this.add
-      .text(width / 2, height * 0.28, '通关！', {
-        fontSize: '40px',
-        color: '#7AC4A0'
-      })
-      .setOrigin(0.5);
-
-    // 星级计算
     const starsEl = document.getElementById('result-stars');
     if (starsEl) {
       if (moves <= par) {
@@ -44,38 +37,19 @@ export class ResultScene extends Phaser.Scene {
       }
     }
 
-    this.add
-      .text(width / 2, height * 0.28 + 54, `本关步数 ${moves} ／ 目标步数 ${par}`, {
-        fontSize: '18px',
-        color: '#3D3A3A'
-      })
-      .setOrigin(0.5);
-
-    if (moves <= par) {
-      this.add
-        .text(width / 2, height * 0.28 + 84, '达到目标步数！', {
-          fontSize: '14px',
-          color: '#F5C542'
-        })
-        .setOrigin(0.5);
-    }
-
-    if (!nextId) {
-      this.add
-        .text(width / 2, height * 0.62, '所有关卡已通关！', {
-          fontSize: '16px',
-          color: '#8A8580'
-        })
-        .setOrigin(0.5);
-    }
-
-    setResultText(`步数 ${moves} / 目标 ${par}`);
+    const resultSummary = !nextId
+      ? `步数 ${moves} / 目标 ${par} · 全部关卡完成！`
+      : moves <= par
+        ? `步数 ${moves} / 目标 ${par} · 达到目标步数！`
+        : `步数 ${moves} / 目标 ${par}`;
+    setResultText(resultSummary);
     setStatusText(
       moves <= par
         ? '漂亮！你已经找到目标步数内的路线。'
         : '已通关；也可以重玩，用撤销逐步压缩路线。',
       'event'
     );
+
     const nextBtn = document.getElementById('btn-next');
     if (nextBtn) nextBtn.hidden = !nextId;
 
@@ -97,6 +71,7 @@ export class ResultScene extends Phaser.Scene {
         })
       );
     }
+
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       for (const fn of this.cleanupFns) fn();
       this.cleanupFns = [];
