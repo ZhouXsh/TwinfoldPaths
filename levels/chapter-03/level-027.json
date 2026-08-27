@@ -9,22 +9,10 @@
     "width": 7,
     "height": 5
   },
-  "blueStart": {
-    "x": 0,
-    "y": 4
-  },
-  "orangeStart": {
-    "x": 6,
-    "y": 4
-  },
-  "blueExit": {
-    "x": 0,
-    "y": 0
-  },
-  "orangeExit": {
-    "x": 6,
-    "y": 0
-  },
+  "blueStart": { "x": 0, "y": 0 },
+  "orangeStart": { "x": 6, "y": 0 },
+  "blueExit": { "x": 0, "y": 4 },
+  "orangeExit": { "x": 6, "y": 4 },
   "walls": [
     { "x": 0, "y": 1 },
     { "x": 0, "y": 2 },
@@ -32,14 +20,14 @@
     { "x": 6, "y": 1 },
     { "x": 6, "y": 2 },
     { "x": 6, "y": 3 },
-    { "x": 2, "y": 0 },
-    { "x": 2, "y": 1 },
-    { "x": 2, "y": 2 },
+    { "x": 2, "y": 4 },
     { "x": 2, "y": 3 },
-    { "x": 4, "y": 0 },
-    { "x": 4, "y": 1 },
+    { "x": 2, "y": 2 },
+    { "x": 2, "y": 1 },
+    { "x": 4, "y": 4 },
+    { "x": 4, "y": 3 },
     { "x": 4, "y": 2 },
-    { "x": 4, "y": 3 }
+    { "x": 4, "y": 1 }
   ],
   "entities": [
     {
@@ -50,9 +38,9 @@
     }
   ],
   "parMoves": 9,
-  "parMovesNote": "BFS 最短步数=8",
+  "parMovesNote": "原关卡做垂直镜像；V_MIRROR/H_MIRROR 在该几何变换下保持规则等价，最短步数保持 9",
   "hint": {
-    "focus": "切换成水平镜像后分开行动"
+    "focus": "从上方进入映射切换区；切成水平镜像后，后半段改为向下分开行动。"
   },
-  "tags": ["chapter-3", "tutorial", "M4", "dual-mapping"]
+  "tags": ["chapter-3", "tutorial", "M4", "dual-mapping", "route-variation"]
 }
