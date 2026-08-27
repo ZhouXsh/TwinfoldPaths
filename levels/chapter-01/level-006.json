@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "initialMapping": "H_MIRROR",
   "id": "level-006",
-  "title": "反向对穿",
+  "title": "允许对穿",
   "chapter": 1,
   "order": 6,
   "grid": {
