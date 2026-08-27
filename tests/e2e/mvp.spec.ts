@@ -123,12 +123,16 @@ test('按钮+滑动+键盘通关前三关（FR-02/FR-04）', async ({ page }) =>
   await pressMove(page, 'left', 1);
   await expectResult(page, 1);
   await page.getByTestId('btn-next').click();
+  await expect(page.getByTestId('level-label')).toHaveText('1-2 左右相反');
+  await page.waitForTimeout(SETTLE_MS);
 
   await swipeMove(page, 'up', 1);
   await swipeMove(page, 'up', 2);
   await pressMove(page, 'left', 3);
   await expectResult(page, 3);
   await page.getByTestId('btn-next').click();
+  await expect(page.getByTestId('level-label')).toHaveText('1-3 同步双出口');
+  await page.waitForTimeout(SETTLE_MS);
 
   await keyMove(page, 'ArrowDown', 1);
   await keyMove(page, 'ArrowDown', 2);
