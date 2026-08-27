@@ -6,27 +6,55 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
     />
-    <meta name="theme-color" content="#101418" />
+    <meta name="theme-color" content="#F7F4F0" />
     <link rel="icon" href="data:," />
     <title>双生折线 Twinfold Paths</title>
     <style>
+      :root {
+        --bg: #f7f4f0;
+        --panel: #ffffff;
+        --panel-hover: #faf8f5;
+        --line: #e8e0d8;
+        --line-light: #f0ebe5;
+        --text: #3d3a3a;
+        --text-secondary: #8a8580;
+        --text-muted: #b5b0ab;
+        --blue: #5bb8ff;
+        --blue-light: #e8f4fd;
+        --orange: #ffa94d;
+        --orange-light: #fff3e8;
+        --gold: #f5c542;
+        --green: #7ac4a0;
+        --green-light: #e8f8f0;
+        --danger: #ff8a7a;
+        --danger-light: #fff0ed;
+        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+        --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.08);
+        --radius-sm: 8px;
+        --radius-md: 12px;
+        --radius-lg: 16px;
+      }
       html,
       body {
         margin: 0;
         padding: 0;
         height: 100%;
         overflow: hidden;
-        background: #101418;
-        color: #dbe7f3;
+        background: var(--bg);
+        color: var(--text);
         font-family:
           system-ui,
           -apple-system,
+          'PingFang SC',
+          'Microsoft YaHei',
           sans-serif;
         -webkit-tap-highlight-color: transparent;
       }
       #app {
         height: 100vh;
         height: 100dvh;
+        max-width: 520px;
+        margin: 0 auto;
         display: flex;
         flex-direction: column;
         padding-top: env(safe-area-inset-top, 0px);
@@ -34,61 +62,75 @@
         padding-left: env(safe-area-inset-left, 0px);
         padding-right: env(safe-area-inset-right, 0px);
       }
+
+      /* ===== 通用栏 ===== */
       .bar {
         display: flex;
         align-items: center;
         gap: 8px;
-        padding: 6px 8px;
-        padding-left: max(8px, env(safe-area-inset-left, 8px));
-        padding-right: max(8px, env(safe-area-inset-right, 8px));
-      }
-      #bar-hud {
-        min-height: 44px;
-        flex-wrap: wrap;
+        padding: 6px 12px;
+        padding-left: max(12px, env(safe-area-inset-left, 12px));
+        padding-right: max(12px, env(safe-area-inset-right, 12px));
       }
       .ui-off {
         visibility: hidden !important;
         pointer-events: none !important;
       }
+      #bar-hud {
+        min-height: 44px;
+        flex-wrap: wrap;
+        background: var(--panel);
+        border-bottom: 1px solid var(--line-light);
+        box-shadow: var(--shadow-sm);
+        position: relative;
+        z-index: 5;
+      }
       #level-label {
         font-size: 14px;
-        color: #9fb4c7;
+        color: var(--text-secondary);
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
         flex: 1;
         min-width: 0;
+        font-weight: 500;
       }
       #mapping-label {
         font-size: 12px;
-        color: #7fe0d0;
-        border: 1px solid #2c4a44;
+        color: var(--green);
+        border: 1px solid #d0ece0;
+        background: var(--green-light);
         border-radius: 8px;
         padding: 2px 8px;
         white-space: nowrap;
+        font-weight: 500;
       }
       #move-box {
         font-size: 14px;
-        color: #9fb4c7;
+        color: var(--text-muted);
         white-space: nowrap;
       }
       #move-count {
-        color: #e8f1f8;
+        color: var(--text);
         font-size: 16px;
+        font-weight: 600;
       }
+
+      /* ===== 游戏舞台 ===== */
       #stage {
         position: relative;
         flex: 1;
         min-height: 0;
         overflow: hidden;
         touch-action: none;
+        background: var(--bg);
       }
       #game {
         position: absolute;
         inset: 0;
       }
 
-      /* ===== 方向预览指示 ===== */
+      /* ===== 方向预览 ===== */
       #dir-preview {
         position: absolute;
         display: none;
@@ -96,7 +138,7 @@
         justify-content: center;
         font-size: 32px;
         font-weight: bold;
-        color: rgba(255, 255, 255, 0.5);
+        color: var(--text-muted);
         pointer-events: none;
         z-index: 10;
         width: 60px;
@@ -104,12 +146,15 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
+        background: rgba(255, 255, 255, 0.7);
+        border-radius: 50%;
+        box-shadow: var(--shadow-md);
       }
       #dir-preview.visible {
         display: flex;
       }
 
-      /* ===== 叠加层（首页、选关、设置、结算） ===== */
+      /* ===== 叠加层 ===== */
       .overlay {
         position: absolute;
         inset: 0;
@@ -118,9 +163,9 @@
         align-items: center;
         justify-content: center;
         gap: 12px;
-        padding: 20px;
-        padding-top: max(20px, env(safe-area-inset-top, 20px));
-        padding-bottom: max(20px, env(safe-area-inset-bottom, 20px));
+        padding: 24px;
+        padding-top: max(24px, env(safe-area-inset-top, 24px));
+        padding-bottom: max(24px, env(safe-area-inset-bottom, 24px));
         pointer-events: none;
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
@@ -135,22 +180,25 @@
 
       .screen-title {
         font-size: 28px;
-        color: #e8f1f8;
+        color: var(--text);
         margin: 8px 0;
+        font-weight: 700;
+        letter-spacing: 2px;
       }
       .screen-subtitle {
         font-size: 14px;
-        color: #9fb4c7;
+        color: var(--text-muted);
         margin: 0 0 12px 0;
       }
 
       #result-text {
         font-size: 14px;
-        color: #9fb4c7;
+        color: var(--text-secondary);
       }
       #home-continue {
         font-size: 14px;
-        color: #7fa8c9;
+        color: var(--blue);
+        font-weight: 500;
       }
 
       /* ===== 通用按钮 ===== */
@@ -159,19 +207,22 @@
         min-height: 48px;
         padding: 8px 14px;
         font-size: 18px;
-        color: #dbe7f3;
-        background: #1c2733;
-        border: 1px solid #33455a;
-        border-radius: 10px;
+        color: var(--text);
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: var(--radius-md);
         touch-action: manipulation;
         user-select: none;
         -webkit-user-select: none;
         cursor: pointer;
         font-family: inherit;
-        transition: background 0.1s;
+        transition: all 0.12s;
+        box-shadow: var(--shadow-sm);
       }
       button:active {
-        background: #2a3a4d;
+        background: var(--panel-hover);
+        transform: translateY(1px);
+        box-shadow: none;
       }
       .bar button {
         font-size: 14px;
@@ -181,22 +232,28 @@
       button:disabled {
         opacity: 0.4;
         cursor: not-allowed;
+        transform: none;
       }
       .btn-primary {
-        background: #2a4a6a;
-        border-color: #4aa3ff;
-        color: #e8f1f8;
+        background: var(--blue);
+        border-color: var(--blue);
+        color: #fff;
+        font-weight: 600;
       }
       .btn-primary:active {
-        background: #3a5a7a;
+        background: #4aa8f0;
+        border-color: #4aa8f0;
+      }
+      .btn-primary:disabled {
+        opacity: 0.5;
       }
       .btn-danger {
-        background: #4a2a2a;
-        border-color: #ff6b4a;
-        color: #ffd0c0;
+        background: var(--danger-light);
+        border-color: var(--danger);
+        color: var(--danger);
       }
       .btn-danger:active {
-        background: #5a3a3a;
+        background: #ffe0dc;
       }
       .btn-small {
         font-size: 13px;
@@ -207,7 +264,12 @@
       /* ===== 方向键 ===== */
       #bar-controls {
         justify-content: center;
+        background: var(--panel);
+        border-top: 1px solid var(--line-light);
         padding-bottom: max(8px, env(safe-area-inset-bottom, 8px));
+        box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.04);
+        position: relative;
+        z-index: 5;
       }
       #dpad {
         display: grid;
@@ -220,18 +282,28 @@
         min-height: 56px;
         font-size: 22px;
         padding: 0;
+        background: var(--blue-light);
+        border-color: #d0e4f8;
+        color: var(--blue);
+        font-weight: 600;
+      }
+      #dpad button:active {
+        background: #d0e8fc;
+        color: #4aa8f0;
       }
 
       /* ===== 状态栏 ===== */
       #status {
-        padding: 4px 8px;
-        padding-left: max(8px, env(safe-area-inset-left, 8px));
-        padding-right: max(8px, env(safe-area-inset-right, 8px));
+        padding: 5px 12px;
+        padding-left: max(12px, env(safe-area-inset-left, 12px));
+        padding-right: max(12px, env(safe-area-inset-right, 12px));
         text-align: center;
         font-size: 12px;
         line-height: 1.4;
-        color: #5d7285;
-        min-height: 18px;
+        color: var(--text-muted);
+        min-height: 20px;
+        background: var(--panel);
+        border-top: 1px solid var(--line-light);
       }
 
       [hidden] {
@@ -253,33 +325,39 @@
         justify-content: center;
         gap: 6px;
         min-height: 100px;
-        background: #1c2733;
-        border: 1px solid #33455a;
-        border-radius: 12px;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: var(--radius-lg);
         cursor: pointer;
-        transition: background 0.1s;
+        transition: all 0.12s;
         padding: 12px;
+        box-shadow: var(--shadow-sm);
       }
       .chapter-grid .chapter-card:active {
-        background: #2a3a4d;
+        background: var(--panel-hover);
+        transform: translateY(1px);
+        box-shadow: none;
       }
       .chapter-grid .chapter-card.locked {
         opacity: 0.4;
         cursor: not-allowed;
+        transform: none;
       }
       .chapter-grid .chapter-card.completed {
-        border-color: #5a9a7a;
+        border-color: var(--green);
+        background: var(--green-light);
       }
       .chapter-name {
         font-size: 16px;
-        color: #e8f1f8;
+        color: var(--text);
+        font-weight: 600;
       }
       .chapter-sub {
         font-size: 12px;
-        color: #9fb4c7;
+        color: var(--text-secondary);
       }
       .chapter-star {
-        color: #ffd479;
+        color: var(--gold);
         font-size: 14px;
       }
 
@@ -297,37 +375,42 @@
         align-items: center;
         justify-content: center;
         min-height: 56px;
-        background: #1c2733;
-        border: 1px solid #33455a;
-        border-radius: 8px;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: var(--radius-sm);
         cursor: pointer;
-        transition: background 0.1s;
+        transition: all 0.12s;
         padding: 4px;
         font-size: 14px;
-        color: #e8f1f8;
+        color: var(--text);
+        font-weight: 500;
+        box-shadow: var(--shadow-sm);
       }
       .level-grid .level-cell:active {
-        background: #2a3a4d;
+        background: var(--panel-hover);
+        transform: translateY(1px);
+        box-shadow: none;
       }
       .level-grid .level-cell.locked {
         opacity: 0.35;
         cursor: not-allowed;
+        transform: none;
       }
       .level-grid .level-cell.current {
-        border-color: #4aa3ff;
-        background: #1a2a40;
+        border-color: var(--blue);
+        background: var(--blue-light);
       }
       .level-grid .level-cell.completed {
-        border-color: #5a9a7a;
+        border-color: var(--green);
       }
       .level-grid .level-cell .star-row {
         font-size: 10px;
-        color: #ffd479;
+        color: var(--gold);
         line-height: 1;
       }
       .level-grid .level-cell .best-row {
         font-size: 9px;
-        color: #7fa8c9;
+        color: var(--text-muted);
         line-height: 1;
       }
 
@@ -337,30 +420,33 @@
         max-width: 360px;
         display: flex;
         flex-direction: column;
-        gap: 12px;
+        gap: 10px;
       }
       .settings-row {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 10px 12px;
-        background: #1c2733;
-        border: 1px solid #33455a;
-        border-radius: 10px;
+        padding: 12px 14px;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-sm);
       }
       .settings-label {
         font-size: 15px;
-        color: #dbe7f3;
+        color: var(--text);
+        font-weight: 500;
       }
       .settings-desc {
         font-size: 11px;
-        color: #5d7285;
+        color: var(--text-muted);
+        margin-top: 2px;
       }
       .toggle-switch {
         position: relative;
         width: 48px;
         height: 28px;
-        background: #2a3a4d;
+        background: #d5cfc8;
         border-radius: 14px;
         cursor: pointer;
         transition: background 0.15s;
@@ -368,9 +454,10 @@
         padding: 0;
         min-width: 48px;
         min-height: 28px;
+        box-shadow: none;
       }
       .toggle-switch.on {
-        background: #4aa3ff;
+        background: var(--blue);
       }
       .toggle-switch::after {
         content: '';
@@ -382,6 +469,7 @@
         background: #fff;
         border-radius: 50%;
         transition: transform 0.15s;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
       }
       .toggle-switch.on::after {
         transform: translateX(20px);
@@ -394,9 +482,9 @@
         display: none;
         align-items: center;
         justify-content: center;
-        background: #101418;
+        background: var(--bg);
         z-index: 9999;
-        color: #e8f1f8;
+        color: var(--text);
         font-size: 18px;
         text-align: center;
         padding: 40px;
@@ -416,16 +504,16 @@
         display: none;
         align-items: center;
         justify-content: center;
-        background: rgba(0, 0, 0, 0.6);
+        background: rgba(0, 0, 0, 0.3);
         z-index: 100;
       }
       .modal-overlay.visible {
         display: flex;
       }
       .modal-box {
-        background: #1c2733;
-        border: 1px solid #33455a;
-        border-radius: 14px;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: var(--radius-lg);
         padding: 24px;
         max-width: 300px;
         width: 80%;
@@ -433,14 +521,16 @@
         display: flex;
         flex-direction: column;
         gap: 16px;
+        box-shadow: var(--shadow-md);
       }
       .modal-title {
         font-size: 18px;
-        color: #e8f1f8;
+        color: var(--text);
+        font-weight: 600;
       }
       .modal-text {
         font-size: 14px;
-        color: #9fb4c7;
+        color: var(--text-secondary);
         line-height: 1.4;
       }
       .modal-buttons {
@@ -461,23 +551,23 @@
       .progress-bar-bg {
         flex: 1;
         height: 6px;
-        background: #1c2733;
+        background: #ede8e2;
         border-radius: 3px;
         overflow: hidden;
       }
       .progress-bar-fill {
         height: 100%;
-        background: #4aa3ff;
+        background: var(--blue);
         border-radius: 3px;
         transition: width 0.3s;
       }
       .progress-text {
         font-size: 12px;
-        color: #9fb4c7;
+        color: var(--text-muted);
         white-space: nowrap;
       }
 
-      /* ===== 响应式调整 ===== */
+      /* ===== 响应式 ===== */
       @media (orientation: landscape) and (max-height: 500px) {
         #landscape-warning.visible {
           display: flex;
@@ -497,6 +587,14 @@
         }
         .screen-title {
           font-size: 24px;
+        }
+        #dpad {
+          gap: 5px;
+        }
+        #dpad button {
+          min-width: 50px;
+          min-height: 50px;
+          font-size: 20px;
         }
       }
       @media (min-width: 600px) {
@@ -527,7 +625,7 @@
       <div>
         <div class="landscape-icon">📱</div>
         <div>请将手机竖屏使用</div>
-        <div style="font-size: 13px; color: #9fb4c7; margin-top: 8px">
+        <div style="font-size: 13px; color: #8a8580; margin-top: 8px">
           Please rotate to portrait mode
         </div>
       </div>
@@ -558,7 +656,7 @@
           <div
             id="home-continue"
             data-testid="home-continue"
-            style="font-size: 14px; color: #7fa8c9"
+            style="font-size: 14px; color: #5bb8ff"
           ></div>
           <button
             id="btn-start"
@@ -648,7 +746,7 @@
 
         <!-- 结算 -->
         <div id="bar-result" class="overlay" hidden>
-          <div class="screen-title" style="color: #7fe0a7">通关！</div>
+          <div class="screen-title" style="color: #7ac4a0">通关！</div>
           <div id="result-stars" style="font-size: 32px; color: #ffd479; letter-spacing: 6px"></div>
           <div id="result-text" data-testid="result-text"></div>
           <div class="bar" style="padding: 0">

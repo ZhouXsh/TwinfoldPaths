@@ -28,7 +28,7 @@ export class ResultScene extends Phaser.Scene {
     this.add
       .text(width / 2, height * 0.28, '通关！', {
         fontSize: '40px',
-        color: '#7fe0a7'
+        color: '#7AC4A0'
       })
       .setOrigin(0.5);
 
@@ -47,7 +47,7 @@ export class ResultScene extends Phaser.Scene {
     this.add
       .text(width / 2, height * 0.28 + 54, `本关步数 ${moves} ／ 目标步数 ${par}`, {
         fontSize: '18px',
-        color: '#e8f1f8'
+        color: '#3D3A3A'
       })
       .setOrigin(0.5);
 
@@ -55,7 +55,7 @@ export class ResultScene extends Phaser.Scene {
       this.add
         .text(width / 2, height * 0.28 + 84, '达到目标步数！', {
           fontSize: '14px',
-          color: '#ffd479'
+          color: '#F5C542'
         })
         .setOrigin(0.5);
     }
@@ -64,7 +64,7 @@ export class ResultScene extends Phaser.Scene {
       this.add
         .text(width / 2, height * 0.62, '所有关卡已通关！', {
           fontSize: '16px',
-          color: '#9fb4c7'
+          color: '#8A8580'
         })
         .setOrigin(0.5);
     }

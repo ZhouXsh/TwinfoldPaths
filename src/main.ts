@@ -10,7 +10,7 @@ import { SettingsScene } from './scenes/SettingsScene';
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
   parent: 'game',
-  backgroundColor: '#101418',
+  backgroundColor: '#F0EBE5',
   scale: {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,

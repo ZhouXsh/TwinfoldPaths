@@ -32,13 +32,13 @@ export class HomeScene extends Phaser.Scene {
     this.add
       .text(width / 2, height * 0.3, '双生折线', {
         fontSize: '40px',
-        color: '#e8f1f8'
+        color: '#3D3A3A'
       })
       .setOrigin(0.5);
     this.add
       .text(width / 2, height * 0.3 + 46, 'Twinfold Paths', {
         fontSize: '18px',
-        color: '#9fb4c7'
+        color: '#8A8580'
       })
       .setOrigin(0.5);
 

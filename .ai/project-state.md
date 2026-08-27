@@ -8,6 +8,7 @@
 - 最近通过命令：`npm run check`（12 步全过，退出码 0，含 27 文件依赖检查）；`npm test`（19 文件 265 用例，含 10 新增遥测测试）；`npm run coverage`（领域层 100% 分支，阈值 ≥90%）；`npm run validate:levels`（50/50 通过）；`npm run solve:levels`（50/50 可解，0 par 错误）；`npm run test:e2e`（96/96，chromium+webkit+mobile-320）；`npm run build`（1.29MB）；`npm run verify:dist`（零外部请求/零密钥/零 source map）
 - 当前阻塞：无
 - 下一步：执行 `prompts/15_发布候选与参赛材料.md`；基于阶段 14 真人试玩反馈和认知走查结论，形成发布候选（RC）
+- 计划外迭代（2026-08-27，阶段 14 与 15 之间）：小清新 UI 重设计与布局错位修复（报告 `reports/ui-redesign-2026-08-27.md`）。改动范围：`index.html`（CSS 主题变量化 + 布局修复）、`src/main.ts`、`src/scenes/BootScene.ts`（全部机关纹理浅色化）、`src/scenes/HomeScene.ts`、`src/scenes/ResultScene.ts`；领域层与 DEMO/ 零改动（git diff 验证）。验收：`npm run check` 12 步全过（含 prettier 格式修复）、E2E 96/96（chromium+webkit+mobile-320，4 workers）、双视口（320×568 / 390×844）程序化布局与配色校验全过（棋盘居中偏移 0px、无重叠、浅色主题生效）。注意：E2E 8 workers 并行存在 pre-existing flaky（资源竞争超时），验收基线为 4 workers。
 
 ## 阶段状态
 
