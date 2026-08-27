@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "initialMapping": "H_MIRROR",
   "id": "level-013",
-  "title": "双方交换职责",
+  "title": "反向交换职责",
   "chapter": 2,
   "order": 13,
   "grid": {
@@ -11,36 +11,36 @@
   },
   "blueStart": {
     "x": 0,
-    "y": 2
+    "y": 1
   },
   "orangeStart": {
     "x": 5,
-    "y": 2
+    "y": 1
   },
   "blueExit": {
     "x": 0,
-    "y": 0
+    "y": 3
   },
   "orangeExit": {
     "x": 6,
-    "y": 0
+    "y": 3
   },
   "walls": [
     {
       "x": 2,
-      "y": 0
+      "y": 3
     },
     {
       "x": 2,
-      "y": 1
+      "y": 2
     },
     {
       "x": 5,
-      "y": 0
+      "y": 3
     },
     {
       "x": 5,
-      "y": 1
+      "y": 2
     }
   ],
   "entities": [
@@ -48,33 +48,33 @@
       "type": "plate",
       "id": "p1",
       "x": 1,
-      "y": 2,
+      "y": 1,
       "doorId": "d1"
     },
     {
       "type": "door",
       "id": "d1",
       "x": 2,
-      "y": 2
+      "y": 1
     },
     {
       "type": "plate",
       "id": "p2",
       "x": 6,
-      "y": 2,
+      "y": 1,
       "doorId": "d2"
     },
     {
       "type": "door",
       "id": "d2",
       "x": 5,
-      "y": 2
+      "y": 1
     }
   ],
   "hint": {
-    "focus": "蓝方踩压板为橙方开门，然后橙方踩压板为蓝方开门——双方交替配合才能都到达出口。"
+    "focus": "这一关把上一关的上下节奏翻转：仍是蓝先开橙门、橙再开蓝门，但最终要向下抵达出口。"
   },
-  "tags": ["chapter-2", "tutorial", "M1", "swap-roles"],
+  "tags": ["chapter-2", "tutorial", "M1", "swap-roles", "route-variation"],
   "parMoves": 3,
-  "parMovesNote": "BFS 求解器验证最短步数=3"
+  "parMovesNote": "由原可解布局做垂直镜像；最短步数保持 3，方向序列上下翻转"
 }
