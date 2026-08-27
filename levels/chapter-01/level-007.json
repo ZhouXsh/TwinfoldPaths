@@ -3,45 +3,45 @@
   "id": "level-007",
   "chapter": 1,
   "order": 7,
-  "title": "两次解耦",
+  "title": "反向双解耦",
   "initialMapping": "H_MIRROR",
   "grid": {
     "width": 6,
     "height": 5
   },
   "blueStart": {
-    "x": 0,
+    "x": 5,
     "y": 4
   },
   "orangeStart": {
-    "x": 5,
+    "x": 0,
     "y": 4
   },
   "blueExit": {
-    "x": 0,
-    "y": 0
-  },
-  "orangeExit": {
     "x": 5,
     "y": 0
   },
+  "orangeExit": {
+    "x": 0,
+    "y": 0
+  },
   "walls": [
-    { "x": 2, "y": 0 },
-    { "x": 2, "y": 1 },
-    { "x": 2, "y": 2 },
-    { "x": 2, "y": 3 },
+    { "x": 3, "y": 0 },
     { "x": 3, "y": 1 },
     { "x": 3, "y": 2 },
     { "x": 3, "y": 3 },
-    { "x": 3, "y": 4 },
-    { "x": 0, "y": 2 },
-    { "x": 5, "y": 2 }
+    { "x": 2, "y": 1 },
+    { "x": 2, "y": 2 },
+    { "x": 2, "y": 3 },
+    { "x": 2, "y": 4 },
+    { "x": 5, "y": 2 },
+    { "x": 0, "y": 2 }
   ],
   "entities": [],
   "parMoves": 6,
-  "parMovesNote": "BFS 求解器验证最短步数=6",
+  "parMovesNote": "由原可解布局做水平镜像；最短步数保持 6，左右输入序列翻转",
   "hint": {
-    "focus": "两道错开的墙迫使两人反复绕行：先向右绕过第一段，再向左绕回第二段。"
+    "focus": "蓝橙起手侧对调了。两道错开的墙仍需要两次解耦，但左右绕行顺序与上一版相反。"
   },
-  "tags": ["chapter-1", "M0", "double-decouple"]
+  "tags": ["chapter-1", "M0", "double-decouple", "route-variation"]
 }
