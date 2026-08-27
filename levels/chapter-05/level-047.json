@@ -3,7 +3,7 @@
   "id": "level-047",
   "chapter": 5,
   "order": 47,
-  "title": "暂停调节同步",
+  "title": "雾中同步",
   "grid": { "width": 7, "height": 6 },
   "blueStart": { "x": 1, "y": 5 },
   "orangeStart": { "x": 5, "y": 5 },
@@ -26,6 +26,6 @@
   ],
   "parMoves": 6,
   "parMovesNote": "阶段08：人工最短解（UP×6）经单元测试回放验证，临时 BFS 复核一致（阶段09 替换为正式求解器）",
-  "hint": { "focus": "橙先拿暂停令牌等一拍：两边才能同回合站上脉冲点", "direction": "UP" },
-  "tags": ["chapter-5", "combo", "M3", "M8", "pause-sync"]
+  "hint": { "focus": "视野有限时先确认两侧脉冲点的位置；橙拿暂停令牌等一拍，才能让两边同回合完成同步。", "direction": "UP" },
+  "tags": ["chapter-5", "combo", "M3", "M8", "pause-sync", "V1-fog"]
 }
