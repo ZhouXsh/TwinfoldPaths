@@ -67,7 +67,7 @@
     }
   ],
   "parMoves": 6,
-  "parMovesNote": "BFS 求解器验证最短步数=6",
+  "parMovesNote": "BFS 最短步数=6；parMoves 与求解器严格一致",
   "hint": {
     "focus": "蓝方走到压板上开门，通过门后继续向上。压板可被双方反复利用来开门。"
   },

@@ -6,9 +6,10 @@ import { canonicalJSON } from '../../src/domain/serialize';
 import { parseLevel } from '../../src/content/validate';
 
 /**
- * BFS 专用的稳定哈希，排除 moveCount 和 history（二者对状态转移无影响）。
+ * BFS 专用稳定哈希。普通关卡排除 moveCount/history；M9 相位门关卡额外保留回合奇偶，
+ * 因为同一几何状态在奇/偶回合拥有不同的后继状态。
  */
-function bfsHash(state: GameState): string {
+function bfsHash(state: GameState, includeTurnParity: boolean): string {
   const logical = {
     version: state.version,
     levelId: state.levelId,
@@ -17,7 +18,8 @@ function bfsHash(state: GameState): string {
     actors: state.actors,
     doors: state.doors,
     pulseDoors: state.pulseDoors,
-    fragileCollapsed: state.fragileCollapsed
+    fragileCollapsed: state.fragileCollapsed,
+    ...(includeTurnParity ? { turnParity: state.moveCount % 2 } : {})
   };
   return fnv1a32(canonicalJSON(logical)).toString(16).padStart(8, '0');
 }
@@ -40,7 +42,6 @@ export interface SolverResult {
   elapsedMs: number;
   budgetExhausted: boolean;
   reachedDepth: number;
-  /** Reason for failure (unsolvable vs budget exhausted) */
   reason?: string;
 }
 
@@ -54,16 +55,11 @@ export const DEFAULT_BUDGET: SolverBudget = {
   maxDepth: 100
 };
 
-/**
- * BFS 求解器（ADR-013）：四方向扩展，调用 applyCommand，
- * 用 stableHash（不含 history）判重。
- * 输出：可解性、最短步数、一条最短解、访问状态数、最短解数量。
- */
 export function bfsSolve(level: LevelDef, budget: SolverBudget = DEFAULT_BUDGET): SolverResult {
   const start = Date.now();
   const initial = createInitialState(level);
+  const includeTurnParity = level.entities.some((entity) => entity.type === 'phaseDoor');
 
-  // 初始即胜利
   if (initial.status === 'WON') {
     return {
       solvable: true,
@@ -78,8 +74,7 @@ export function bfsSolve(level: LevelDef, budget: SolverBudget = DEFAULT_BUDGET)
   }
 
   const seen = new Set<string>();
-  const initialHash = bfsHash(initial);
-  seen.add(initialHash);
+  seen.add(bfsHash(initial, includeTurnParity));
 
   interface BfsNode {
     state: GameState;
@@ -95,14 +90,11 @@ export function bfsSolve(level: LevelDef, budget: SolverBudget = DEFAULT_BUDGET)
 
   for (let depth = 0; depth < budget.maxDepth; depth++) {
     if (frontier.length === 0) break;
-
-    // 如果已经找到解且当前层深度 > 最优步数，可以提前终止
     if (firstSolution !== null && depth >= optimalSteps) break;
 
     const nextFrontier: BfsNode[] = [];
 
     for (const node of frontier) {
-      // 如果已经找到解且当前节点深度 >= 最优步数，不需要再扩展
       if (firstSolution !== null && node.moves.length >= optimalSteps) continue;
 
       if (statesVisited >= budget.maxNodes) {
@@ -122,8 +114,7 @@ export function bfsSolve(level: LevelDef, budget: SolverBudget = DEFAULT_BUDGET)
       for (const dir of DIRECTIONS) {
         const outcome = applyCommand(level, node.state, dir);
         const nextState = outcome.state;
-
-        const hash = bfsHash(nextState);
+        const hash = bfsHash(nextState, includeTurnParity);
 
         if (seen.has(hash)) continue;
         seen.add(hash);
@@ -140,26 +131,18 @@ export function bfsSolve(level: LevelDef, budget: SolverBudget = DEFAULT_BUDGET)
           } else if (newMoves.length === optimalSteps) {
             solutionCount++;
           }
-          // 同一层可能有多个解，继续搜完本层
           continue;
         }
 
-        // 剪枝：如果当前路径已经 >= 已知最优，不加入下一层
         if (firstSolution !== null && newMoves.length >= optimalSteps) continue;
-
         nextFrontier.push({ state: nextState, moves: newMoves });
       }
     }
 
     frontier = nextFrontier;
-
-    // 如果本层已找到解，不再继续向下搜索
-    if (firstSolution !== null) {
-      break;
-    }
+    if (firstSolution !== null) break;
   }
 
-  // 如果还有未处理的 frontier 但已找到解
   if (firstSolution !== null) {
     return {
       solvable: true,
@@ -173,9 +156,8 @@ export function bfsSolve(level: LevelDef, budget: SolverBudget = DEFAULT_BUDGET)
     };
   }
 
-  // 如果 frontier 为空，状态空间穷尽
   const elapsed = Date.now() - start;
-  if (frontier.length === 0 && firstSolution === null) {
+  if (frontier.length === 0) {
     return {
       solvable: false,
       optimalSteps: -1,
@@ -189,7 +171,6 @@ export function bfsSolve(level: LevelDef, budget: SolverBudget = DEFAULT_BUDGET)
     };
   }
 
-  // 深度超限
   return {
     solvable: false,
     optimalSteps: -1,
@@ -203,9 +184,6 @@ export function bfsSolve(level: LevelDef, budget: SolverBudget = DEFAULT_BUDGET)
   };
 }
 
-/**
- * 回放校验：从初始状态按解序列跑 applyCommand，终态 status === 'WON'。
- */
 export function replaySolution(level: LevelDef, moves: Direction[]): boolean {
   let state = createInitialState(level);
   for (const dir of moves) {
@@ -214,9 +192,6 @@ export function replaySolution(level: LevelDef, moves: Direction[]): boolean {
   return state.status === 'WON';
 }
 
-/**
- * 从 JSON 文件内容解析关卡
- */
 export function parseLevelFromJson(json: string): LevelDef {
   return parseLevel(JSON.parse(json));
 }

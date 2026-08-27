@@ -6,124 +6,89 @@ import {
   levelLinearIndex,
   nextLevelId
 } from '../../../src/content/levels';
-import type { LevelRecord } from '../../../src/content/validate';
 import { parseLevel } from '../../../src/content/validate';
 import { bfsSolve, replaySolution } from '../../../tools/solver/bfs-solver';
-import { applyCommand } from '../../../src/domain/engine';
-import { createInitialState } from '../../../src/domain/level';
-import type { Direction, GameState } from '../../../src/domain/types';
 
-const SOLUTIONS: Record<string, Direction[]> = {
-  'level-001': ['LEFT'],
-  'level-002': ['UP', 'UP', 'LEFT'],
-  'level-003': ['DOWN', 'DOWN', 'DOWN', 'DOWN'],
-  'level-011': ['LEFT', 'LEFT', 'LEFT', 'UP', 'RIGHT'],
-  'level-015': ['LEFT', 'UP', 'LEFT', 'LEFT', 'LEFT', 'DOWN', 'DOWN'],
-  'level-016': ['RIGHT', 'RIGHT', 'RIGHT'],
-  'level-017': ['LEFT', 'LEFT', 'LEFT', 'LEFT', 'LEFT'],
-  'level-021': ['DOWN', 'RIGHT', 'DOWN', 'DOWN'],
-  'level-023': ['DOWN', 'DOWN', 'DOWN', 'UP'],
-  'level-026': ['UP', 'UP', 'UP', 'UP'],
-  'level-029': ['LEFT', 'RIGHT', 'RIGHT', 'RIGHT'],
-  'level-031': ['UP', 'RIGHT', 'UP', 'RIGHT', 'UP', 'LEFT', 'LEFT'],
-  'level-034': ['RIGHT', 'UP', 'UP', 'UP', 'UP'],
-  'level-036': ['UP', 'RIGHT', 'LEFT'],
-  'level-038': ['RIGHT', 'RIGHT', 'UP'],
-  'level-041': ['UP', 'RIGHT', 'UP', 'UP', 'LEFT'],
-  'level-044': ['UP', 'UP', 'RIGHT', 'UP', 'UP', 'LEFT'],
-  'level-046': ['UP', 'RIGHT', 'UP', 'UP', 'UP', 'LEFT'],
-  'level-047': ['UP', 'UP', 'UP', 'UP', 'UP', 'UP']
-};
-
-const TUTORIAL_IDS = new Set([
-  'level-001',
-  'level-002',
-  'level-003',
-  'level-004',
-  'level-005',
-  'level-006',
-  'level-011',
-  'level-012',
-  'level-013',
-  'level-014',
-  'level-016',
-  'level-021',
-  'level-022',
-  'level-026',
-  'level-027',
-  'level-031',
-  'level-032',
-  'level-036',
-  'level-037',
-  'level-041',
-  'level-042',
-  'level-046'
-]);
-
-function replay(level: LevelRecord, moves: Direction[]): GameState {
-  let state = createInitialState(level);
-  for (const dir of moves) {
-    state = applyCommand(level, state, dir).state;
-  }
-  return state;
+function solveAll() {
+  return LEVELS.map((level) => ({ level, result: bfsSolve(level) }));
 }
 
 describe('关卡注册表（levels/chapter-01..05）', () => {
   it('注册表恰有 50 关，按章节/序号排序', () => {
     const ids = LEVELS.map((l) => l.id);
     expect(ids.length).toBe(50);
-    // 验证每章恰 10 关
     for (let ch = 1; ch <= 5; ch++) {
-      const chLevels = LEVELS.filter((l) => l.chapter === ch);
-      expect(chLevels.length, `第${ch}章应有 10 关`).toBe(10);
+      expect(LEVELS.filter((l) => l.chapter === ch).length, `第${ch}章应有 10 关`).toBe(10);
     }
-    // 验证 order 连续
     for (let i = 1; i < ids.length; i++) {
       const curr = LEVELS[i];
       const prev = LEVELS[i - 1];
-      expect(curr, `LEVELS[${i}] 应存在`).toBeDefined();
-      expect(prev, `LEVELS[${i - 1}] 应存在`).toBeDefined();
-      if (!curr || !prev) continue;
-      expect(
-        curr.order,
-        `关卡顺序应递增: ${prev.id}(${prev.order}) -> ${curr.id}(${curr.order})`
-      ).toBeGreaterThan(prev.order);
+      expect(curr?.order, `LEVELS[${i}] 顺序异常`).toBeGreaterThan(prev?.order ?? 0);
     }
     expect(FIRST_LEVEL_ID).toBe('level-001');
     expect(LEVELS[0]?.id).toBe('level-001');
-    expect(LEVELS[LEVELS.length - 1]?.id).toBe('level-050');
+    expect(LEVELS.at(-1)?.id).toBe('level-050');
   });
 
-  it('每关按宣称教学解法可回放至胜利，且解法长度等于 parMoves', () => {
-    for (const level of LEVELS) {
-      const solution = SOLUTIONS[level.id];
-      if (solution) {
-        const final = replay(level, solution);
-        expect(final.status, `${level.id} 回放未胜利`).toBe('WON');
-        expect(final.moveCount, `${level.id} parMoves 与教学解法不一致`).toBe(level.parMoves);
-      } else {
-        // 新关卡：用 BFS 求解验证
-        const result = bfsSolve(level);
-        expect(result.solvable, `${level.id} 应可解`).toBe(true);
-        const replayOk = replaySolution(level, result.solution);
-        expect(replayOk, `${level.id} 回放应胜利`).toBe(true);
-        expect(result.optimalSteps, `${level.id} 最短步数应 <= parMoves`).toBeLessThanOrEqual(
-          level.parMoves
-        );
-      }
+  it('全部 50 关 BFS 可解、可回放，且 parMoves 必须严格等于最优步数', () => {
+    for (const { level, result } of solveAll()) {
+      expect(result.solvable, `${level.id} 应可解: ${result.reason ?? ''}`).toBe(true);
+      expect(result.budgetExhausted, `${level.id} 不应超预算`).toBe(false);
+      expect(replaySolution(level, result.solution), `${level.id} 最短解回放应胜利`).toBe(true);
+      expect(level.parMoves, `${level.id} parMoves 必须由 BFS 精确回填`).toBe(result.optimalSteps);
+      expect(level.parMovesNote ?? '', `${level.id} 应记录 BFS 依据`).toMatch(/BFS/);
     }
   });
 
-  it('所有关卡带章节与机制标签；教学关含 tutorial 标签', () => {
-    for (const level of LEVELS) {
-      expect(level.tags, `${level.id} 缺章节标签`).toContain(`chapter-${level.chapter}`);
-      expect(
-        level.tags.some((t) => /^M\d$/.test(t)),
-        `${level.id} 缺机制标签`
-      ).toBe(true);
-      expect(level.tags.includes('tutorial'), `${level.id} tutorial 标记错误`).toBe(
-        TUTORIAL_IDS.has(level.id)
-      );
+  it('后 30 关确实重制为更长的大地图谜题', () => {
+    const solved = solveAll().filter(({ level }) => level.order >= 21);
+    const avg = solved.reduce((sum, x) => sum + x.result.optimalSteps, 0) / solved.length;
+    expect(avg, `后30关平均最优步数=${avg.toFixed(2)}，仍然过短`).toBeGreaterThanOrEqual(18);
+
+    const largeCount = solved.filter(
+      ({ level }) => Math.max(level.grid.width, level.grid.height) >= 9
+    ).length;
+    expect(largeCount, '后30关至少 80% 应为 9 格以上长边的大地图').toBeGreaterThanOrEqual(24);
+
+    for (const chapter of [3, 4, 5]) {
+      const rows = solved.filter(({ level }) => level.chapter === chapter);
+      const chapterAvg = rows.reduce((sum, x) => sum + x.result.optimalSteps, 0) / rows.length;
+      expect(chapterAvg, `第${chapter}章平均最优步数过短`).toBeGreaterThanOrEqual(15);
+    }
+  });
+
+  it('第四章 10/10 关统一采用探索迷雾，并包含多种探索变体', () => {
+    const chapter4 = LEVELS.filter((level) => level.chapter === 4);
+    expect(chapter4).toHaveLength(10);
+    for (const level of chapter4) {
+      expect(level.visibility?.mode, `${level.id} 应属于完整的探索迷雾章节`).toBe('fog');
+      expect(level.tags, `${level.id} 缺 exploration 标签`).toContain('exploration');
+    }
+    const featureTags = new Set(chapter4.flatMap((level) => level.tags));
+    for (const tag of [
+      'fog-no-memory',
+      'fog-decay',
+      'fog-alternating',
+      'fog-diamond',
+      'fog-cross',
+      'fog-radar',
+      'V2-beacon'
+    ]) {
+      expect(featureTags.has(tag), `第四章缺少探索变体 ${tag}`).toBe(true);
+    }
+  });
+
+  it('第五章完整引入 M9 相位门，且每章仍至少有一个教学关', () => {
+    const chapter5 = LEVELS.filter((level) => level.chapter === 5);
+    expect(chapter5.every((level) => level.tags.includes('M9'))).toBe(true);
+    expect(chapter5.every((level) => level.entities.some((e) => e.type === 'phaseDoor'))).toBe(true);
+    for (let chapter = 1; chapter <= 5; chapter++) {
+      const rows = LEVELS.filter((level) => level.chapter === chapter);
+      expect(rows.some((level) => level.tags.includes('tutorial')), `第${chapter}章缺教学关`).toBe(true);
+      for (const level of rows) {
+        expect(level.tags).toContain(`chapter-${chapter}`);
+        expect(level.tags.some((t) => /^M\d+$/.test(t)), `${level.id} 缺机制标签`).toBe(true);
+      }
     }
   });
 
@@ -139,27 +104,10 @@ describe('关卡注册表（levels/chapter-01..05）', () => {
   });
 
   it('levelLinearIndex 给出 1 基全局序号（50 关连续编号）', () => {
-    expect(levelLinearIndex('level-001')).toBe(1);
-    expect(levelLinearIndex('level-010')).toBe(10);
-    expect(levelLinearIndex('level-011')).toBe(11);
-    expect(levelLinearIndex('level-020')).toBe(20);
-    expect(levelLinearIndex('level-021')).toBe(21);
-    expect(levelLinearIndex('level-030')).toBe(30);
-    expect(levelLinearIndex('level-031')).toBe(31);
-    expect(levelLinearIndex('level-040')).toBe(40);
-    expect(levelLinearIndex('level-041')).toBe(41);
-    expect(levelLinearIndex('level-050')).toBe(50);
-    expect(levelLinearIndex('不存在')).toBe(-1);
-  });
-
-  it('全部 50 关 BFS 可解且回放至胜利（自动回放验证）', () => {
-    for (const level of LEVELS) {
-      const result = bfsSolve(level);
-      expect(result.solvable, `${level.id} 应可解`).toBe(true);
-      expect(result.budgetExhausted, `${level.id} 不应超预算`).toBe(false);
-      const replayOk = replaySolution(level, result.solution);
-      expect(replayOk, `${level.id} 回放应胜利`).toBe(true);
+    for (let i = 0; i < LEVELS.length; i++) {
+      expect(levelLinearIndex(LEVELS[i]!.id)).toBe(i + 1);
     }
+    expect(levelLinearIndex('不存在')).toBe(-1);
   });
 });
 
@@ -179,6 +127,7 @@ function validRaw(): Record<string, unknown> {
     walls: [{ x: 4, y: 1 }],
     entities: [],
     parMoves: 1,
+    parMovesNote: 'BFS 最短步数=1',
     hint: { focus: '测试', direction: 'LEFT' },
     tags: ['chapter-1', 'tutorial', 'M0']
   };
@@ -191,7 +140,24 @@ describe('parseLevel 严格校验（拒绝静默修复）', () => {
     expect(level.hint.direction).toBe('LEFT');
   });
 
-  it('拒绝未知字段', () => {
+  it('探索规则可解析且严格拒绝未知字段', () => {
+    const raw = validRaw();
+    raw.visibility = {
+      mode: 'fog',
+      radius: 1,
+      shape: 'diamond',
+      memory: 'decay',
+      memoryTurns: 3,
+      source: 'alternating',
+      pulseEvery: 5,
+      pulseRadius: 12
+    };
+    expect(parseLevel(raw).visibility?.shape).toBe('diamond');
+    (raw.visibility as Record<string, unknown>).unknown = true;
+    expect(() => parseLevel(raw)).toThrow(/未知字段/);
+  });
+
+  it('拒绝未知顶层字段', () => {
     const raw = validRaw();
     raw.extraField = 1;
     expect(() => parseLevel(raw)).toThrow(/未知字段/);

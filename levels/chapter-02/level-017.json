@@ -4,20 +4,54 @@
   "chapter": 2,
   "order": 17,
   "title": "两类门的顺序",
-  "grid": { "width": 7, "height": 3 },
-  "blueStart": { "x": 1, "y": 1 },
-  "orangeStart": { "x": 2, "y": 1 },
-  "blueExit": { "x": 0, "y": 1 },
-  "orangeExit": { "x": 6, "y": 1 },
+  "grid": {
+    "width": 7,
+    "height": 3
+  },
+  "blueStart": {
+    "x": 1,
+    "y": 1
+  },
+  "orangeStart": {
+    "x": 2,
+    "y": 1
+  },
+  "blueExit": {
+    "x": 0,
+    "y": 1
+  },
+  "orangeExit": {
+    "x": 6,
+    "y": 1
+  },
   "initialMapping": "H_MIRROR",
   "walls": [],
   "entities": [
-    { "type": "plate", "id": "p1", "x": 0, "y": 1, "doorId": "d1" },
-    { "type": "door", "id": "d1", "x": 3, "y": 1 },
-    { "type": "colorDoor", "x": 4, "y": 1, "color": "ORANGE" }
+    {
+      "type": "plate",
+      "id": "p1",
+      "x": 0,
+      "y": 1,
+      "doorId": "d1"
+    },
+    {
+      "type": "door",
+      "id": "d1",
+      "x": 3,
+      "y": 1
+    },
+    {
+      "type": "colorDoor",
+      "x": 4,
+      "y": 1,
+      "color": "ORANGE"
+    }
   ],
   "parMoves": 5,
-  "parMovesNote": "阶段07：人工最短解（LEFT×5）经单元测试回放验证；阶段09 由 BFS 求解器复核",
-  "hint": { "focus": "先开压板门，再过橙的专属门；蓝的出口就在压板上", "direction": "LEFT" },
+  "parMovesNote": "BFS 最短步数=5；parMoves 与求解器严格一致",
+  "hint": {
+    "focus": "先开压板门，再过橙的专属门；蓝的出口就在压板上",
+    "direction": "LEFT"
+  },
   "tags": ["chapter-2", "M1", "M2", "combo"]
 }

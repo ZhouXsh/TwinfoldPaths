@@ -26,8 +26,14 @@
     "y": 0
   },
   "walls": [
-    { "x": 0, "y": 2 },
-    { "x": 1, "y": 2 }
+    {
+      "x": 0,
+      "y": 2
+    },
+    {
+      "x": 1,
+      "y": 2
+    }
   ],
   "entities": [],
   "hint": {
@@ -35,5 +41,5 @@
   },
   "tags": ["chapter-1", "M0", "chapter-final"],
   "parMoves": 9,
-  "parMovesNote": "BFS 最短步数=9；将第一章最高难度稳定放在章末"
+  "parMovesNote": "BFS 最短步数=9；parMoves 与求解器严格一致"
 }

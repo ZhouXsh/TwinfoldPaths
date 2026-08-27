@@ -54,16 +54,18 @@ describe('BFS 求解器', () => {
       expect(result.optimalSteps).toBe(4);
     });
 
-    it('level-047 最短步数为 6', () => {
+    it('level-047 已重制为长解关卡，par 与 BFS 一致', () => {
       const entry = LEVELS.find((l) => l.id === 'level-047');
       expect(entry, 'level-047 未注册').toBeDefined();
       const level_047 = entry as LevelDef;
       const result = bfsSolve(level_047);
       expect(result.solvable).toBe(true);
-      expect(result.optimalSteps).toBe(6);
+      expect(result.optimalSteps).toBe(level_047.parMoves);
+      expect(result.optimalSteps).toBeGreaterThanOrEqual(20);
     });
 
-    it('所有 19 关均可解且回放至胜利', () => {
+    it('所有 50 关均可解且回放至胜利', () => {
+      expect(LEVELS).toHaveLength(50);
       for (const level of LEVELS) {
         const result = bfsSolve(level);
         expect(result.solvable, `${level.id} 应可解`).toBe(true);
@@ -85,7 +87,7 @@ describe('BFS 求解器', () => {
           { x: 0, y: 1 },
           { x: 1, y: 1 },
           { x: 2, y: 1 }
-        ] // 堵住中间行
+        ]
       });
       const result = bfsSolve(level);
       expect(result.solvable).toBe(false);
@@ -134,9 +136,7 @@ describe('BFS 求解器', () => {
         results.push(`${result.solvable}-${result.optimalSteps}-${result.solution.join(',')}`);
       }
       const first = results[0];
-      for (const r of results) {
-        expect(r).toBe(first);
-      }
+      for (const r of results) expect(r).toBe(first);
     });
 
     it('level-029 求解 50 次结果一致', () => {
@@ -149,9 +149,7 @@ describe('BFS 求解器', () => {
         results.push(`${result.solvable}-${result.optimalSteps}-${result.solution.join(',')}`);
       }
       const first = results[0];
-      for (const r of results) {
-        expect(r).toBe(first);
-      }
+      for (const r of results) expect(r).toBe(first);
     });
   });
 });

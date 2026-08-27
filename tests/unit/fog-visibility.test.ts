@@ -1,13 +1,19 @@
 import { describe, expect, it } from 'vitest';
-import { computeVisibleCells, fogCellKey, mergeExploredCells } from '../../src/scenes/fog-visibility';
+import {
+  computeFogState,
+  computeVisibleCells,
+  fogCellKey,
+  mergeExploredCells
+} from '../../src/scenes/fog-visibility';
 
 describe('fog visibility', () => {
-  it('radius=1 reveals a 3x3 area around one centered actor', () => {
+  it('radius=1 + square reveals a 3x3 area around one centered actor', () => {
     const visible = computeVisibleCells({
       width: 5,
       height: 5,
       actors: [{ x: 2, y: 2 }],
-      radius: 1
+      radius: 1,
+      shape: 'square'
     });
     expect(visible.size).toBe(9);
     expect(visible.has(fogCellKey(1, 1))).toBe(true);
@@ -25,33 +31,117 @@ describe('fog visibility', () => {
     expect([...visible].sort()).toEqual(['0,0', '0,1', '1,0', '1,1']);
   });
 
-  it('unions both actors visibility and keeps explored cells', () => {
-    const explored = new Set<string>();
-    const first = computeVisibleCells({
-      width: 8,
-      height: 8,
-      actors: [
-        { x: 0, y: 0 },
-        { x: 7, y: 7 }
-      ],
-      radius: 1
+  it('supports diamond and cross vision shapes', () => {
+    const diamond = computeVisibleCells({
+      width: 7,
+      height: 7,
+      actors: [{ x: 3, y: 3 }],
+      radius: 2,
+      shape: 'diamond'
     });
-    mergeExploredCells(explored, first);
-    expect(explored.has('0,0')).toBe(true);
-    expect(explored.has('7,7')).toBe(true);
+    expect(diamond.has('3,1')).toBe(true);
+    expect(diamond.has('1,1')).toBe(false);
 
-    const second = computeVisibleCells({
+    const cross = computeVisibleCells({
+      width: 7,
+      height: 7,
+      actors: [{ x: 3, y: 3 }],
+      radius: 2,
+      shape: 'cross'
+    });
+    expect(cross.has('3,1')).toBe(true);
+    expect(cross.has('2,2')).toBe(false);
+    expect(cross.size).toBe(9);
+  });
+
+  it('keeps persistent memory but can disable or decay it', () => {
+    const frames = [
+      { moveCount: 0, blue: { x: 1, y: 1 }, orange: { x: 6, y: 6 } },
+      { moveCount: 1, blue: { x: 2, y: 1 }, orange: { x: 5, y: 6 } },
+      { moveCount: 5, blue: { x: 5, y: 1 }, orange: { x: 2, y: 6 } }
+    ];
+    const persistent = computeFogState({
       width: 8,
       height: 8,
-      actors: [
-        { x: 2, y: 2 },
-        { x: 5, y: 5 }
-      ],
-      radius: 1
+      frames,
+      rules: { mode: 'fog', radius: 1, memory: 'persistent' }
     });
-    mergeExploredCells(explored, second);
-    expect(explored.has('0,0')).toBe(true);
-    expect(explored.has('2,2')).toBe(true);
-    expect(explored.has('5,5')).toBe(true);
+    expect(persistent.remembered.has('0,0')).toBe(true);
+
+    const none = computeFogState({
+      width: 8,
+      height: 8,
+      frames,
+      rules: { mode: 'fog', radius: 1, memory: 'none' }
+    });
+    expect(none.remembered.size).toBe(0);
+
+    const decay = computeFogState({
+      width: 8,
+      height: 8,
+      frames,
+      rules: { mode: 'fog', radius: 1, memory: 'decay', memoryTurns: 2 }
+    });
+    expect(decay.remembered.has('0,0')).toBe(false);
+  });
+
+  it('alternates the active vision source by move parity', () => {
+    const even = computeFogState({
+      width: 10,
+      height: 10,
+      frames: [{ moveCount: 2, blue: { x: 1, y: 1 }, orange: { x: 8, y: 8 } }],
+      rules: { mode: 'fog', radius: 1, source: 'alternating', memory: 'none' }
+    });
+    expect(even.visible.has('1,1')).toBe(true);
+    expect(even.visible.has('8,8')).toBe(false);
+
+    const odd = computeFogState({
+      width: 10,
+      height: 10,
+      frames: [{ moveCount: 3, blue: { x: 1, y: 1 }, orange: { x: 8, y: 8 } }],
+      rules: { mode: 'fog', radius: 1, source: 'alternating', memory: 'none' }
+    });
+    expect(odd.visible.has('1,1')).toBe(false);
+    expect(odd.visible.has('8,8')).toBe(true);
+  });
+
+  it('radar pulse temporarily expands vision', () => {
+    const fog = computeFogState({
+      width: 9,
+      height: 9,
+      frames: [{ moveCount: 5, blue: { x: 1, y: 1 }, orange: { x: 7, y: 7 } }],
+      rules: {
+        mode: 'fog',
+        radius: 1,
+        memory: 'none',
+        pulseEvery: 5,
+        pulseRadius: 12
+      }
+    });
+    expect(fog.pulseActive).toBe(true);
+    expect(fog.visible.size).toBe(81);
+  });
+
+  it('activated beacon permanently contributes a reveal area', () => {
+    const fog = computeFogState({
+      width: 9,
+      height: 9,
+      frames: [
+        { moveCount: 0, blue: { x: 1, y: 1 }, orange: { x: 7, y: 7 } },
+        { moveCount: 1, blue: { x: 3, y: 3 }, orange: { x: 5, y: 7 } },
+        { moveCount: 4, blue: { x: 6, y: 3 }, orange: { x: 2, y: 7 } }
+      ],
+      rules: { mode: 'fog', radius: 1, memory: 'none' },
+      beacons: [{ x: 3, y: 3, radius: 2 }]
+    });
+    expect(fog.activatedBeacons.has('3,3')).toBe(true);
+    expect(fog.visible.has('1,1')).toBe(true);
+  });
+
+  it('legacy mergeExploredCells helper still unions visible cells', () => {
+    const explored = new Set<string>();
+    mergeExploredCells(explored, new Set(['0,0', '1,1']));
+    mergeExploredCells(explored, new Set(['1,1', '2,2']));
+    expect([...explored].sort()).toEqual(['0,0', '1,1', '2,2']);
   });
 });

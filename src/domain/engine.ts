@@ -7,7 +7,8 @@ import type {
   LevelDef,
   MappingMode,
   MoveResult,
-  Point
+  Point,
+  TurnPhase
 } from './types';
 import { DIRECTIONS } from './types';
 import { addDir, equalsPoint, inBounds, pointKey } from './point';
@@ -50,7 +51,11 @@ function isCollapsed(state: GameState, p: Point): boolean {
   return state.fragileCollapsed.some((c) => equalsPoint(c, p));
 }
 
-/** P4 阻挡判定并给出原因（优先级与结算规范 P4 一致：目标格 1–5 先于当前格 6 单向约束）。 */
+function nextTurnPhase(state: GameState): TurnPhase {
+  return (state.moveCount + 1) % 2 === 1 ? 'ODD' : 'EVEN';
+}
+
+/** P4 阻挡判定并给出原因（目标格阻挡先于当前格 oneWay 离开约束）。 */
 function obstructionReason(
   idx: LevelIndex,
   state: GameState,
@@ -65,6 +70,7 @@ function obstructionReason(
     if (entity.type === 'door' && !state.doors[entity.id]) return 'door';
     if (entity.type === 'colorDoor' && entity.color !== color) return 'colorDoor';
     if (entity.type === 'pulseDoor' && !state.pulseDoors[entity.pairId]) return 'pulseDoor';
+    if (entity.type === 'phaseDoor' && entity.phase !== nextTurnPhase(state)) return 'phaseDoor';
   }
   return null;
 }
@@ -266,8 +272,6 @@ export function applyCommand(level: LevelDef, prev: GameState, input: Direction)
   for (const who of ['blue', 'orange'] as const) {
     const start = who === 'blue' ? blueFrom : orangeFrom;
     if (!entitiesAt(idx, start).some((e) => e.type === 'fragile')) continue;
-    // D1（ADR-016）：仅当 D2 后该格无任何角色才坍塌——对穿/传送落点占位时不坍塌，
-    // 否则会出现角色站在已坍塌格上（违反 I1）。
     const occupiedAfter =
       equalsPoint(state.actors.blue.pos, start) || equalsPoint(state.actors.orange.pos, start);
     if (!occupiedAfter && !isCollapsed(state, start)) {

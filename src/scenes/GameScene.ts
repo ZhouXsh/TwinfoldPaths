@@ -1,5 +1,12 @@
 import Phaser from 'phaser';
-import type { ActorMoveInfo, Direction, GameState, MappingMode, Point } from '../domain/types';
+import type {
+  ActorMoveInfo,
+  Direction,
+  GameState,
+  MappingMode,
+  Point,
+  TurnPhase
+} from '../domain/types';
 import { applyCommand, restart, undo } from '../domain/engine';
 import { createInitialState } from '../domain/level';
 import { DELTA, equalsPoint } from '../domain/point';
@@ -28,9 +35,8 @@ import {
   hideDirectionPreview
 } from './dom-ui';
 import { recordEvent } from '../telemetry/telemetry';
-import { computeVisibleCells, fogCellKey, mergeExploredCells } from './fog-visibility';
+import { computeFogState, fogCellKey, type FogFrame } from './fog-visibility';
 
-/** 移动动画时长（阶段 06 要求 150–220ms）。 */
 const MOVE_ANIM_MS = 180;
 const CANCEL_SHAKE_MS = 120;
 const WIN_DELAY_MS = 700;
@@ -55,6 +61,11 @@ const ONEWAY_TEXTURES: Record<'UP' | 'DOWN' | 'LEFT' | 'RIGHT', string> = {
   DOWN: 'oneway-DOWN',
   LEFT: 'oneway-LEFT',
   RIGHT: 'oneway-RIGHT'
+};
+
+const PHASE_TINTS: Record<TurnPhase, number> = {
+  ODD: 0x9c8cff,
+  EVEN: 0xffc56f
 };
 
 const KEY_DIRECTIONS: ReadonlyArray<readonly [string, Direction]> = [
@@ -98,10 +109,10 @@ export class GameScene extends Phaser.Scene {
   private pulseDoorSprites: Array<{ sprite: Phaser.GameObjects.Image; pairId: string }> = [];
   private pulseSwitchSprites: Array<{ sprite: Phaser.GameObjects.Image; x: number; y: number }> =
     [];
+  private phaseDoorSprites: Array<{ sprite: Phaser.GameObjects.Image; phase: TurnPhase }> = [];
   private blueToken: Phaser.GameObjects.Image | null = null;
   private orangeToken: Phaser.GameObjects.Image | null = null;
   private fogGraphics: Phaser.GameObjects.Graphics | null = null;
-  private exploredCells = new Set<string>();
   private cleanupFns: Array<() => void> = [];
   private reducedAnim = false;
   private pointerDownPos: { x: number; y: number } | null = null;
@@ -130,10 +141,10 @@ export class GameScene extends Phaser.Scene {
     this.fragileSprites = [];
     this.pulseDoorSprites = [];
     this.pulseSwitchSprites = [];
+    this.phaseDoorSprites = [];
     this.blueToken = null;
     this.orangeToken = null;
     this.fogGraphics = null;
-    this.exploredCells.clear();
     this.pointerDownPos = null;
     this.pointerDownTime = 0;
     this.hintRestoreTimer?.remove(false);
@@ -144,7 +155,7 @@ export class GameScene extends Phaser.Scene {
     audioManager.setState({ music: settings.music, sfx: settings.sfx });
 
     this.drawBoard(level);
-    this.refreshFog(true);
+    this.refreshFog();
     showBars('bar-hud', 'bar-controls');
     setLevelLabel(`${level.chapter}-${level.order} ${level.title}`);
     setMappingLabel(`映射：${MAPPING_NAMES[this.state.mapping]}`);
@@ -169,8 +180,7 @@ export class GameScene extends Phaser.Scene {
 
   private drawBoard(level: LevelRecord): void {
     const { width, height } = level.grid;
-    // 大地图自动使用更窄边距；10x10 在 360 逻辑画布上仍能获得约 34px 单元格。
-    const boardPadding = Math.max(width, height) >= 8 ? 12 : 24;
+    const boardPadding = Math.max(width, height) >= 8 ? 10 : 24;
     this.tile = Math.min(
       Math.floor((BOARD_SIZE - boardPadding) / width),
       Math.floor((BOARD_SIZE - boardPadding) / height),
@@ -241,6 +251,22 @@ export class GameScene extends Phaser.Scene {
             pairId: entity.pairId
           });
           break;
+        case 'phaseDoor':
+          this.phaseDoorSprites.push({
+            sprite: this.add
+              .image(c.x, c.y, 'pulsedoor-closed')
+              .setScale(scale)
+              .setTint(PHASE_TINTS[entity.phase]),
+            phase: entity.phase
+          });
+          break;
+        case 'visionBeacon':
+          this.add
+            .image(c.x, c.y, 'pulseswitch')
+            .setScale(scale * 0.9)
+            .setTint(0x71d8c1)
+            .setAlpha(0.95);
+          break;
         default:
           break;
       }
@@ -279,11 +305,22 @@ export class GameScene extends Phaser.Scene {
     return level.visibility?.mode === 'fog' || level.tags.includes(FOG_TAG);
   }
 
-  /**
-   * V1 探索迷雾：当前视野完全透明、已经探索的旧区域半透明、未知区域遮蔽。
-   * explored 不写入 GameState，因此撤销不会“忘记”已经看过的地图；重开会清空。
-   */
-  private refreshFog(resetExplored = false): void {
+  private fogFrames(state: GameState): FogFrame[] {
+    const frames: FogFrame[] = state.history.map((snapshot) => ({
+      moveCount: snapshot.moveCount,
+      blue: snapshot.actors.blue.pos,
+      orange: snapshot.actors.orange.pos
+    }));
+    frames.push({
+      moveCount: state.moveCount,
+      blue: state.actors.blue.pos,
+      orange: state.actors.orange.pos
+    });
+    return frames;
+  }
+
+  /** 第四章探索系统：九宫格基础上支持失忆、交替视野、形状变化、雷达和信标。 */
+  private refreshFog(): void {
     const level = this.level;
     const state = this.state;
     if (!level || !state) return;
@@ -294,28 +331,30 @@ export class GameScene extends Phaser.Scene {
       return;
     }
 
-    if (resetExplored) this.exploredCells.clear();
-    const radius = level.visibility?.radius ?? 1;
-    const visible = computeVisibleCells({
+    const rules = level.visibility ?? { mode: 'fog' as const, radius: 1 };
+    const beacons = level.entities
+      .filter((entity): entity is Extract<typeof entity, { type: 'visionBeacon' }> =>
+        entity.type === 'visionBeacon'
+      )
+      .map((entity) => ({ x: entity.x, y: entity.y, radius: entity.radius }));
+    const fog = computeFogState({
       width: level.grid.width,
       height: level.grid.height,
-      actors: [state.actors.blue.pos, state.actors.orange.pos],
-      radius
+      frames: this.fogFrames(state),
+      rules,
+      beacons
     });
-    mergeExploredCells(this.exploredCells, visible);
 
-    if (!this.fogGraphics) {
-      this.fogGraphics = this.add.graphics().setDepth(1000);
-    }
+    if (!this.fogGraphics) this.fogGraphics = this.add.graphics().setDepth(1000);
     const graphics = this.fogGraphics;
     graphics.clear();
 
     for (let y = 0; y < level.grid.height; y++) {
       for (let x = 0; x < level.grid.width; x++) {
         const key = fogCellKey(x, y);
-        if (visible.has(key)) continue;
-        const explored = this.exploredCells.has(key);
-        graphics.fillStyle(explored ? 0xdfe6ef : 0xf1f4f8, explored ? 0.58 : 0.96);
+        if (fog.visible.has(key)) continue;
+        const remembered = fog.remembered.has(key);
+        graphics.fillStyle(remembered ? 0xdfe6ef : 0xf1f4f8, remembered ? 0.58 : 0.97);
         graphics.fillRect(
           this.originX + x * this.tile,
           this.originY + y * this.tile,
@@ -418,13 +457,9 @@ export class GameScene extends Phaser.Scene {
   ): void {
     const animDuration = this.reducedAnim ? 30 : MOVE_ANIM_MS;
 
-    if (result.teleported.blue || result.teleported.orange) {
-      audioManager.play('teleport');
-    } else if (result.blue.blocked || result.orange.blocked) {
-      audioManager.play('block');
-    } else {
-      audioManager.play('move');
-    }
+    if (result.teleported.blue || result.teleported.orange) audioManager.play('teleport');
+    else if (result.blue.blocked || result.orange.blocked) audioManager.play('block');
+    else audioManager.play('move');
 
     if (this.blueActor)
       this.animateActor(this.blueActor, result.blue, input, result.teleported.blue, animDuration);
@@ -446,14 +481,14 @@ export class GameScene extends Phaser.Scene {
       this.refreshExitGlow();
       this.syncEntityStates(state);
       this.syncTokens(state);
-      this.refreshFog(false);
+      this.refreshFog();
       const events: string[] = [];
       if (result.teleported.blue) events.push('蓝被传送');
       if (result.teleported.orange) events.push('橙被传送');
-      if (result.blue.blocked && result.blue.reason !== 'oneWay') {
+      if (result.blue.blocked && !['oneWay', 'phaseDoor'].includes(result.blue.reason ?? '')) {
         events.push('蓝被障碍挡住，橙仍会照常行动');
       }
-      if (result.orange.blocked && result.orange.reason !== 'oneWay') {
+      if (result.orange.blocked && !['oneWay', 'phaseDoor'].includes(result.orange.reason ?? '')) {
         events.push('橙被障碍挡住，蓝仍会照常行动');
       }
       if (state.fragileCollapsed.length > collapsedBefore) {
@@ -468,6 +503,9 @@ export class GameScene extends Phaser.Scene {
         events.push('单向格只能顺箭头离开');
       } else if (result.blue.reason === 'pulseDoor' || result.orange.reason === 'pulseDoor') {
         events.push('脉冲门未激活');
+      } else if (result.blue.reason === 'phaseDoor' || result.orange.reason === 'phaseDoor') {
+        const next = state.moveCount % 2 === 0 ? '奇数' : '偶数';
+        events.push(`相位不匹配：下一步是${next}步相位`);
       }
       if (result.pauseConsumed.blue) events.push('蓝消耗暂停令牌，原地停留');
       if (result.pauseConsumed.orange) events.push('橙消耗暂停令牌，原地停留');
@@ -481,12 +519,19 @@ export class GameScene extends Phaser.Scene {
       if (blueOnExit !== orangeOnExit) {
         events.push(blueOnExit ? '蓝已到达出口，继续引导橙就位' : '橙已到达出口，继续引导蓝就位');
       }
+      if (
+        level.visibility?.pulseEvery &&
+        state.moveCount > 0 &&
+        state.moveCount % level.visibility.pulseEvery === 0
+      ) {
+        events.push('雷达脉冲：视野短暂展开');
+      }
       if (state.actors.blue.hasPauseToken && !result.pauseConsumed.blue) {
-        const prev = this.state?.history?.[this.state.history.length - 1];
+        const prev = state.history[state.history.length - 1];
         if (prev && !prev.actors.blue.hasPauseToken) audioManager.play('token');
       }
       if (state.actors.orange.hasPauseToken && !result.pauseConsumed.orange) {
-        const prev = this.state?.history?.[this.state.history.length - 1];
+        const prev = state.history[state.history.length - 1];
         if (prev && !prev.actors.orange.hasPauseToken) audioManager.play('token');
       }
       setStatusText(
@@ -517,7 +562,7 @@ export class GameScene extends Phaser.Scene {
       return;
     }
     if (info.blocked) {
-      if (info.reason === 'oneWay') {
+      if (info.reason === 'oneWay' || info.reason === 'phaseDoor') {
         if (!this.reducedAnim) {
           this.tweens.add({
             targets: sprite,
@@ -556,7 +601,6 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  /** 同格取消（R-04）反馈：双方短促抖动，不消耗步数。 */
   private feedbackCancel(): void {
     if (this.reducedAnim) return;
     for (const sprite of [this.blueActor, this.orangeActor]) {
@@ -585,7 +629,6 @@ export class GameScene extends Phaser.Scene {
       .setScale(orangeOn ? this.exitBaseScale * 1.15 : this.exitBaseScale);
   }
 
-  /** 实体表现一律由 GameState 驱动（门开闭不得只存在精灵上）。 */
   private syncEntityStates(state: GameState): void {
     for (const [doorId, sprite] of this.doorSprites) {
       sprite.setTexture(state.doors[doorId] ? 'door-open' : 'door-closed');
@@ -614,9 +657,16 @@ export class GameScene extends Phaser.Scene {
         equalsPoint(state.actors.orange.pos, { x: pulseSwitch.x, y: pulseSwitch.y });
       pulseSwitch.sprite.setAlpha(occupied ? 1 : 0.72);
     }
+    const nextPhase: TurnPhase = (state.moveCount + 1) % 2 === 1 ? 'ODD' : 'EVEN';
+    for (const phaseDoor of this.phaseDoorSprites) {
+      const open = phaseDoor.phase === nextPhase;
+      phaseDoor.sprite
+        .setTexture(open ? 'pulsedoor-open' : 'pulsedoor-closed')
+        .setTint(PHASE_TINTS[phaseDoor.phase])
+        .setAlpha(open ? 0.75 : 1);
+    }
   }
 
-  /** 暂停令牌指示（M3）：跟随角色，位于格子右上角。 */
   private syncTokens(state: GameState): void {
     const sync = (
       token: Phaser.GameObjects.Image | null,
@@ -658,7 +708,7 @@ export class GameScene extends Phaser.Scene {
     this.syncActors();
     this.syncEntityStates(prev);
     this.syncTokens(prev);
-    this.refreshFog(false);
+    this.refreshFog();
     setMappingLabel(`映射：${MAPPING_NAMES[prev.mapping]}`);
     setMoveCount(prev.moveCount);
     this.refreshExitGlow();
@@ -675,7 +725,7 @@ export class GameScene extends Phaser.Scene {
     this.syncActors();
     this.syncEntityStates(this.state);
     this.syncTokens(this.state);
-    this.refreshFog(true);
+    this.refreshFog();
     setMappingLabel(`映射：${MAPPING_NAMES[this.state.mapping]}`);
     setMoveCount(0);
     this.refreshExitGlow();

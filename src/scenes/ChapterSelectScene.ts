@@ -8,9 +8,9 @@ import { bindButton, getEl, setStatusText, showBars } from './dom-ui';
 const CHAPTERS = [
   { num: 1, title: '镜像初识', subtitle: 'M0 基础镜像规则' },
   { num: 2, title: '彼此开路', subtitle: 'M1 压板 M2 专属门' },
-  { num: 3, title: '打破同步', subtitle: 'M3 暂停 M4 切换' },
-  { num: 4, title: '空间折叠', subtitle: 'M5 单向 M6 传送' },
-  { num: 5, title: '双线合流', subtitle: 'M7 脆弱 M8 脉冲' }
+  { num: 3, title: '扩域迷阵', subtitle: '大地图 · 映射变体 · 长线规划' },
+  { num: 4, title: '暗域探索', subtitle: '全章迷雾 · 记忆 · 雷达 · 信标' },
+  { num: 5, title: '时相终局', subtitle: 'M9 相位门 · 高级机制综合' }
 ];
 
 export class ChapterSelectScene extends Phaser.Scene {
@@ -23,7 +23,7 @@ export class ChapterSelectScene extends Phaser.Scene {
   create(): void {
     showBars('bar-chapter-select');
     this.renderChapters();
-    setStatusText('每章包含两段机制学习和一个综合挑战，建议按顺序游玩。');
+    setStatusText('后半程从空间扩展进入暗域探索，再进入需要计算回合奇偶的时相终局。');
     this.cleanupFns.push(bindButton('btn-chapter-back', () => this.scene.start('Home')));
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       for (const fn of this.cleanupFns) fn();

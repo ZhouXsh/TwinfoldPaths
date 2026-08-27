@@ -1,0 +1,51 @@
+name: Late Game Redesign
+
+on:
+  push:
+    branches:
+      - optimize/late-game-redesign-20260827
+
+permissions:
+  contents: write
+
+jobs:
+  generate-and-verify:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Wire generators to reusable solver API
+        run: |
+          sed -i 's#../tools-dist/solver.mjs#../tools-dist/solverApi.mjs#g' tools/redesign-late-game.mjs tools/sync-par.mjs
+      - name: Diversify repeated optimal routes
+        run: node tools/patch-redesign-specs.mjs
+      - name: Rebuild levels 21-50
+        run: npm run redesign:late-game
+      - name: Make BFS authoritative for all parMoves
+        run: node tools/sync-par.mjs
+      - name: Format generated content
+        run: npx prettier --write levels/chapter-01 levels/chapter-02 levels/chapter-03 levels/chapter-04 levels/chapter-05 reports/late-game-redesign-summary.md reports/late-game-redesign-summary.json docs/decision-log.md .ai/project-state.md
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run validate:levels
+      - run: npm run solve:levels
+      - run: npm run report:solution-variety
+      - run: npm run build
+      - run: npm run verify:dist
+      - name: Commit generated level content and factual reports
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tools/redesign-late-game.mjs tools/sync-par.mjs levels docs/decision-log.md .ai/project-state.md reports/late-game-redesign-summary.md reports/late-game-redesign-summary.json
+          if git diff --cached --quiet; then
+            echo "No generated changes to commit"
+          else
+            git commit -m "content: rebuild levels 21-50 and sync exact BFS par"
+            git push
+          fi

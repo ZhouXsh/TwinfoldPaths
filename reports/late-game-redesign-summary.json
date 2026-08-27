@@ -1,0 +1,527 @@
+{
+  "generatedAt": "2026-08-27T11:50:22.763Z",
+  "averageLate": 18.9,
+  "byChapter": [
+    {
+      "chapter": 3,
+      "average": 17.2,
+      "min": 13,
+      "max": 23
+    },
+    {
+      "chapter": 4,
+      "average": 17.9,
+      "min": 13,
+      "max": 23
+    },
+    {
+      "chapter": 5,
+      "average": 21.6,
+      "min": 16,
+      "max": 24
+    }
+  ],
+  "levels": [
+    {
+      "id": "level-021",
+      "chapter": 3,
+      "grid": "11x7",
+      "optimalSteps": 13,
+      "statesVisited": 14,
+      "solutionCount": 1,
+      "solution": "RIGHT RIGHT RIGHT DOWN DOWN LEFT LEFT LEFT DOWN DOWN RIGHT RIGHT RIGHT",
+      "visibility": null,
+      "featureTypes": [
+        "colorDoor"
+      ]
+    },
+    {
+      "id": "level-022",
+      "chapter": 3,
+      "grid": "7x11",
+      "optimalSteps": 13,
+      "statesVisited": 14,
+      "solutionCount": 1,
+      "solution": "DOWN DOWN DOWN RIGHT RIGHT UP UP UP RIGHT RIGHT DOWN DOWN DOWN",
+      "visibility": null,
+      "featureTypes": [
+        "oneWay"
+      ]
+    },
+    {
+      "id": "level-023",
+      "chapter": 3,
+      "grid": "13x7",
+      "optimalSteps": 17,
+      "statesVisited": 24,
+      "solutionCount": 1,
+      "solution": "RIGHT RIGHT RIGHT RIGHT DOWN DOWN UP LEFT LEFT LEFT LEFT DOWN DOWN RIGHT RIGHT RIGHT RIGHT",
+      "visibility": null,
+      "featureTypes": [
+        "pauseTile",
+        "fragile"
+      ]
+    },
+    {
+      "id": "level-024",
+      "chapter": 3,
+      "grid": "7x13",
+      "optimalSteps": 16,
+      "statesVisited": 17,
+      "solutionCount": 1,
+      "solution": "DOWN DOWN DOWN DOWN RIGHT RIGHT UP UP UP UP RIGHT RIGHT DOWN DOWN DOWN DOWN",
+      "visibility": null,
+      "featureTypes": [
+        "plate",
+        "door"
+      ]
+    },
+    {
+      "id": "level-025",
+      "chapter": 3,
+      "grid": "11x9",
+      "optimalSteps": 18,
+      "statesVisited": 24,
+      "solutionCount": 1,
+      "solution": "RIGHT RIGHT RIGHT DOWN DOWN LEFT LEFT LEFT DOWN DOWN RIGHT RIGHT RIGHT DOWN DOWN LEFT LEFT LEFT",
+      "visibility": null,
+      "featureTypes": [
+        "pulseSwitch",
+        "pulseDoor"
+      ]
+    },
+    {
+      "id": "level-026",
+      "chapter": 3,
+      "grid": "15x15",
+      "optimalSteps": 14,
+      "statesVisited": 22,
+      "solutionCount": 1,
+      "solution": "RIGHT RIGHT RIGHT DOWN DOWN LEFT UP LEFT LEFT DOWN DOWN RIGHT RIGHT RIGHT",
+      "visibility": null,
+      "featureTypes": [
+        "oneWay",
+        "pauseTile",
+        "fragile"
+      ]
+    },
+    {
+      "id": "level-027",
+      "chapter": 3,
+      "grid": "13x9",
+      "optimalSteps": 22,
+      "statesVisited": 23,
+      "solutionCount": 1,
+      "solution": "RIGHT RIGHT RIGHT RIGHT DOWN DOWN LEFT LEFT LEFT LEFT DOWN DOWN RIGHT RIGHT RIGHT RIGHT DOWN DOWN LEFT LEFT LEFT LEFT",
+      "visibility": null,
+      "featureTypes": [
+        "colorDoor",
+        "plate",
+        "door"
+      ]
+    },
+    {
+      "id": "level-028",
+      "chapter": 3,
+      "grid": "9x11",
+      "optimalSteps": 19,
+      "statesVisited": 20,
+      "solutionCount": 1,
+      "solution": "DOWN DOWN DOWN RIGHT RIGHT UP UP UP UP RIGHT RIGHT DOWN DOWN DOWN RIGHT RIGHT UP UP UP",
+      "visibility": null,
+      "featureTypes": [
+        "pauseTile",
+        "oneWay"
+      ]
+    },
+    {
+      "id": "level-029",
+      "chapter": 3,
+      "grid": "13x9",
+      "optimalSteps": 23,
+      "statesVisited": 38,
+      "solutionCount": 1,
+      "solution": "RIGHT RIGHT RIGHT RIGHT DOWN DOWN LEFT LEFT LEFT LEFT UP DOWN DOWN RIGHT RIGHT RIGHT RIGHT DOWN DOWN LEFT LEFT LEFT LEFT",
+      "visibility": null,
+      "featureTypes": [
+        "fragile",
+        "pauseTile",
+        "pulseSwitch",
+        "pulseDoor"
+      ]
+    },
+    {
+      "id": "level-030",
+      "chapter": 3,
+      "grid": "15x15",
+      "optimalSteps": 17,
+      "statesVisited": 28,
+      "solutionCount": 1,
+      "solution": "RIGHT RIGHT RIGHT RIGHT DOWN DOWN LEFT UP LEFT LEFT LEFT DOWN DOWN RIGHT RIGHT RIGHT RIGHT",
+      "visibility": null,
+      "featureTypes": [
+        "colorDoor",
+        "pauseTile",
+        "pulseSwitch",
+        "pulseDoor"
+      ]
+    },
+    {
+      "id": "level-031",
+      "chapter": 4,
+      "grid": "11x7",
+      "optimalSteps": 13,
+      "statesVisited": 14,
+      "solutionCount": 1,
+      "solution": "RIGHT RIGHT RIGHT DOWN DOWN LEFT LEFT LEFT DOWN DOWN RIGHT RIGHT RIGHT",
+      "visibility": {
+        "mode": "fog",
+        "radius": 1,
+        "shape": "square",
+        "memory": "persistent",
+        "source": "both"
+      },
+      "featureTypes": [
+        "colorDoor"
+      ]
+    },
+    {
+      "id": "level-032",
+      "chapter": 4,
+      "grid": "7x11",
+      "optimalSteps": 13,
+      "statesVisited": 14,
+      "solutionCount": 1,
+      "solution": "DOWN DOWN DOWN RIGHT RIGHT UP UP UP RIGHT RIGHT DOWN DOWN DOWN",
+      "visibility": {
+        "mode": "fog",
+        "radius": 1,
+        "shape": "square",
+        "memory": "none",
+        "source": "both"
+      },
+      "featureTypes": [
+        "oneWay"
+      ]
+    },
+    {
+      "id": "level-033",
+      "chapter": 4,
+      "grid": "13x7",
+      "optimalSteps": 16,
+      "statesVisited": 24,
+      "solutionCount": 1,
+      "solution": "RIGHT RIGHT RIGHT RIGHT DOWN DOWN LEFT LEFT LEFT LEFT DOWN DOWN RIGHT RIGHT RIGHT RIGHT",
+      "visibility": {
+        "mode": "fog",
+        "radius": 1,
+        "shape": "square",
+        "memory": "decay",
+        "source": "both",
+        "memoryTurns": 3
+      },
+      "featureTypes": [
+        "fragile"
+      ]
+    },
+    {
+      "id": "level-034",
+      "chapter": 4,
+      "grid": "7x13",
+      "optimalSteps": 17,
+      "statesVisited": 18,
+      "solutionCount": 1,
+      "solution": "DOWN DOWN DOWN DOWN RIGHT RIGHT UP UP UP UP UP RIGHT RIGHT DOWN DOWN DOWN DOWN",
+      "visibility": {
+        "mode": "fog",
+        "radius": 1,
+        "shape": "square",
+        "memory": "persistent",
+        "source": "alternating"
+      },
+      "featureTypes": [
+        "pauseTile"
+      ]
+    },
+    {
+      "id": "level-035",
+      "chapter": 4,
+      "grid": "11x9",
+      "optimalSteps": 18,
+      "statesVisited": 19,
+      "solutionCount": 1,
+      "solution": "RIGHT RIGHT RIGHT DOWN DOWN LEFT LEFT LEFT DOWN DOWN RIGHT RIGHT RIGHT DOWN DOWN LEFT LEFT LEFT",
+      "visibility": {
+        "mode": "fog",
+        "radius": 1,
+        "shape": "diamond",
+        "memory": "persistent",
+        "source": "both"
+      },
+      "featureTypes": [
+        "oneWay",
+        "colorDoor"
+      ]
+    },
+    {
+      "id": "level-036",
+      "chapter": 4,
+      "grid": "9x11",
+      "optimalSteps": 18,
+      "statesVisited": 19,
+      "solutionCount": 1,
+      "solution": "DOWN DOWN DOWN RIGHT RIGHT UP UP UP RIGHT RIGHT DOWN DOWN DOWN RIGHT RIGHT UP UP UP",
+      "visibility": {
+        "mode": "fog",
+        "radius": 1,
+        "shape": "cross",
+        "memory": "decay",
+        "source": "both",
+        "memoryTurns": 4
+      },
+      "featureTypes": [
+        "plate",
+        "door"
+      ]
+    },
+    {
+      "id": "level-037",
+      "chapter": 4,
+      "grid": "13x9",
+      "optimalSteps": 22,
+      "statesVisited": 30,
+      "solutionCount": 1,
+      "solution": "RIGHT RIGHT RIGHT RIGHT DOWN DOWN LEFT LEFT LEFT LEFT DOWN DOWN RIGHT RIGHT RIGHT RIGHT DOWN DOWN LEFT LEFT LEFT LEFT",
+      "visibility": {
+        "mode": "fog",
+        "radius": 1,
+        "shape": "square",
+        "memory": "none",
+        "source": "both",
+        "pulseEvery": 5,
+        "pulseRadius": 16
+      },
+      "featureTypes": [
+        "fragile",
+        "oneWay"
+      ]
+    },
+    {
+      "id": "level-038",
+      "chapter": 4,
+      "grid": "9x13",
+      "optimalSteps": 22,
+      "statesVisited": 23,
+      "solutionCount": 1,
+      "solution": "DOWN DOWN DOWN DOWN RIGHT RIGHT UP UP UP UP RIGHT RIGHT DOWN DOWN DOWN DOWN RIGHT RIGHT UP UP UP UP",
+      "visibility": {
+        "mode": "fog",
+        "radius": 1,
+        "shape": "square",
+        "memory": "decay",
+        "source": "both",
+        "memoryTurns": 2
+      },
+      "featureTypes": [
+        "visionBeacon"
+      ]
+    },
+    {
+      "id": "level-039",
+      "chapter": 4,
+      "grid": "13x9",
+      "optimalSteps": 23,
+      "statesVisited": 24,
+      "solutionCount": 1,
+      "solution": "RIGHT RIGHT RIGHT RIGHT DOWN DOWN LEFT LEFT LEFT LEFT DOWN DOWN RIGHT UP RIGHT RIGHT RIGHT DOWN DOWN LEFT LEFT LEFT LEFT",
+      "visibility": {
+        "mode": "fog",
+        "radius": 1,
+        "shape": "square",
+        "memory": "decay",
+        "source": "alternating",
+        "memoryTurns": 2
+      },
+      "featureTypes": [
+        "visionBeacon",
+        "pauseTile"
+      ]
+    },
+    {
+      "id": "level-040",
+      "chapter": 4,
+      "grid": "15x15",
+      "optimalSteps": 17,
+      "statesVisited": 26,
+      "solutionCount": 1,
+      "solution": "RIGHT RIGHT RIGHT RIGHT DOWN DOWN LEFT UP LEFT LEFT LEFT DOWN DOWN RIGHT RIGHT RIGHT RIGHT",
+      "visibility": {
+        "mode": "fog",
+        "radius": 1,
+        "shape": "diamond",
+        "memory": "decay",
+        "source": "both",
+        "memoryTurns": 3,
+        "pulseEvery": 6,
+        "pulseRadius": 20
+      },
+      "featureTypes": [
+        "visionBeacon",
+        "pauseTile",
+        "pulseSwitch",
+        "pulseDoor"
+      ]
+    },
+    {
+      "id": "level-041",
+      "chapter": 5,
+      "grid": "11x9",
+      "optimalSteps": 19,
+      "statesVisited": 37,
+      "solutionCount": 1,
+      "solution": "UP RIGHT RIGHT RIGHT DOWN DOWN LEFT LEFT LEFT DOWN DOWN RIGHT RIGHT RIGHT DOWN DOWN LEFT LEFT LEFT",
+      "visibility": null,
+      "featureTypes": [
+        "phaseDoor"
+      ]
+    },
+    {
+      "id": "level-042",
+      "chapter": 5,
+      "grid": "9x11",
+      "optimalSteps": 18,
+      "statesVisited": 37,
+      "solutionCount": 1,
+      "solution": "DOWN DOWN DOWN RIGHT RIGHT UP UP UP RIGHT RIGHT DOWN DOWN DOWN RIGHT RIGHT UP UP UP",
+      "visibility": null,
+      "featureTypes": [
+        "phaseDoor",
+        "oneWay"
+      ]
+    },
+    {
+      "id": "level-043",
+      "chapter": 5,
+      "grid": "13x9",
+      "optimalSteps": 22,
+      "statesVisited": 45,
+      "solutionCount": 1,
+      "solution": "RIGHT RIGHT RIGHT RIGHT DOWN DOWN LEFT LEFT LEFT LEFT DOWN DOWN RIGHT RIGHT RIGHT RIGHT DOWN DOWN LEFT LEFT LEFT LEFT",
+      "visibility": null,
+      "featureTypes": [
+        "colorDoor",
+        "phaseDoor"
+      ]
+    },
+    {
+      "id": "level-044",
+      "chapter": 5,
+      "grid": "9x13",
+      "optimalSteps": 24,
+      "statesVisited": 47,
+      "solutionCount": 1,
+      "solution": "UP DOWN DOWN DOWN DOWN RIGHT UP RIGHT UP UP UP UP RIGHT RIGHT DOWN DOWN DOWN DOWN RIGHT RIGHT UP UP UP UP",
+      "visibility": null,
+      "featureTypes": [
+        "pauseTile",
+        "phaseDoor"
+      ]
+    },
+    {
+      "id": "level-045",
+      "chapter": 5,
+      "grid": "13x9",
+      "optimalSteps": 23,
+      "statesVisited": 68,
+      "solutionCount": 1,
+      "solution": "UP RIGHT RIGHT RIGHT RIGHT DOWN DOWN LEFT LEFT LEFT LEFT DOWN DOWN RIGHT RIGHT RIGHT RIGHT DOWN DOWN LEFT LEFT LEFT LEFT",
+      "visibility": null,
+      "featureTypes": [
+        "fragile",
+        "phaseDoor"
+      ]
+    },
+    {
+      "id": "level-046",
+      "chapter": 5,
+      "grid": "15x15",
+      "optimalSteps": 16,
+      "statesVisited": 45,
+      "solutionCount": 1,
+      "solution": "RIGHT RIGHT RIGHT RIGHT DOWN DOWN LEFT LEFT LEFT LEFT DOWN DOWN RIGHT RIGHT RIGHT RIGHT",
+      "visibility": null,
+      "featureTypes": [
+        "pulseSwitch",
+        "pulseDoor",
+        "phaseDoor"
+      ]
+    },
+    {
+      "id": "level-047",
+      "chapter": 5,
+      "grid": "9x13",
+      "optimalSteps": 23,
+      "statesVisited": 47,
+      "solutionCount": 1,
+      "solution": "DOWN DOWN DOWN DOWN RIGHT RIGHT UP UP UP UP RIGHT RIGHT DOWN DOWN DOWN DOWN UP RIGHT RIGHT UP UP UP UP",
+      "visibility": null,
+      "featureTypes": [
+        "oneWay",
+        "phaseDoor",
+        "pauseTile"
+      ]
+    },
+    {
+      "id": "level-048",
+      "chapter": 5,
+      "grid": "13x9",
+      "optimalSteps": 24,
+      "statesVisited": 47,
+      "solutionCount": 1,
+      "solution": "UP RIGHT RIGHT RIGHT RIGHT DOWN DOWN LEFT LEFT LEFT UP LEFT DOWN DOWN RIGHT RIGHT RIGHT RIGHT DOWN DOWN LEFT LEFT LEFT LEFT",
+      "visibility": null,
+      "featureTypes": [
+        "plate",
+        "door",
+        "pauseTile",
+        "phaseDoor",
+        "colorDoor"
+      ]
+    },
+    {
+      "id": "level-049",
+      "chapter": 5,
+      "grid": "9x13",
+      "optimalSteps": 23,
+      "statesVisited": 57,
+      "solutionCount": 1,
+      "solution": "UP DOWN DOWN DOWN DOWN RIGHT RIGHT UP UP UP UP RIGHT RIGHT DOWN DOWN DOWN DOWN RIGHT RIGHT UP UP UP UP",
+      "visibility": null,
+      "featureTypes": [
+        "fragile",
+        "pulseSwitch",
+        "pulseDoor",
+        "phaseDoor",
+        "oneWay"
+      ]
+    },
+    {
+      "id": "level-050",
+      "chapter": 5,
+      "grid": "13x9",
+      "optimalSteps": 24,
+      "statesVisited": 75,
+      "solutionCount": 1,
+      "solution": "UP RIGHT RIGHT RIGHT RIGHT DOWN DOWN UP LEFT LEFT LEFT LEFT DOWN DOWN RIGHT RIGHT RIGHT RIGHT DOWN DOWN LEFT LEFT LEFT LEFT",
+      "visibility": null,
+      "featureTypes": [
+        "colorDoor",
+        "pauseTile",
+        "fragile",
+        "phaseDoor",
+        "pulseSwitch",
+        "pulseDoor"
+      ]
+    }
+  ]
+}

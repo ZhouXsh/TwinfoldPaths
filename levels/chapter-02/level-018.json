@@ -65,5 +65,5 @@
   },
   "tags": ["chapter-2", "M1", "M2", "key-position"],
   "parMoves": 4,
-  "parMovesNote": "BFS 求解器验证最短步数=4"
+  "parMovesNote": "BFS 最短步数=4；parMoves 与求解器严格一致"
 }
