@@ -3,7 +3,7 @@
   "id": "level-047",
   "chapter": 5,
   "order": 47,
-  "title": "雾中同步",
+  "title": "暂停调节同步",
   "grid": { "width": 9, "height": 8 },
   "blueStart": { "x": 2, "y": 6 },
   "orangeStart": { "x": 6, "y": 6 },
