@@ -57,16 +57,22 @@ async function expectResult(page: Page, moves: number): Promise<void> {
 test('首次用户前三关完整流程（FR-01/FR-02/FR-04）', async ({ page }) => {
   const g = guard(page);
   await openHome(page);
-  await expect(page.getByTestId('status')).toHaveText('健康检查 OK');
-  await expect(page.getByTestId('home-continue')).toHaveText('继续：第 1 关');
+  await expect(page.getByTestId('status')).toContainText('让蓝与橙同时到达');
+  await expect(page.getByTestId('home-continue')).toContainText('第 1 / 50 关');
 
   // 第 1 关
   await startGame(page);
   await expect(page.getByTestId('level-label')).toHaveText('1-1 第一次分岔');
+  await expect(page.getByTestId('target-count')).toHaveText('1');
+  await expect(page.getByTestId('btn-hint')).toBeVisible();
+  await expect(page.getByTestId('btn-left')).toHaveClass(/recommended/);
+  await page.getByTestId('btn-hint').click();
+  await expect(page.getByTestId('status')).toContainText('两个角色都响应');
   await pressMove(page, 'left', 1);
   await expectResult(page, 1);
   await page.getByTestId('btn-next').click();
   await expect(page.getByTestId('level-label')).toHaveText('1-2 左右相反');
+  await expect(page.getByTestId('btn-up')).toHaveClass(/recommended/);
 
   // 第 2 关
   await pressMove(page, 'up', 1);
@@ -150,7 +156,7 @@ test('刷新后进度保持（FR-07）', async ({ page }) => {
   // 刷新
   await page.reload();
   await expect(page.getByTestId('btn-start')).toBeVisible({ timeout: 20000 });
-  await expect(page.getByTestId('home-continue')).toHaveText('继续：第 2 关');
+  await expect(page.getByTestId('home-continue')).toContainText('第 2 / 50 关 · 左右相反');
 
   // 继续进入第 2 关
   await page.getByTestId('btn-start').click();

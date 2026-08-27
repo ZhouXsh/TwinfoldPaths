@@ -3,47 +3,43 @@
   "id": "level-008",
   "chapter": 1,
   "order": 8,
-  "title": "非对称解法",
+  "title": "折线预演",
   "initialMapping": "H_MIRROR",
   "grid": {
-    "width": 5,
-    "height": 5
+    "width": 6,
+    "height": 6
   },
   "blueStart": {
     "x": 0,
-    "y": 4
+    "y": 5
   },
   "orangeStart": {
-    "x": 4,
-    "y": 4
+    "x": 5,
+    "y": 5
   },
   "blueExit": {
-    "x": 0,
+    "x": 2,
     "y": 0
   },
   "orangeExit": {
-    "x": 4,
+    "x": 3,
     "y": 0
   },
   "walls": [
-    {
-      "x": 0,
-      "y": 2
-    },
-    {
-      "x": 1,
-      "y": 2
-    },
-    {
-      "x": 2,
-      "y": 2
-    }
+    { "x": 2, "y": 2 },
+    { "x": 3, "y": 2 },
+    { "x": 2, "y": 3 },
+    { "x": 3, "y": 3 },
+    { "x": 0, "y": 3 },
+    { "x": 5, "y": 3 },
+    { "x": 0, "y": 1 },
+    { "x": 5, "y": 1 }
   ],
   "entities": [],
-  "parMoves": 11,
-  "parMovesNote": "BFS 最短步数=11",
+  "parMoves": 7,
+  "parMovesNote": "BFS 最短步数=7；作为章末前的路径规划预演",
   "hint": {
-    "focus": "蓝方的路被墙挡住，橙方畅通：不对称的路径"
+    "focus": "先看两侧缺口，再规划折线路线；墙会在不同回合分别挡住两人。"
   },
-  "tags": ["chapter-1", "M0", "asymmetric"]
+  "tags": ["chapter-1", "M0", "asymmetric", "pre-final"]
 }

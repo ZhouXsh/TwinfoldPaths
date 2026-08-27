@@ -68,7 +68,7 @@ for (const vp of VIEWPORTS) {
 
     await page.goto('/');
     await expect(page.getByTestId('btn-start')).toBeVisible({ timeout: 20000 });
-    await expect(page.getByTestId('status')).toHaveText('健康检查 OK');
+    await expect(page.getByTestId('status')).toContainText('让蓝与橙同时到达');
 
     // 进入游戏
     await page.getByTestId('btn-start').click();
@@ -210,7 +210,7 @@ test('刷新后进度保持（FR-07）', async ({ page }) => {
   // 刷新
   await page.reload();
   await expect(page.getByTestId('btn-start')).toBeVisible({ timeout: 20000 });
-  await expect(page.getByTestId('home-continue')).toHaveText('继续：第 2 关');
+  await expect(page.getByTestId('home-continue')).toContainText('第 2 / 50 关 · 左右相反');
 
   // 继续进入第 2 关
   await page.getByTestId('btn-start').click();

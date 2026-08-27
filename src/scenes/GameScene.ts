@@ -20,7 +20,9 @@ import {
   setLevelLabel,
   setMappingLabel,
   setMoveCount,
+  setTargetMoves,
   setStatusText,
+  setHintDirection,
   showBars,
   showDirectionPreview,
   hideDirectionPreview
@@ -101,6 +103,7 @@ export class GameScene extends Phaser.Scene {
   private pointerDownPos: { x: number; y: number } | null = null;
   private pointerDownTime = 0;
   private dirPreviewTimer: Phaser.Time.TimerEvent | null = null;
+  private hintRestoreTimer: Phaser.Time.TimerEvent | null = null;
 
   constructor() {
     super('Game');
@@ -127,6 +130,8 @@ export class GameScene extends Phaser.Scene {
     this.orangeToken = null;
     this.pointerDownPos = null;
     this.pointerDownTime = 0;
+    this.hintRestoreTimer?.remove(false);
+    this.hintRestoreTimer = null;
 
     // 加载设置
     const settings = loadSettings(localStorageStore());
@@ -138,7 +143,8 @@ export class GameScene extends Phaser.Scene {
     setLevelLabel(`${level.chapter}-${level.order} ${level.title}`);
     setMappingLabel(`映射：${MAPPING_NAMES[this.state.mapping]}`);
     setMoveCount(0);
-    setStatusText(level.hint.focus);
+    setTargetMoves(level.parMoves);
+    this.showLevelHint(false);
     this.syncEntityStates(this.state);
     this.bindInputs();
 
@@ -146,6 +152,9 @@ export class GameScene extends Phaser.Scene {
     recordEvent('level_start', level.id, 0);
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.hintRestoreTimer?.remove(false);
+      this.hintRestoreTimer = null;
+      setHintDirection(null);
       for (const fn of this.cleanupFns) fn();
       this.cleanupFns = [];
     });
@@ -312,6 +321,7 @@ export class GameScene extends Phaser.Scene {
     }
     this.cleanupFns.push(bindButton('btn-undo', () => this.handleUndo()));
     this.cleanupFns.push(bindButton('btn-restart', () => this.handleRestart()));
+    this.cleanupFns.push(bindButton('btn-hint', () => this.showLevelHint(true)));
     this.cleanupFns.push(
       bindButton('btn-home', () => {
         audioManager.play('uiTap');
@@ -386,6 +396,12 @@ export class GameScene extends Phaser.Scene {
       const events: string[] = [];
       if (result.teleported.blue) events.push('蓝被传送');
       if (result.teleported.orange) events.push('橙被传送');
+      if (result.blue.blocked && result.blue.reason !== 'oneWay') {
+        events.push('蓝被障碍挡住，橙仍会照常行动');
+      }
+      if (result.orange.blocked && result.orange.reason !== 'oneWay') {
+        events.push('橙被障碍挡住，蓝仍会照常行动');
+      }
       if (state.fragileCollapsed.length > collapsedBefore) {
         events.push('脆弱格坍塌');
         audioManager.play('collapse');
@@ -406,6 +422,11 @@ export class GameScene extends Phaser.Scene {
         events.push(`映射切换为${MAPPING_NAMES[state.mapping]}`);
         audioManager.play('switch');
       }
+      const blueOnExit = equalsPoint(state.actors.blue.pos, level.blueExit);
+      const orangeOnExit = equalsPoint(state.actors.orange.pos, level.orangeExit);
+      if (blueOnExit !== orangeOnExit) {
+        events.push(blueOnExit ? '蓝已到达出口，继续引导橙就位' : '橙已到达出口，继续引导蓝就位');
+      }
       // 暂停令牌获得
       if (state.actors.blue.hasPauseToken && !result.pauseConsumed.blue) {
         const prev = this.state?.history?.[this.state.history.length - 1];
@@ -419,7 +440,11 @@ export class GameScene extends Phaser.Scene {
           audioManager.play('token');
         }
       }
-      setStatusText(events.length > 0 ? events.join('；') : level.hint.focus);
+      setStatusText(
+        events.length > 0 ? events.join('；') : level.hint.focus,
+        events.length ? 'event' : 'hint'
+      );
+      if (events.length > 0 && !result.won) this.scheduleHintRestore();
       if (result.won) this.winSequence();
     });
   }
@@ -594,7 +619,7 @@ export class GameScene extends Phaser.Scene {
     setMappingLabel(`映射：${MAPPING_NAMES[prev.mapping]}`);
     setMoveCount(prev.moveCount);
     this.refreshExitGlow();
-    setStatusText(level.hint.focus);
+    this.showLevelHint(false);
     audioManager.play('uiTap');
     recordEvent('undo', level.id, prev.moveCount);
   }
@@ -610,7 +635,7 @@ export class GameScene extends Phaser.Scene {
     setMappingLabel(`映射：${MAPPING_NAMES[this.state.mapping]}`);
     setMoveCount(0);
     this.refreshExitGlow();
-    setStatusText(level.hint.focus);
+    this.showLevelHint(false);
     audioManager.play('uiTap');
     recordEvent('restart', level.id, 0);
   }
@@ -641,7 +666,7 @@ export class GameScene extends Phaser.Scene {
     );
 
     audioManager.play('win');
-    setStatusText('双出口同步达成！');
+    setStatusText('双出口同步达成！', 'event');
 
     if (!this.reducedAnim) {
       for (const sprite of [this.blueActor, this.orangeActor]) {
@@ -665,5 +690,23 @@ export class GameScene extends Phaser.Scene {
         nextId: nextLevelId(level.id)
       });
     });
+  }
+
+  private showLevelHint(record = false): void {
+    const level = this.level;
+    if (!level) return;
+    this.hintRestoreTimer?.remove(false);
+    this.hintRestoreTimer = null;
+    setStatusText(level.hint.focus, 'hint');
+    setHintDirection(level.hint.direction);
+    if (record) {
+      audioManager.play('uiTap');
+      recordEvent('hint', level.id, this.state?.moveCount ?? 0);
+    }
+  }
+
+  private scheduleHintRestore(): void {
+    this.hintRestoreTimer?.remove(false);
+    this.hintRestoreTimer = this.time.delayedCall(2200, () => this.showLevelHint(false));
   }
 }

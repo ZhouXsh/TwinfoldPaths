@@ -10,7 +10,7 @@
       "file": "chapter-01/level-001.json",
       "tags": ["M0"],
       "parMoves": 1,
-      "difficulty": "入门"
+      "difficulty": "教学"
     },
     {
       "id": "level-002",
@@ -20,7 +20,7 @@
       "file": "chapter-01/level-002.json",
       "tags": ["M0"],
       "parMoves": 3,
-      "difficulty": "入门"
+      "difficulty": "教学"
     },
     {
       "id": "level-003",
@@ -30,7 +30,7 @@
       "file": "chapter-01/level-003.json",
       "tags": ["M0"],
       "parMoves": 4,
-      "difficulty": "入门"
+      "difficulty": "教学"
     },
     {
       "id": "level-004",
@@ -39,8 +39,8 @@
       "title": "墙体解耦",
       "file": "chapter-01/level-004.json",
       "tags": ["M0"],
-      "parMoves": 4,
-      "difficulty": "入门"
+      "parMoves": 6,
+      "difficulty": "教学"
     },
     {
       "id": "level-005",
@@ -49,18 +49,18 @@
       "title": "出口不锁定",
       "file": "chapter-01/level-005.json",
       "tags": ["M0"],
-      "parMoves": 8,
-      "difficulty": "简单"
+      "parMoves": 6,
+      "difficulty": "教学"
     },
     {
       "id": "level-006",
       "chapter": 1,
       "order": 6,
-      "title": "各自绕行",
+      "title": "允许对穿",
       "file": "chapter-01/level-006.json",
       "tags": ["M0"],
-      "parMoves": 4,
-      "difficulty": "入门"
+      "parMoves": 6,
+      "difficulty": "教学"
     },
     {
       "id": "level-007",
@@ -69,18 +69,18 @@
       "title": "两次解耦",
       "file": "chapter-01/level-007.json",
       "tags": ["M0"],
-      "parMoves": 4,
-      "difficulty": "入门"
+      "parMoves": 6,
+      "difficulty": "进阶"
     },
     {
       "id": "level-008",
       "chapter": 1,
       "order": 8,
-      "title": "非对称解法",
+      "title": "折线预演",
       "file": "chapter-01/level-008.json",
       "tags": ["M0"],
-      "parMoves": 11,
-      "difficulty": "中等"
+      "parMoves": 7,
+      "difficulty": "进阶"
     },
     {
       "id": "level-009",
@@ -89,8 +89,8 @@
       "title": "先远离后返回",
       "file": "chapter-01/level-009.json",
       "tags": ["M0"],
-      "parMoves": 4,
-      "difficulty": "入门"
+      "parMoves": 6,
+      "difficulty": "进阶"
     },
     {
       "id": "level-010",
@@ -99,8 +99,8 @@
       "title": "第一章综合",
       "file": "chapter-01/level-010.json",
       "tags": ["M0"],
-      "parMoves": 7,
-      "difficulty": "简单"
+      "parMoves": 9,
+      "difficulty": "挑战"
     },
     {
       "id": "level-011",
@@ -110,7 +110,7 @@
       "file": "chapter-02/level-011.json",
       "tags": ["M1"],
       "parMoves": 5,
-      "difficulty": "简单"
+      "difficulty": "教学"
     },
     {
       "id": "level-012",
@@ -119,8 +119,8 @@
       "title": "离板关门时序",
       "file": "chapter-02/level-012.json",
       "tags": ["M1"],
-      "parMoves": 3,
-      "difficulty": "简单"
+      "parMoves": 6,
+      "difficulty": "教学"
     },
     {
       "id": "level-013",
@@ -130,7 +130,7 @@
       "file": "chapter-02/level-013.json",
       "tags": ["M1"],
       "parMoves": 3,
-      "difficulty": "简单"
+      "difficulty": "教学"
     },
     {
       "id": "level-014",
@@ -139,8 +139,8 @@
       "title": "压板二次利用",
       "file": "chapter-02/level-014.json",
       "tags": ["M1"],
-      "parMoves": 4,
-      "difficulty": "简单"
+      "parMoves": 6,
+      "difficulty": "教学"
     },
     {
       "id": "level-015",
@@ -150,7 +150,7 @@
       "file": "chapter-02/level-015.json",
       "tags": ["M0", "M1"],
       "parMoves": 7,
-      "difficulty": "简单"
+      "difficulty": "进阶"
     },
     {
       "id": "level-016",
@@ -160,7 +160,7 @@
       "file": "chapter-02/level-016.json",
       "tags": ["M2"],
       "parMoves": 3,
-      "difficulty": "入门"
+      "difficulty": "教学"
     },
     {
       "id": "level-017",
@@ -170,7 +170,7 @@
       "file": "chapter-02/level-017.json",
       "tags": ["M1", "M2"],
       "parMoves": 5,
-      "difficulty": "简单"
+      "difficulty": "舒缓"
     },
     {
       "id": "level-018",
@@ -180,7 +180,7 @@
       "file": "chapter-02/level-018.json",
       "tags": ["M1", "M2"],
       "parMoves": 4,
-      "difficulty": "简单"
+      "difficulty": "舒缓"
     },
     {
       "id": "level-019",
@@ -189,8 +189,8 @@
       "title": "双压板双门",
       "file": "chapter-02/level-019.json",
       "tags": ["M1", "M2"],
-      "parMoves": 2,
-      "difficulty": "入门"
+      "parMoves": 6,
+      "difficulty": "进阶"
     },
     {
       "id": "level-020",
@@ -199,8 +199,8 @@
       "title": "第二章综合",
       "file": "chapter-02/level-020.json",
       "tags": ["M0", "M1", "M2"],
-      "parMoves": 4,
-      "difficulty": "简单"
+      "parMoves": 6,
+      "difficulty": "挑战"
     },
     {
       "id": "level-021",
@@ -210,7 +210,7 @@
       "file": "chapter-03/level-021.json",
       "tags": ["M3"],
       "parMoves": 4,
-      "difficulty": "简单"
+      "difficulty": "教学"
     },
     {
       "id": "level-022",
@@ -219,8 +219,8 @@
       "title": "主动消耗暂停",
       "file": "chapter-03/level-022.json",
       "tags": ["M3"],
-      "parMoves": 5,
-      "difficulty": "简单"
+      "parMoves": 7,
+      "difficulty": "教学"
     },
     {
       "id": "level-023",
@@ -230,7 +230,7 @@
       "file": "chapter-03/level-023.json",
       "tags": ["M1", "M3"],
       "parMoves": 4,
-      "difficulty": "简单"
+      "difficulty": "舒缓"
     },
     {
       "id": "level-024",
@@ -239,8 +239,8 @@
       "title": "双方先后暂停",
       "file": "chapter-03/level-024.json",
       "tags": ["M3"],
-      "parMoves": 5,
-      "difficulty": "简单"
+      "parMoves": 8,
+      "difficulty": "挑战"
     },
     {
       "id": "level-025",
@@ -249,8 +249,8 @@
       "title": "专属门与暂停",
       "file": "chapter-03/level-025.json",
       "tags": ["M2", "M3"],
-      "parMoves": 5,
-      "difficulty": "简单"
+      "parMoves": 7,
+      "difficulty": "进阶"
     },
     {
       "id": "level-026",
@@ -260,7 +260,7 @@
       "file": "chapter-03/level-026.json",
       "tags": ["M4"],
       "parMoves": 4,
-      "difficulty": "简单"
+      "difficulty": "教学"
     },
     {
       "id": "level-027",
@@ -269,8 +269,8 @@
       "title": "两种映射分段",
       "file": "chapter-03/level-027.json",
       "tags": ["M4"],
-      "parMoves": 6,
-      "difficulty": "简单"
+      "parMoves": 9,
+      "difficulty": "教学"
     },
     {
       "id": "level-028",
@@ -280,7 +280,7 @@
       "file": "chapter-03/level-028.json",
       "tags": ["M3", "M4"],
       "parMoves": 6,
-      "difficulty": "简单"
+      "difficulty": "进阶"
     },
     {
       "id": "level-029",
@@ -290,7 +290,7 @@
       "file": "chapter-03/level-029.json",
       "tags": ["M1", "M4"],
       "parMoves": 4,
-      "difficulty": "简单"
+      "difficulty": "舒缓"
     },
     {
       "id": "level-030",
@@ -299,8 +299,8 @@
       "title": "第三章综合",
       "file": "chapter-03/level-030.json",
       "tags": ["M1", "M2", "M3", "M4"],
-      "parMoves": 6,
-      "difficulty": "中等"
+      "parMoves": 9,
+      "difficulty": "挑战"
     },
     {
       "id": "level-031",
@@ -310,7 +310,7 @@
       "file": "chapter-04/level-031.json",
       "tags": ["M5"],
       "parMoves": 7,
-      "difficulty": "简单"
+      "difficulty": "教学"
     },
     {
       "id": "level-032",
@@ -319,8 +319,8 @@
       "title": "单向固定下一步",
       "file": "chapter-04/level-032.json",
       "tags": ["M5"],
-      "parMoves": 4,
-      "difficulty": "简单"
+      "parMoves": 6,
+      "difficulty": "教学"
     },
     {
       "id": "level-033",
@@ -329,8 +329,8 @@
       "title": "两类解耦",
       "file": "chapter-04/level-033.json",
       "tags": ["M3", "M5"],
-      "parMoves": 5,
-      "difficulty": "简单"
+      "parMoves": 7,
+      "difficulty": "进阶"
     },
     {
       "id": "level-034",
@@ -340,7 +340,7 @@
       "file": "chapter-04/level-034.json",
       "tags": ["M4", "M5"],
       "parMoves": 5,
-      "difficulty": "简单"
+      "difficulty": "舒缓"
     },
     {
       "id": "level-035",
@@ -349,8 +349,8 @@
       "title": "门后单向约束",
       "file": "chapter-04/level-035.json",
       "tags": ["M1", "M5"],
-      "parMoves": 4,
-      "difficulty": "简单"
+      "parMoves": 6,
+      "difficulty": "进阶"
     },
     {
       "id": "level-036",
@@ -360,7 +360,7 @@
       "file": "chapter-04/level-036.json",
       "tags": ["M6"],
       "parMoves": 3,
-      "difficulty": "入门"
+      "difficulty": "教学"
     },
     {
       "id": "level-037",
@@ -369,8 +369,8 @@
       "title": "单方传送",
       "file": "chapter-04/level-037.json",
       "tags": ["M6"],
-      "parMoves": 9,
-      "difficulty": "中等"
+      "parMoves": 6,
+      "difficulty": "教学"
     },
     {
       "id": "level-038",
@@ -380,7 +380,7 @@
       "file": "chapter-04/level-038.json",
       "tags": ["M5", "M6"],
       "parMoves": 3,
-      "difficulty": "简单"
+      "difficulty": "舒缓"
     },
     {
       "id": "level-039",
@@ -389,8 +389,8 @@
       "title": "控制传送回合",
       "file": "chapter-04/level-039.json",
       "tags": ["M3", "M4", "M6"],
-      "parMoves": 3,
-      "difficulty": "简单"
+      "parMoves": 5,
+      "difficulty": "舒缓"
     },
     {
       "id": "level-040",
@@ -399,8 +399,8 @@
       "title": "第四章综合",
       "file": "chapter-04/level-040.json",
       "tags": ["M1", "M4", "M5", "M6"],
-      "parMoves": 13,
-      "difficulty": "困难"
+      "parMoves": 7,
+      "difficulty": "挑战"
     },
     {
       "id": "level-041",
@@ -410,7 +410,7 @@
       "file": "chapter-05/level-041.json",
       "tags": ["M7"],
       "parMoves": 5,
-      "difficulty": "简单"
+      "difficulty": "教学"
     },
     {
       "id": "level-042",
@@ -419,8 +419,8 @@
       "title": "脆弱格变临时墙",
       "file": "chapter-05/level-042.json",
       "tags": ["M7"],
-      "parMoves": 4,
-      "difficulty": "简单"
+      "parMoves": 6,
+      "difficulty": "教学"
     },
     {
       "id": "level-043",
@@ -429,8 +429,8 @@
       "title": "暂停决定消耗者",
       "file": "chapter-05/level-043.json",
       "tags": ["M3", "M7"],
-      "parMoves": 5,
-      "difficulty": "简单"
+      "parMoves": 7,
+      "difficulty": "进阶"
     },
     {
       "id": "level-044",
@@ -440,7 +440,7 @@
       "file": "chapter-05/level-044.json",
       "tags": ["M5", "M7"],
       "parMoves": 6,
-      "difficulty": "中等"
+      "difficulty": "进阶"
     },
     {
       "id": "level-045",
@@ -449,8 +449,8 @@
       "title": "变化棋盘",
       "file": "chapter-05/level-045.json",
       "tags": ["M1", "M4", "M7"],
-      "parMoves": 6,
-      "difficulty": "中等"
+      "parMoves": 9,
+      "difficulty": "挑战"
     },
     {
       "id": "level-046",
@@ -460,7 +460,7 @@
       "file": "chapter-05/level-046.json",
       "tags": ["M8"],
       "parMoves": 6,
-      "difficulty": "中等"
+      "difficulty": "教学"
     },
     {
       "id": "level-047",
@@ -470,7 +470,7 @@
       "file": "chapter-05/level-047.json",
       "tags": ["M3", "M8"],
       "parMoves": 6,
-      "difficulty": "中等"
+      "difficulty": "进阶"
     },
     {
       "id": "level-048",
@@ -479,8 +479,8 @@
       "title": "传送映射同步",
       "file": "chapter-05/level-048.json",
       "tags": ["M4", "M6", "M8"],
-      "parMoves": 4,
-      "difficulty": "中等"
+      "parMoves": 7,
+      "difficulty": "进阶"
     },
     {
       "id": "level-049",
@@ -489,8 +489,8 @@
       "title": "终极预演",
       "file": "chapter-05/level-049.json",
       "tags": ["M2", "M3", "M7"],
-      "parMoves": 5,
-      "difficulty": "中等"
+      "parMoves": 7,
+      "difficulty": "进阶"
     },
     {
       "id": "level-050",
@@ -500,7 +500,7 @@
       "file": "chapter-05/level-050.json",
       "tags": ["M1", "M5", "M8"],
       "parMoves": 6,
-      "difficulty": "中等"
+      "difficulty": "进阶"
     }
   ]
 }

@@ -8,7 +8,7 @@ import {
   type SaveSettings
 } from '../persistence/save-store';
 import { audioManager } from '../audio/audio-manager';
-import { bindButton, getEl, showBars } from './dom-ui';
+import { bindButton, getEl, setStatusText, showBars } from './dom-ui';
 
 export class SettingsScene extends Phaser.Scene {
   private cleanupFns: Array<() => void> = [];
@@ -23,6 +23,7 @@ export class SettingsScene extends Phaser.Scene {
     this.settings = loadSettings(localStorageStore());
     audioManager.setState({ music: this.settings.music, sfx: this.settings.sfx });
     this.renderSettings();
+    setStatusText('可随时调整音效与动画强度；设置会自动保存在本机。');
     this.cleanupFns.push(bindButton('btn-settings-back', () => this.scene.start('Home')));
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       for (const fn of this.cleanupFns) fn();

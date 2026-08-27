@@ -101,8 +101,8 @@ async function shot(page: Page, testInfo: TestInfo, name: string): Promise<void>
 test('首页一键进入第1关（FR-01）', async ({ page }, testInfo) => {
   const g = guard(page);
   await openHome(page);
-  await expect(page.getByTestId('status')).toHaveText('健康检查 OK');
-  await expect(page.getByTestId('home-continue')).toHaveText('继续：第 1 关');
+  await expect(page.getByTestId('status')).toContainText('让蓝与橙同时到达');
+  await expect(page.getByTestId('home-continue')).toContainText('第 1 / 50 关');
   await shot(page, testInfo, 'home');
   await startGame(page);
   await expect(page.getByTestId('level-label')).toHaveText('1-1 第一次分岔');
@@ -177,7 +177,7 @@ test('刷新后从最高解锁关继续（FR-07）', async ({ page }, testInfo) 
 
   await page.reload();
   await expect(page.getByTestId('btn-start')).toBeVisible({ timeout: 20000 });
-  await expect(page.getByTestId('home-continue')).toHaveText('继续：第 2 关');
+  await expect(page.getByTestId('home-continue')).toContainText('第 2 / 50 关 · 左右相反');
   await shot(page, testInfo, 'home-continue-after-reload');
   await page.getByTestId('btn-start').click();
   await expect(page.getByTestId('level-label')).toHaveText('1-2 左右相反');

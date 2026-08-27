@@ -45,10 +45,6 @@
     {
       "x": 4,
       "y": 2
-    },
-    {
-      "x": 5,
-      "y": 2
     }
   ],
   "entities": [
@@ -68,9 +64,9 @@
     }
   ],
   "hint": {
-    "focus": "只有蓝能传送到墙的另一侧，橙需要绕路"
+    "focus": "先让蓝进入传送门，再利用右侧缺口让橙穿过横墙；两人的路线不同但仍共用指令。"
   },
   "tags": ["chapter-4", "tutorial", "M6", "single-portal"],
-  "parMoves": 9,
-  "parMovesNote": "BFS 最短步数=9"
+  "parMoves": 6,
+  "parMovesNote": "BFS 最短步数=6；打开右侧缺口以平滑传送机制的教学坡度"
 }

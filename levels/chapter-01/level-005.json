@@ -19,35 +19,18 @@
   },
   "blueExit": {
     "x": 0,
-    "y": 2
+    "y": 1
   },
   "orangeExit": {
     "x": 4,
     "y": 0
   },
-  "walls": [
-    {
-      "x": 2,
-      "y": 1
-    },
-    {
-      "x": 2,
-      "y": 2
-    },
-    {
-      "x": 2,
-      "y": 3
-    },
-    {
-      "x": 4,
-      "y": 2
-    }
-  ],
+  "walls": [{ "x": 1, "y": 0 }],
   "entities": [],
   "hint": {
-    "focus": "蓝的出口很近，但橙需要绕远路：先到的人耐心等待"
+    "focus": "先向右错开位置，再一起向上；蓝会先被墙挡住，最后向左让两人同时归位。"
   },
   "tags": ["chapter-1", "tutorial", "M0", "exit-no-lock"],
-  "parMoves": 8,
-  "parMovesNote": "BFS 最短步数=8"
+  "parMoves": 6,
+  "parMovesNote": "BFS 最短步数=6；重绘为第一章中段的单次错位练习"
 }
