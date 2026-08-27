@@ -77,5 +77,5 @@
   },
   "tags": ["chapter-1", "M0", "detour"],
   "parMoves": 6,
-  "parMovesNote": "BFS 求解器验证最短步数=6"
+  "parMovesNote": "BFS 最短步数=6；parMoves 与求解器严格一致"
 }

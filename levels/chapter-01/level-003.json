@@ -4,16 +4,36 @@
   "chapter": 1,
   "order": 3,
   "title": "同步双出口",
-  "grid": { "width": 5, "height": 5 },
-  "blueStart": { "x": 1, "y": 0 },
-  "orangeStart": { "x": 3, "y": 0 },
-  "blueExit": { "x": 1, "y": 4 },
-  "orangeExit": { "x": 3, "y": 2 },
+  "grid": {
+    "width": 5,
+    "height": 5
+  },
+  "blueStart": {
+    "x": 1,
+    "y": 0
+  },
+  "orangeStart": {
+    "x": 3,
+    "y": 0
+  },
+  "blueExit": {
+    "x": 1,
+    "y": 4
+  },
+  "orangeExit": {
+    "x": 3,
+    "y": 2
+  },
   "initialMapping": "H_MIRROR",
-  "walls": [{ "x": 3, "y": 3 }],
+  "walls": [
+    {
+      "x": 3,
+      "y": 3
+    }
+  ],
   "entities": [],
   "parMoves": 4,
-  "parMovesNote": "MVP：人工最短解（DOWN×4，橙靠墙等待）经单元测试回放验证；阶段09 由 BFS 求解器复核",
+  "parMovesNote": "BFS 最短步数=4；parMoves 与求解器严格一致",
   "hint": {
     "focus": "出口不锁定：先到的人等待另一人。橙向下2步到出口后会被墙挡住，蓝继续向下4步",
     "direction": "DOWN"

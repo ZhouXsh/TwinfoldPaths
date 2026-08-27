@@ -76,5 +76,5 @@
   },
   "tags": ["chapter-2", "tutorial", "M1", "swap-roles", "route-variation"],
   "parMoves": 3,
-  "parMovesNote": "由原可解布局做垂直镜像；最短步数保持 3，方向序列上下翻转"
+  "parMovesNote": "BFS 最短步数=3；parMoves 与求解器严格一致"
 }

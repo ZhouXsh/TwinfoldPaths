@@ -25,12 +25,17 @@
     "x": 4,
     "y": 0
   },
-  "walls": [{ "x": 1, "y": 0 }],
+  "walls": [
+    {
+      "x": 1,
+      "y": 0
+    }
+  ],
   "entities": [],
   "hint": {
     "focus": "先向右错开位置，再一起向上；蓝会先被墙挡住，最后向左让两人同时归位。"
   },
   "tags": ["chapter-1", "tutorial", "M0", "exit-no-lock"],
   "parMoves": 6,
-  "parMovesNote": "BFS 最短步数=6；重绘为第一章中段的单次错位练习"
+  "parMovesNote": "BFS 最短步数=6；parMoves 与求解器严格一致"
 }

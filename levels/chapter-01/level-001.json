@@ -4,16 +4,36 @@
   "chapter": 1,
   "order": 1,
   "title": "第一次分岔",
-  "grid": { "width": 5, "height": 3 },
-  "blueStart": { "x": 1, "y": 1 },
-  "orangeStart": { "x": 3, "y": 1 },
-  "blueExit": { "x": 0, "y": 1 },
-  "orangeExit": { "x": 3, "y": 1 },
+  "grid": {
+    "width": 5,
+    "height": 3
+  },
+  "blueStart": {
+    "x": 1,
+    "y": 1
+  },
+  "orangeStart": {
+    "x": 3,
+    "y": 1
+  },
+  "blueExit": {
+    "x": 0,
+    "y": 1
+  },
+  "orangeExit": {
+    "x": 3,
+    "y": 1
+  },
   "initialMapping": "H_MIRROR",
-  "walls": [{ "x": 4, "y": 1 }],
+  "walls": [
+    {
+      "x": 4,
+      "y": 1
+    }
+  ],
   "entities": [],
   "parMoves": 1,
-  "parMovesNote": "MVP：人工最短解（LEFT）经单元测试回放验证；阶段09 由 BFS 求解器复核",
+  "parMovesNote": "BFS 最短步数=1；parMoves 与求解器严格一致",
   "hint": {
     "focus": "← 键：蓝→左，橙→右（被墙挡住）。两个角色都响应方向指令。",
     "direction": "LEFT"

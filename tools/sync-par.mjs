@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { bfsSolve } from '../tools-dist/solver.mjs';
+import { bfsSolve } from '../tools-dist/solverApi.mjs';
 
 const ROOT = process.cwd();
 let changed = 0;
