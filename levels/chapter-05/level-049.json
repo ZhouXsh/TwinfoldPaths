@@ -9,22 +9,10 @@
     "width": 7,
     "height": 5
   },
-  "blueStart": {
-    "x": 0,
-    "y": 4
-  },
-  "orangeStart": {
-    "x": 6,
-    "y": 4
-  },
-  "blueExit": {
-    "x": 0,
-    "y": 0
-  },
-  "orangeExit": {
-    "x": 6,
-    "y": 0
-  },
+  "blueStart": { "x": 0, "y": 0 },
+  "orangeStart": { "x": 6, "y": 0 },
+  "blueExit": { "x": 0, "y": 4 },
+  "orangeExit": { "x": 6, "y": 4 },
   "walls": [
     { "x": 0, "y": 1 },
     { "x": 0, "y": 2 },
@@ -32,43 +20,25 @@
     { "x": 6, "y": 1 },
     { "x": 6, "y": 2 },
     { "x": 6, "y": 3 },
-    { "x": 2, "y": 0 },
-    { "x": 2, "y": 1 },
-    { "x": 2, "y": 2 },
+    { "x": 2, "y": 4 },
     { "x": 2, "y": 3 },
-    { "x": 4, "y": 0 },
-    { "x": 4, "y": 1 },
+    { "x": 2, "y": 2 },
+    { "x": 2, "y": 1 },
+    { "x": 4, "y": 4 },
+    { "x": 4, "y": 3 },
     { "x": 4, "y": 2 },
-    { "x": 4, "y": 3 }
+    { "x": 4, "y": 1 }
   ],
   "entities": [
-    {
-      "type": "colorDoor",
-      "x": 1,
-      "y": 2,
-      "color": "BLUE"
-    },
-    {
-      "type": "colorDoor",
-      "x": 5,
-      "y": 2,
-      "color": "ORANGE"
-    },
-    {
-      "type": "fragile",
-      "x": 1,
-      "y": 3
-    },
-    {
-      "type": "pauseTile",
-      "x": 5,
-      "y": 3
-    }
+    { "type": "colorDoor", "x": 1, "y": 2, "color": "BLUE" },
+    { "type": "colorDoor", "x": 5, "y": 2, "color": "ORANGE" },
+    { "type": "fragile", "x": 1, "y": 1 },
+    { "type": "pauseTile", "x": 5, "y": 1 }
   ],
   "parMoves": 7,
-  "parMovesNote": "BFS 最短步数=7",
+  "parMovesNote": "原终极预演做垂直镜像；专属门、暂停与脆弱格的相对关系保持，最短步数保持 7",
   "hint": {
-    "focus": "专属门、暂停和脆弱格的终极组合"
+    "focus": "终极预演改为从上向下：专属门、暂停和脆弱格的组合次序不变，但方向节奏完全翻转。"
   },
-  "tags": ["chapter-5", "M2", "M3", "M7", "final-preview"]
+  "tags": ["chapter-5", "M2", "M3", "M7", "final-preview", "route-variation"]
 }
