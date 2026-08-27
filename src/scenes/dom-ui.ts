@@ -44,6 +44,10 @@ export function setMoveCount(moves: number): void {
   getEl('move-count').textContent = String(moves);
 }
 
+export function setTargetMoves(moves: number): void {
+  getEl('target-count').textContent = String(moves);
+}
+
 export function setLevelLabel(text: string): void {
   getEl('level-label').textContent = text;
 }
@@ -53,8 +57,26 @@ export function setMappingLabel(text: string): void {
   getEl('mapping-label').textContent = text;
 }
 
-export function setStatusText(text: string): void {
-  getEl('status').textContent = text;
+export function setStatusText(text: string, tone: 'hint' | 'event' = 'hint'): void {
+  const status = getEl('status');
+  status.textContent = text;
+  status.classList.toggle('event-feedback', tone === 'event');
+}
+
+/** 高亮教学建议方向；传入 null 时清除。 */
+export function setHintDirection(direction: string | null | undefined): void {
+  const directionById: Record<string, string> = {
+    'btn-up': 'UP',
+    'btn-down': 'DOWN',
+    'btn-left': 'LEFT',
+    'btn-right': 'RIGHT'
+  };
+  for (const [id, value] of Object.entries(directionById)) {
+    const button = getEl<HTMLButtonElement>(id);
+    const recommended = value === direction;
+    button.classList.toggle('recommended', recommended);
+    button.setAttribute('aria-pressed', String(recommended));
+  }
 }
 
 export function setResultText(text: string): void {

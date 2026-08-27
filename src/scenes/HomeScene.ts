@@ -2,9 +2,14 @@ import Phaser from 'phaser';
 import { LEVELS } from '../content/levels';
 import { localStorageStore, loadSave, defaultSave } from '../persistence/save-store';
 import { audioManager } from '../audio/audio-manager';
-import { bindButton, setHomeContinue, setStatusText, showBars, showConfirmDialog } from './dom-ui';
-
-const STATUS_OK = '健康检查 OK';
+import {
+  bindButton,
+  getEl,
+  setHomeContinue,
+  setStatusText,
+  showBars,
+  showConfirmDialog
+} from './dom-ui';
 
 export class HomeScene extends Phaser.Scene {
   private cleanupFns: Array<() => void> = [];
@@ -28,24 +33,13 @@ export class HomeScene extends Phaser.Scene {
     window.addEventListener('keydown', unlockAudio, { once: true });
 
     showBars('bar-home');
-    const { width, height } = this.scale;
-    this.add
-      .text(width / 2, height * 0.3, '双生折线', {
-        fontSize: '40px',
-        color: '#3D3A3A'
-      })
-      .setOrigin(0.5);
-    this.add
-      .text(width / 2, height * 0.3 + 46, 'Twinfold Paths', {
-        fontSize: '18px',
-        color: '#8A8580'
-      })
-      .setOrigin(0.5);
-
     const save = loadSave(localStorageStore());
     const index = Math.min(Math.max(save.highestUnlocked, 1), LEVELS.length);
     const level = LEVELS[index - 1] ?? LEVELS[0];
-    setHomeContinue(`继续：第 ${index} 关`);
+    setHomeContinue(
+      `旅程进度 · 第 ${index} / ${LEVELS.length} 关${level ? ` · ${level.title}` : ''}`
+    );
+    getEl<HTMLButtonElement>('btn-start').textContent = index > 1 ? '继续旅程' : '开始第一关';
 
     this.cleanupFns.push(
       bindButton('btn-start', () => {
@@ -77,13 +71,14 @@ export class HomeScene extends Phaser.Scene {
           const newSave = defaultSave();
           localStorageStore().setItem('twinfold-paths:save:a', JSON.stringify(newSave));
           localStorageStore().setItem('twinfold-paths:save:b', JSON.stringify(newSave));
-          setHomeContinue('继续：第 1 关');
+          setHomeContinue(`旅程进度 · 第 1 / ${LEVELS.length} 关 · 第一次分岔`);
+          getEl<HTMLButtonElement>('btn-start').textContent = '开始第一关';
           setStatusText('进度已清除');
         }
       })
     );
 
-    setStatusText(STATUS_OK);
+    setStatusText('滑动棋盘或点击方向键，让蓝与橙同时到达各自出口。');
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       for (const fn of this.cleanupFns) fn();

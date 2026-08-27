@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { audioManager } from '../audio/audio-manager';
-import { bindButton, setResultText, showBars } from './dom-ui';
+import { bindButton, setResultText, setStatusText, showBars } from './dom-ui';
 
 interface ResultSceneData {
   levelId: string;
@@ -70,6 +70,12 @@ export class ResultScene extends Phaser.Scene {
     }
 
     setResultText(`步数 ${moves} / 目标 ${par}`);
+    setStatusText(
+      moves <= par
+        ? '漂亮！你已经找到目标步数内的路线。'
+        : '已通关；也可以重玩，用撤销逐步压缩路线。',
+      'event'
+    );
     const nextBtn = document.getElementById('btn-next');
     if (nextBtn) nextBtn.hidden = !nextId;
 

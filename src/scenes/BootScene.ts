@@ -10,16 +10,16 @@ export class BootScene extends Phaser.Scene {
     const g = this.make.graphics({}, false);
     const S = 64;
 
-    g.fillStyle(0xf0ebe5);
+    g.fillStyle(0xf8fafc);
     g.fillRect(0, 0, S, S);
-    g.lineStyle(2, 0xe5dfd8);
+    g.lineStyle(2, 0xe2e8f0);
     g.strokeRect(1, 1, S - 2, S - 2);
     g.generateTexture('tile', S, S);
     g.clear();
 
-    g.fillStyle(0xd5cfc8);
+    g.fillStyle(0xd7dee8);
     g.fillRect(0, 0, S, S);
-    g.lineStyle(3, 0xc0bab3);
+    g.lineStyle(3, 0xb9c4d2);
     g.strokeRect(2, 2, S - 4, S - 4);
     g.lineStyle(3, 0xb5afa8);
     g.lineBetween(10, S - 10, S - 10, 10);

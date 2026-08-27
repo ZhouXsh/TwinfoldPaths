@@ -3,7 +3,7 @@ import Phaser from 'phaser';
 import { LEVELS } from '../content/levels';
 import { localStorageStore, loadSave } from '../persistence/save-store';
 import { audioManager } from '../audio/audio-manager';
-import { bindButton, getEl, showBars } from './dom-ui';
+import { bindButton, getEl, setStatusText, showBars } from './dom-ui';
 
 const CHAPTERS = [
   { num: 1, title: '镜像初识', subtitle: 'M0 基础镜像规则' },
@@ -23,6 +23,7 @@ export class ChapterSelectScene extends Phaser.Scene {
   create(): void {
     showBars('bar-chapter-select');
     this.renderChapters();
+    setStatusText('每章包含两段机制学习和一个综合挑战，建议按顺序游玩。');
     this.cleanupFns.push(bindButton('btn-chapter-back', () => this.scene.start('Home')));
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       for (const fn of this.cleanupFns) fn();
@@ -56,6 +57,7 @@ export class ChapterSelectScene extends Phaser.Scene {
       if (!isUnlocked) {
         card.classList.add('locked');
         card.innerHTML = `
+          <div class="chapter-index">CHAPTER ${ch.num}</div>
           <div class="chapter-name">第${ch.num}章</div>
           <div class="chapter-sub">🔒 未解锁</div>
         `;
@@ -63,6 +65,7 @@ export class ChapterSelectScene extends Phaser.Scene {
         card.classList.toggle('completed', allCompleted);
         const stars = allCompleted ? '⭐⭐⭐' : completed > 0 ? '⭐' : '';
         card.innerHTML = `
+          <div class="chapter-index">CHAPTER ${ch.num}</div>
           <div class="chapter-name">第${ch.num}章</div>
           <div class="chapter-sub">${ch.title}</div>
           <div class="chapter-star">${stars}</div>
