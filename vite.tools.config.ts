@@ -1,13 +1,14 @@
 import { defineConfig } from 'vite';
 import { resolve } from 'path';
 
-// 工具链构建配置：将 solver 与关卡解序列差异化审计打包为 Node ESM bundle。
+// 工具链构建配置：CLI、可复用 solver API 与关卡解序列差异化审计均打包为 Node ESM。
 export default defineConfig({
   build: {
     outDir: 'tools-dist',
     rollupOptions: {
       input: {
         solver: resolve(__dirname, 'tools/solver/main.ts'),
+        solverApi: resolve(__dirname, 'tools/solver/bfs-solver.ts'),
         variety: resolve(__dirname, 'tools/variety/main.ts')
       },
       output: {
