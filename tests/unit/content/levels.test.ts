@@ -161,12 +161,10 @@ describe('关卡注册表（levels/chapter-01..05）', () => {
   it('23–50 关必须包含跨球互锁：一侧压板直接控制另一侧门', () => {
     for (const level of LEVELS.filter((item) => item.order >= 23)) {
       expect(level.tags, `${level.id} 缺 cross-interaction 标签`).toContain('cross-interaction');
-      const crossPlates = level.entities.filter(
-        (entity) => entity.type === 'plate' && entity.id.includes('-cross-')
-      );
-      const crossDoors = level.entities.filter(
-        (entity) => entity.type === 'door' && entity.id.includes('-cross-')
-      );
+      const plates = level.entities.filter((entity) => entity.type === 'plate');
+      const doors = level.entities.filter((entity) => entity.type === 'door');
+      const crossPlates = plates.filter((entity) => entity.id.includes('-cross-'));
+      const crossDoors = doors.filter((entity) => entity.id.includes('-cross-'));
       expect(crossPlates.length, `${level.id} 至少需要一组双向跨球压板`).toBeGreaterThanOrEqual(2);
       expect(crossDoors.length, `${level.id} 至少需要一组双向跨球门`).toBeGreaterThanOrEqual(2);
       for (const plate of crossPlates) {
