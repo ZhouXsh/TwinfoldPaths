@@ -13,6 +13,79 @@ function solveAll() {
   return LEVELS.map((level) => ({ level, result: bfsSolve(level) }));
 }
 
+function pointKey(p: { x: number; y: number }): string {
+  return `${p.x},${p.y}`;
+}
+
+function openCells(level: (typeof LEVELS)[number]): Set<string> {
+  const walls = new Set(level.walls.map(pointKey));
+  const open = new Set<string>();
+  for (let y = 0; y < level.grid.height; y++) {
+    for (let x = 0; x < level.grid.width; x++) {
+      if (!walls.has(`${x},${y}`)) open.add(`${x},${y}`);
+    }
+  }
+  return open;
+}
+
+function openNeighbors(
+  level: (typeof LEVELS)[number],
+  open: Set<string>,
+  p: { x: number; y: number }
+): Array<{ x: number; y: number }> {
+  return [
+    { x: p.x + 1, y: p.y },
+    { x: p.x - 1, y: p.y },
+    { x: p.x, y: p.y + 1 },
+    { x: p.x, y: p.y - 1 }
+  ].filter(
+    (q) =>
+      q.x >= 0 &&
+      q.y >= 0 &&
+      q.x < level.grid.width &&
+      q.y < level.grid.height &&
+      open.has(pointKey(q))
+  );
+}
+
+function canReach(
+  level: (typeof LEVELS)[number],
+  start: { x: number; y: number },
+  target: { x: number; y: number }
+): boolean {
+  const open = openCells(level);
+  const seen = new Set([pointKey(start)]);
+  const queue = [start];
+  for (let head = 0; head < queue.length; head++) {
+    const current = queue[head]!;
+    if (pointKey(current) === pointKey(target)) return true;
+    for (const next of openNeighbors(level, open, current)) {
+      const k = pointKey(next);
+      if (seen.has(k)) continue;
+      seen.add(k);
+      queue.push(next);
+    }
+  }
+  return false;
+}
+
+function deadEndCount(level: (typeof LEVELS)[number]): number {
+  const open = openCells(level);
+  const protectedCells = new Set([
+    pointKey(level.blueStart),
+    pointKey(level.orangeStart),
+    pointKey(level.blueExit),
+    pointKey(level.orangeExit)
+  ]);
+  let count = 0;
+  for (const cell of open) {
+    if (protectedCells.has(cell)) continue;
+    const [x, y] = cell.split(',').map(Number);
+    if (openNeighbors(level, open, { x: x!, y: y! }).length === 1) count++;
+  }
+  return count;
+}
+
 describe('关卡注册表（levels/chapter-01..05）', () => {
   it('注册表恰有 50 关，按章节/序号排序', () => {
     const ids = LEVELS.map((l) => l.id);
@@ -40,6 +113,22 @@ describe('关卡注册表（levels/chapter-01..05）', () => {
     }
   });
 
+  it('九宫格探索迷雾成为 50/50 常驻核心规则，同时保留渐进变体', () => {
+    for (const level of LEVELS) {
+      expect(level.visibility?.mode, `${level.id} 必须常驻探索迷雾`).toBe('fog');
+      expect(level.visibility?.radius, `${level.id} 必须保持九宫格半径=1`).toBe(1);
+      expect(level.visibility?.shape, `${level.id} 核心视野必须保持 3x3 square`).toBe('square');
+      expect(level.tags).toContain('V1-fog');
+      expect(level.tags).toContain('exploration-core');
+    }
+
+    const late = LEVELS.filter((level) => level.order >= 21);
+    expect(late.some((level) => level.visibility?.memory === 'none')).toBe(true);
+    expect(late.some((level) => level.visibility?.memory === 'decay')).toBe(true);
+    expect(late.some((level) => level.visibility?.source === 'alternating')).toBe(true);
+    expect(late.some((level) => (level.visibility?.pulseEvery ?? 0) > 0)).toBe(true);
+  });
+
   it('后 30 关确实重制为更长的大地图谜题', () => {
     const solved = solveAll().filter(({ level }) => level.order >= 21);
     const avg = solved.reduce((sum, x) => sum + x.result.optimalSteps, 0) / solved.length;
@@ -57,23 +146,47 @@ describe('关卡注册表（levels/chapter-01..05）', () => {
     }
   });
 
-  it('第四章 10/10 关统一采用探索迷雾，并包含多种探索变体', () => {
+  it('21–50 关改为共享迷宫网络并具有真实死胡同，不再是两条彼此隔离的单通道', () => {
+    for (const level of LEVELS.filter((item) => item.order >= 21)) {
+      expect(level.tags, `${level.id} 缺 maze 标签`).toContain('maze');
+      expect(level.tags, `${level.id} 缺 shared-maze 标签`).toContain('shared-maze');
+      expect(
+        canReach(level, level.blueStart, level.orangeStart),
+        `${level.id} 双球区域仍然几何隔离`
+      ).toBe(true);
+      expect(deadEndCount(level), `${level.id} 至少应有两个非起终点死胡同`).toBeGreaterThanOrEqual(2);
+    }
+  });
+
+  it('23–50 关必须包含跨球互锁：一侧压板直接控制另一侧门', () => {
+    for (const level of LEVELS.filter((item) => item.order >= 23)) {
+      expect(level.tags, `${level.id} 缺 cross-interaction 标签`).toContain('cross-interaction');
+      const crossPlates = level.entities.filter(
+        (entity) => entity.type === 'plate' && entity.id.includes('-cross-')
+      );
+      const crossDoors = level.entities.filter(
+        (entity) => entity.type === 'door' && entity.id.includes('-cross-')
+      );
+      expect(crossPlates.length, `${level.id} 至少需要一组双向跨球压板`).toBeGreaterThanOrEqual(2);
+      expect(crossDoors.length, `${level.id} 至少需要一组双向跨球门`).toBeGreaterThanOrEqual(2);
+      for (const plate of crossPlates) {
+        expect(
+          crossDoors.some((door) => door.id === plate.doorId),
+          `${level.id} 跨球压板必须指向有效门`
+        ).toBe(true);
+      }
+    }
+  });
+
+  it('第四章保留探索章节身份，但不再独占迷雾规则', () => {
     const chapter4 = LEVELS.filter((level) => level.chapter === 4);
     expect(chapter4).toHaveLength(10);
     for (const level of chapter4) {
-      expect(level.visibility?.mode, `${level.id} 应属于完整的探索迷雾章节`).toBe('fog');
+      expect(level.visibility?.mode).toBe('fog');
       expect(level.tags, `${level.id} 缺 exploration 标签`).toContain('exploration');
     }
     const featureTags = new Set(chapter4.flatMap((level) => level.tags));
-    for (const tag of [
-      'fog-no-memory',
-      'fog-decay',
-      'fog-alternating',
-      'fog-diamond',
-      'fog-cross',
-      'fog-radar',
-      'V2-beacon'
-    ]) {
+    for (const tag of ['fog-no-memory', 'fog-decay', 'fog-alternating', 'fog-radar', 'V2-beacon']) {
       expect(featureTags.has(tag), `第四章缺少探索变体 ${tag}`).toBe(true);
     }
   });
