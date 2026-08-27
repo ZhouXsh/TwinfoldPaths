@@ -27,23 +27,7 @@
   },
   "walls": [
     {
-      "x": 0,
-      "y": 0
-    },
-    {
-      "x": 1,
-      "y": 0
-    },
-    {
-      "x": 2,
-      "y": 0
-    },
-    {
       "x": 3,
-      "y": 0
-    },
-    {
-      "x": 4,
       "y": 0
     },
     {
@@ -112,10 +96,6 @@
     },
     {
       "x": 0,
-      "y": 5
-    },
-    {
-      "x": 1,
       "y": 5
     },
     {
@@ -242,5 +222,13 @@
   "hint": {
     "focus": "垂直镜像会让橙球上下相反，沿蛇形长廊观察两条路线。"
   },
-  "tags": ["chapter-3", "M5", "large-map"]
+  "tags": ["chapter-3", "M5", "large-map", "V1-fog", "exploration-core", "maze", "shared-maze"],
+  "visibility": {
+    "mode": "fog",
+    "radius": 1,
+    "shape": "square",
+    "memory": "decay",
+    "source": "both",
+    "memoryTurns": 5
+  }
 }

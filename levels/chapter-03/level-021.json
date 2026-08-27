@@ -27,27 +27,11 @@
   },
   "walls": [
     {
-      "x": 0,
-      "y": 0
-    },
-    {
-      "x": 1,
-      "y": 0
-    },
-    {
       "x": 2,
       "y": 0
     },
     {
-      "x": 3,
-      "y": 0
-    },
-    {
       "x": 4,
-      "y": 0
-    },
-    {
-      "x": 5,
       "y": 0
     },
     {
@@ -72,10 +56,6 @@
     },
     {
       "x": 0,
-      "y": 1
-    },
-    {
-      "x": 5,
       "y": 1
     },
     {
@@ -242,5 +222,21 @@
   "hint": {
     "focus": "地图变大后先认清双线的镜像长廊；专属门只是路标。"
   },
-  "tags": ["chapter-3", "tutorial", "M2", "large-map"]
+  "tags": [
+    "chapter-3",
+    "tutorial",
+    "M2",
+    "large-map",
+    "V1-fog",
+    "exploration-core",
+    "maze",
+    "shared-maze"
+  ],
+  "visibility": {
+    "mode": "fog",
+    "radius": 1,
+    "shape": "square",
+    "memory": "persistent",
+    "source": "both"
+  }
 }

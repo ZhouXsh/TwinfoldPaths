@@ -49,7 +49,14 @@
   "hint": {
     "focus": "蓝方先走到压板上为橙方开门，橙方穿过门后再让蓝方离开——注意门只会在压板被踩时打开。"
   },
-  "tags": ["chapter-2", "tutorial", "M1", "plate-door-timing"],
+  "tags": ["chapter-2", "tutorial", "M1", "plate-door-timing", "V1-fog", "exploration-core"],
   "parMoves": 6,
-  "parMovesNote": "BFS 最短步数=6；parMoves 与求解器严格一致"
+  "parMovesNote": "BFS 最短步数=6；parMoves 与求解器严格一致",
+  "visibility": {
+    "mode": "fog",
+    "radius": 1,
+    "shape": "square",
+    "memory": "persistent",
+    "source": "both"
+  }
 }

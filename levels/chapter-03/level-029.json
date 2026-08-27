@@ -27,19 +27,7 @@
   },
   "walls": [
     {
-      "x": 0,
-      "y": 0
-    },
-    {
-      "x": 1,
-      "y": 0
-    },
-    {
       "x": 2,
-      "y": 0
-    },
-    {
-      "x": 3,
       "y": 0
     },
     {
@@ -47,15 +35,7 @@
       "y": 0
     },
     {
-      "x": 5,
-      "y": 0
-    },
-    {
       "x": 6,
-      "y": 0
-    },
-    {
-      "x": 7,
       "y": 0
     },
     {
@@ -80,10 +60,6 @@
     },
     {
       "x": 0,
-      "y": 1
-    },
-    {
-      "x": 6,
       "y": 1
     },
     {
@@ -365,6 +341,32 @@
       "pairId": "level-029-pulse",
       "x": 7,
       "y": 7
+    },
+    {
+      "type": "plate",
+      "id": "level-029-cross-1-bp",
+      "x": 5,
+      "y": 1,
+      "doorId": "level-029-cross-1-od"
+    },
+    {
+      "type": "door",
+      "id": "level-029-cross-1-od",
+      "x": 7,
+      "y": 2
+    },
+    {
+      "type": "plate",
+      "id": "level-029-cross-1-op",
+      "x": 7,
+      "y": 1,
+      "doorId": "level-029-cross-1-bd"
+    },
+    {
+      "type": "door",
+      "id": "level-029-cross-1-bd",
+      "x": 5,
+      "y": 2
     }
   ],
   "parMoves": 23,
@@ -372,5 +374,23 @@
   "hint": {
     "focus": "两段脆弱路封住退路，脉冲门要求你在深入前建立同步。"
   },
-  "tags": ["chapter-3", "M7", "M8", "large-map"]
+  "tags": [
+    "chapter-3",
+    "M7",
+    "M8",
+    "large-map",
+    "V1-fog",
+    "exploration-core",
+    "maze",
+    "shared-maze",
+    "cross-interaction"
+  ],
+  "visibility": {
+    "mode": "fog",
+    "radius": 1,
+    "shape": "square",
+    "memory": "decay",
+    "source": "both",
+    "memoryTurns": 2
+  }
 }

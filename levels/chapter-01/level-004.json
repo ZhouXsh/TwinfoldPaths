@@ -59,7 +59,14 @@
   "hint": {
     "focus": "中央一列墙把棋盘分成左右两半，蓝方出口在左上角，橙方在右上角。注意蓝方和橙方在水平方向上镜像移动：按右时蓝向右、橙向左。"
   },
-  "tags": ["chapter-1", "tutorial", "M0", "wall-decouple"],
+  "tags": ["chapter-1", "tutorial", "M0", "wall-decouple", "V1-fog", "exploration-core"],
   "parMoves": 6,
-  "parMovesNote": "BFS 最短步数=6；parMoves 与求解器严格一致"
+  "parMovesNote": "BFS 最短步数=6；parMoves 与求解器严格一致",
+  "visibility": {
+    "mode": "fog",
+    "radius": 1,
+    "shape": "square",
+    "memory": "persistent",
+    "source": "both"
+  }
 }

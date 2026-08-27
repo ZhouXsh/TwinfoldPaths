@@ -27,19 +27,7 @@
   },
   "walls": [
     {
-      "x": 0,
-      "y": 0
-    },
-    {
-      "x": 1,
-      "y": 0
-    },
-    {
       "x": 2,
-      "y": 0
-    },
-    {
-      "x": 3,
       "y": 0
     },
     {
@@ -47,15 +35,7 @@
       "y": 0
     },
     {
-      "x": 5,
-      "y": 0
-    },
-    {
       "x": 6,
-      "y": 0
-    },
-    {
-      "x": 7,
       "y": 0
     },
     {
@@ -63,15 +43,7 @@
       "y": 0
     },
     {
-      "x": 9,
-      "y": 0
-    },
-    {
       "x": 10,
-      "y": 0
-    },
-    {
-      "x": 11,
       "y": 0
     },
     {
@@ -80,10 +52,6 @@
     },
     {
       "x": 0,
-      "y": 1
-    },
-    {
-      "x": 6,
       "y": 1
     },
     {
@@ -333,6 +301,32 @@
       "x": 8,
       "y": 5,
       "arrow": "LEFT"
+    },
+    {
+      "type": "plate",
+      "id": "level-037-cross-1-bp",
+      "x": 5,
+      "y": 1,
+      "doorId": "level-037-cross-1-od"
+    },
+    {
+      "type": "door",
+      "id": "level-037-cross-1-od",
+      "x": 7,
+      "y": 2
+    },
+    {
+      "type": "plate",
+      "id": "level-037-cross-1-op",
+      "x": 7,
+      "y": 1,
+      "doorId": "level-037-cross-1-bd"
+    },
+    {
+      "type": "door",
+      "id": "level-037-cross-1-bd",
+      "x": 5,
+      "y": 2
     }
   ],
   "parMoves": 22,
@@ -340,7 +334,18 @@
   "hint": {
     "focus": "每五个有效回合雷达会闪现全局视野；在脉冲之间记住岔路。"
   },
-  "tags": ["chapter-4", "M5", "M7", "V1-fog", "fog-radar", "exploration"],
+  "tags": [
+    "chapter-4",
+    "M5",
+    "M7",
+    "V1-fog",
+    "fog-radar",
+    "exploration",
+    "exploration-core",
+    "maze",
+    "shared-maze",
+    "cross-interaction"
+  ],
   "visibility": {
     "mode": "fog",
     "radius": 1,

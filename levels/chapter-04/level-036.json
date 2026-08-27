@@ -3,7 +3,7 @@
   "id": "level-036",
   "chapter": 4,
   "order": 36,
-  "title": "十字探路",
+  "title": "互锁探路",
   "initialMapping": "V_MIRROR",
   "grid": {
     "width": 9,
@@ -27,23 +27,7 @@
   },
   "walls": [
     {
-      "x": 0,
-      "y": 0
-    },
-    {
-      "x": 1,
-      "y": 0
-    },
-    {
-      "x": 2,
-      "y": 0
-    },
-    {
       "x": 3,
-      "y": 0
-    },
-    {
-      "x": 4,
       "y": 0
     },
     {
@@ -51,18 +35,6 @@
       "y": 0
     },
     {
-      "x": 6,
-      "y": 0
-    },
-    {
-      "x": 7,
-      "y": 0
-    },
-    {
-      "x": 8,
-      "y": 0
-    },
-    {
       "x": 0,
       "y": 1
     },
@@ -77,10 +49,6 @@
     {
       "x": 8,
       "y": 1
-    },
-    {
-      "x": 0,
-      "y": 2
     },
     {
       "x": 2,
@@ -132,10 +100,6 @@
     },
     {
       "x": 0,
-      "y": 5
-    },
-    {
-      "x": 1,
       "y": 5
     },
     {
@@ -297,18 +261,53 @@
       "id": "level-036-do",
       "x": 5,
       "y": 9
+    },
+    {
+      "type": "plate",
+      "id": "level-036-cross-1-bp",
+      "x": 1,
+      "y": 4,
+      "doorId": "level-036-cross-1-od"
+    },
+    {
+      "type": "door",
+      "id": "level-036-cross-1-od",
+      "x": 2,
+      "y": 6
+    },
+    {
+      "type": "plate",
+      "id": "level-036-cross-1-op",
+      "x": 1,
+      "y": 6,
+      "doorId": "level-036-cross-1-bd"
+    },
+    {
+      "type": "door",
+      "id": "level-036-cross-1-bd",
+      "x": 2,
+      "y": 4
     }
   ],
   "parMoves": 18,
   "parMovesNote": "BFS 最短步数=18；parMoves 与求解器严格一致",
   "hint": {
-    "focus": "十字视野看得远但看不到斜角，利用压板门判断长廊结构。"
+    "focus": "九宫格视野保持不变；压板门要求两球互相提供通路，先找压板，再判断另一侧的门。"
   },
-  "tags": ["chapter-4", "M1", "V1-fog", "fog-cross", "exploration"],
+  "tags": [
+    "chapter-4",
+    "M1",
+    "V1-fog",
+    "exploration",
+    "exploration-core",
+    "maze",
+    "shared-maze",
+    "cross-interaction"
+  ],
   "visibility": {
     "mode": "fog",
     "radius": 1,
-    "shape": "cross",
+    "shape": "square",
     "memory": "decay",
     "source": "both",
     "memoryTurns": 4

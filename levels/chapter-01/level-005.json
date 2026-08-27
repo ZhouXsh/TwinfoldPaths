@@ -35,7 +35,14 @@
   "hint": {
     "focus": "先向右错开位置，再一起向上；蓝会先被墙挡住，最后向左让两人同时归位。"
   },
-  "tags": ["chapter-1", "tutorial", "M0", "exit-no-lock"],
+  "tags": ["chapter-1", "tutorial", "M0", "exit-no-lock", "V1-fog", "exploration-core"],
   "parMoves": 6,
-  "parMovesNote": "BFS 最短步数=6；parMoves 与求解器严格一致"
+  "parMovesNote": "BFS 最短步数=6；parMoves 与求解器严格一致",
+  "visibility": {
+    "mode": "fog",
+    "radius": 1,
+    "shape": "square",
+    "memory": "persistent",
+    "source": "both"
+  }
 }

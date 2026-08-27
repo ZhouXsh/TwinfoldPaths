@@ -1,0 +1,489 @@
+{
+  "generatedAt": "2026-08-27T12:39:44.666Z",
+  "averageLate": 18.9,
+  "allLevelsFog": true,
+  "lateSharedMazeCount": 30,
+  "lateCrossInteractionCount": 28,
+  "levels": [
+    {
+      "id": "level-001",
+      "order": 1,
+      "optimalSteps": 1,
+      "globalFog": true
+    },
+    {
+      "id": "level-002",
+      "order": 2,
+      "optimalSteps": 3,
+      "globalFog": true
+    },
+    {
+      "id": "level-003",
+      "order": 3,
+      "optimalSteps": 4,
+      "globalFog": true
+    },
+    {
+      "id": "level-004",
+      "order": 4,
+      "optimalSteps": 6,
+      "globalFog": true
+    },
+    {
+      "id": "level-005",
+      "order": 5,
+      "optimalSteps": 6,
+      "globalFog": true
+    },
+    {
+      "id": "level-006",
+      "order": 6,
+      "optimalSteps": 6,
+      "globalFog": true
+    },
+    {
+      "id": "level-007",
+      "order": 7,
+      "optimalSteps": 6,
+      "globalFog": true
+    },
+    {
+      "id": "level-008",
+      "order": 8,
+      "optimalSteps": 7,
+      "globalFog": true
+    },
+    {
+      "id": "level-009",
+      "order": 9,
+      "optimalSteps": 6,
+      "globalFog": true
+    },
+    {
+      "id": "level-010",
+      "order": 10,
+      "optimalSteps": 9,
+      "globalFog": true
+    },
+    {
+      "id": "level-011",
+      "order": 11,
+      "optimalSteps": 5,
+      "globalFog": true
+    },
+    {
+      "id": "level-012",
+      "order": 12,
+      "optimalSteps": 6,
+      "globalFog": true
+    },
+    {
+      "id": "level-013",
+      "order": 13,
+      "optimalSteps": 3,
+      "globalFog": true
+    },
+    {
+      "id": "level-014",
+      "order": 14,
+      "optimalSteps": 6,
+      "globalFog": true
+    },
+    {
+      "id": "level-015",
+      "order": 15,
+      "optimalSteps": 7,
+      "globalFog": true
+    },
+    {
+      "id": "level-016",
+      "order": 16,
+      "optimalSteps": 3,
+      "globalFog": true
+    },
+    {
+      "id": "level-017",
+      "order": 17,
+      "optimalSteps": 5,
+      "globalFog": true
+    },
+    {
+      "id": "level-018",
+      "order": 18,
+      "optimalSteps": 4,
+      "globalFog": true
+    },
+    {
+      "id": "level-019",
+      "order": 19,
+      "optimalSteps": 6,
+      "globalFog": true
+    },
+    {
+      "id": "level-020",
+      "order": 20,
+      "optimalSteps": 6,
+      "globalFog": true
+    },
+    {
+      "id": "level-021",
+      "order": 21,
+      "optimalSteps": 13,
+      "globalFog": true,
+      "originalPar": 13,
+      "bridgeCells": 1,
+      "addedDeadEnds": 4,
+      "deadEnds": 3,
+      "crossGates": 0,
+      "shared": true
+    },
+    {
+      "id": "level-022",
+      "order": 22,
+      "optimalSteps": 13,
+      "globalFog": true,
+      "originalPar": 13,
+      "bridgeCells": 1,
+      "addedDeadEnds": 4,
+      "deadEnds": 3,
+      "crossGates": 0,
+      "shared": true
+    },
+    {
+      "id": "level-023",
+      "order": 23,
+      "optimalSteps": 17,
+      "globalFog": true,
+      "originalPar": 17,
+      "bridgeCells": 1,
+      "addedDeadEnds": 4,
+      "deadEnds": 3,
+      "crossGates": 1,
+      "shared": true
+    },
+    {
+      "id": "level-024",
+      "order": 24,
+      "optimalSteps": 16,
+      "globalFog": true,
+      "originalPar": 16,
+      "bridgeCells": 1,
+      "addedDeadEnds": 4,
+      "deadEnds": 3,
+      "crossGates": 1,
+      "shared": true
+    },
+    {
+      "id": "level-025",
+      "order": 25,
+      "optimalSteps": 18,
+      "globalFog": true,
+      "originalPar": 18,
+      "bridgeCells": 1,
+      "addedDeadEnds": 4,
+      "deadEnds": 3,
+      "crossGates": 1,
+      "shared": true
+    },
+    {
+      "id": "level-026",
+      "order": 26,
+      "optimalSteps": 14,
+      "globalFog": true,
+      "originalPar": 14,
+      "bridgeCells": 2,
+      "addedDeadEnds": 2,
+      "deadEnds": 6,
+      "crossGates": 1,
+      "shared": true
+    },
+    {
+      "id": "level-027",
+      "order": 27,
+      "optimalSteps": 22,
+      "globalFog": true,
+      "originalPar": 22,
+      "bridgeCells": 1,
+      "addedDeadEnds": 5,
+      "deadEnds": 4,
+      "crossGates": 1,
+      "shared": true
+    },
+    {
+      "id": "level-028",
+      "order": 28,
+      "optimalSteps": 19,
+      "globalFog": true,
+      "originalPar": 19,
+      "bridgeCells": 1,
+      "addedDeadEnds": 5,
+      "deadEnds": 4,
+      "crossGates": 1,
+      "shared": true
+    },
+    {
+      "id": "level-029",
+      "order": 29,
+      "optimalSteps": 23,
+      "globalFog": true,
+      "originalPar": 23,
+      "bridgeCells": 1,
+      "addedDeadEnds": 5,
+      "deadEnds": 4,
+      "crossGates": 1,
+      "shared": true
+    },
+    {
+      "id": "level-030",
+      "order": 30,
+      "optimalSteps": 17,
+      "globalFog": true,
+      "originalPar": 17,
+      "bridgeCells": 2,
+      "addedDeadEnds": 3,
+      "deadEnds": 6,
+      "crossGates": 1,
+      "shared": true
+    },
+    {
+      "id": "level-031",
+      "order": 31,
+      "optimalSteps": 13,
+      "globalFog": true,
+      "originalPar": 13,
+      "bridgeCells": 1,
+      "addedDeadEnds": 6,
+      "deadEnds": 5,
+      "crossGates": 1,
+      "shared": true
+    },
+    {
+      "id": "level-032",
+      "order": 32,
+      "optimalSteps": 13,
+      "globalFog": true,
+      "originalPar": 13,
+      "bridgeCells": 1,
+      "addedDeadEnds": 7,
+      "deadEnds": 5,
+      "crossGates": 1,
+      "shared": true
+    },
+    {
+      "id": "level-033",
+      "order": 33,
+      "optimalSteps": 16,
+      "globalFog": true,
+      "originalPar": 16,
+      "bridgeCells": 1,
+      "addedDeadEnds": 6,
+      "deadEnds": 5,
+      "crossGates": 1,
+      "shared": true
+    },
+    {
+      "id": "level-034",
+      "order": 34,
+      "optimalSteps": 17,
+      "globalFog": true,
+      "originalPar": 17,
+      "bridgeCells": 1,
+      "addedDeadEnds": 7,
+      "deadEnds": 5,
+      "crossGates": 1,
+      "shared": true
+    },
+    {
+      "id": "level-035",
+      "order": 35,
+      "optimalSteps": 18,
+      "globalFog": true,
+      "originalPar": 18,
+      "bridgeCells": 1,
+      "addedDeadEnds": 6,
+      "deadEnds": 5,
+      "crossGates": 1,
+      "shared": true
+    },
+    {
+      "id": "level-036",
+      "order": 36,
+      "optimalSteps": 18,
+      "globalFog": true,
+      "originalPar": 18,
+      "bridgeCells": 1,
+      "addedDeadEnds": 8,
+      "deadEnds": 6,
+      "crossGates": 1,
+      "shared": true
+    },
+    {
+      "id": "level-037",
+      "order": 37,
+      "optimalSteps": 22,
+      "globalFog": true,
+      "originalPar": 22,
+      "bridgeCells": 1,
+      "addedDeadEnds": 7,
+      "deadEnds": 6,
+      "crossGates": 1,
+      "shared": true
+    },
+    {
+      "id": "level-038",
+      "order": 38,
+      "optimalSteps": 22,
+      "globalFog": true,
+      "originalPar": 22,
+      "bridgeCells": 1,
+      "addedDeadEnds": 8,
+      "deadEnds": 6,
+      "crossGates": 1,
+      "shared": true
+    },
+    {
+      "id": "level-039",
+      "order": 39,
+      "optimalSteps": 23,
+      "globalFog": true,
+      "originalPar": 23,
+      "bridgeCells": 1,
+      "addedDeadEnds": 7,
+      "deadEnds": 6,
+      "crossGates": 1,
+      "shared": true
+    },
+    {
+      "id": "level-040",
+      "order": 40,
+      "optimalSteps": 17,
+      "globalFog": true,
+      "originalPar": 17,
+      "bridgeCells": 2,
+      "addedDeadEnds": 4,
+      "deadEnds": 6,
+      "crossGates": 1,
+      "shared": true
+    },
+    {
+      "id": "level-041",
+      "order": 41,
+      "optimalSteps": 19,
+      "globalFog": true,
+      "originalPar": 19,
+      "bridgeCells": 1,
+      "addedDeadEnds": 10,
+      "deadEnds": 7,
+      "crossGates": 2,
+      "shared": true
+    },
+    {
+      "id": "level-042",
+      "order": 42,
+      "optimalSteps": 18,
+      "globalFog": true,
+      "originalPar": 18,
+      "bridgeCells": 1,
+      "addedDeadEnds": 9,
+      "deadEnds": 7,
+      "crossGates": 2,
+      "shared": true
+    },
+    {
+      "id": "level-043",
+      "order": 43,
+      "optimalSteps": 22,
+      "globalFog": true,
+      "originalPar": 22,
+      "bridgeCells": 1,
+      "addedDeadEnds": 9,
+      "deadEnds": 7,
+      "crossGates": 2,
+      "shared": true
+    },
+    {
+      "id": "level-044",
+      "order": 44,
+      "optimalSteps": 24,
+      "globalFog": true,
+      "originalPar": 24,
+      "bridgeCells": 1,
+      "addedDeadEnds": 9,
+      "deadEnds": 7,
+      "crossGates": 2,
+      "shared": true
+    },
+    {
+      "id": "level-045",
+      "order": 45,
+      "optimalSteps": 23,
+      "globalFog": true,
+      "originalPar": 23,
+      "bridgeCells": 1,
+      "addedDeadEnds": 9,
+      "deadEnds": 7,
+      "crossGates": 2,
+      "shared": true
+    },
+    {
+      "id": "level-046",
+      "order": 46,
+      "optimalSteps": 16,
+      "globalFog": true,
+      "originalPar": 16,
+      "bridgeCells": 2,
+      "addedDeadEnds": 6,
+      "deadEnds": 8,
+      "crossGates": 2,
+      "shared": true
+    },
+    {
+      "id": "level-047",
+      "order": 47,
+      "optimalSteps": 23,
+      "globalFog": true,
+      "originalPar": 23,
+      "bridgeCells": 1,
+      "addedDeadEnds": 10,
+      "deadEnds": 8,
+      "crossGates": 2,
+      "shared": true
+    },
+    {
+      "id": "level-048",
+      "order": 48,
+      "optimalSteps": 24,
+      "globalFog": true,
+      "originalPar": 24,
+      "bridgeCells": 1,
+      "addedDeadEnds": 11,
+      "deadEnds": 8,
+      "crossGates": 2,
+      "shared": true
+    },
+    {
+      "id": "level-049",
+      "order": 49,
+      "optimalSteps": 23,
+      "globalFog": true,
+      "originalPar": 23,
+      "bridgeCells": 1,
+      "addedDeadEnds": 10,
+      "deadEnds": 8,
+      "crossGates": 2,
+      "shared": true
+    },
+    {
+      "id": "level-050",
+      "order": 50,
+      "optimalSteps": 24,
+      "globalFog": true,
+      "originalPar": 24,
+      "bridgeCells": 1,
+      "addedDeadEnds": 11,
+      "deadEnds": 8,
+      "crossGates": 2,
+      "shared": true
+    }
+  ]
+}

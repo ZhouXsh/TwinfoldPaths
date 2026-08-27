@@ -46,5 +46,12 @@
     "focus": "方框门只认蓝色，菱形门只认橙色：各走各的门",
     "direction": "RIGHT"
   },
-  "tags": ["chapter-2", "tutorial", "M2", "color-door"]
+  "tags": ["chapter-2", "tutorial", "M2", "color-door", "V1-fog", "exploration-core"],
+  "visibility": {
+    "mode": "fog",
+    "radius": 1,
+    "shape": "square",
+    "memory": "persistent",
+    "source": "both"
+  }
 }

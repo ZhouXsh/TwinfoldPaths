@@ -53,5 +53,12 @@
     "focus": "先开压板门，再过橙的专属门；蓝的出口就在压板上",
     "direction": "LEFT"
   },
-  "tags": ["chapter-2", "M1", "M2", "combo"]
+  "tags": ["chapter-2", "M1", "M2", "combo", "V1-fog", "exploration-core"],
+  "visibility": {
+    "mode": "fog",
+    "radius": 1,
+    "shape": "square",
+    "memory": "persistent",
+    "source": "both"
+  }
 }

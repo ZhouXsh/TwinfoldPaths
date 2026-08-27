@@ -27,19 +27,7 @@
   },
   "walls": [
     {
-      "x": 0,
-      "y": 0
-    },
-    {
-      "x": 1,
-      "y": 0
-    },
-    {
       "x": 2,
-      "y": 0
-    },
-    {
-      "x": 3,
       "y": 0
     },
     {
@@ -47,15 +35,7 @@
       "y": 0
     },
     {
-      "x": 5,
-      "y": 0
-    },
-    {
       "x": 6,
-      "y": 0
-    },
-    {
-      "x": 7,
       "y": 0
     },
     {
@@ -80,10 +60,6 @@
     },
     {
       "x": 0,
-      "y": 1
-    },
-    {
-      "x": 6,
       "y": 1
     },
     {
@@ -349,6 +325,32 @@
       "id": "level-027-do",
       "x": 10,
       "y": 5
+    },
+    {
+      "type": "plate",
+      "id": "level-027-cross-1-bp",
+      "x": 4,
+      "y": 1,
+      "doorId": "level-027-cross-1-od"
+    },
+    {
+      "type": "door",
+      "id": "level-027-cross-1-od",
+      "x": 7,
+      "y": 1
+    },
+    {
+      "type": "plate",
+      "id": "level-027-cross-1-op",
+      "x": 8,
+      "y": 1,
+      "doorId": "level-027-cross-1-bd"
+    },
+    {
+      "type": "door",
+      "id": "level-027-cross-1-bd",
+      "x": 5,
+      "y": 1
     }
   ],
   "parMoves": 22,
@@ -356,5 +358,23 @@
   "hint": {
     "focus": "前段识别专属门，后段再用压板门完成长距离同步。"
   },
-  "tags": ["chapter-3", "M1", "M2", "large-map"]
+  "tags": [
+    "chapter-3",
+    "M1",
+    "M2",
+    "large-map",
+    "V1-fog",
+    "exploration-core",
+    "maze",
+    "shared-maze",
+    "cross-interaction"
+  ],
+  "visibility": {
+    "mode": "fog",
+    "radius": 1,
+    "shape": "square",
+    "memory": "decay",
+    "source": "alternating",
+    "memoryTurns": 3
+  }
 }

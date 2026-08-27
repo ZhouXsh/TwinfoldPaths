@@ -33,5 +33,12 @@
     "focus": "先按两次 ↑：两人会一起向上；再按 ←：蓝向左、橙向右，同时进入出口。",
     "direction": "UP"
   },
-  "tags": ["chapter-1", "tutorial", "M0", "mirror"]
+  "tags": ["chapter-1", "tutorial", "M0", "mirror", "V1-fog", "exploration-core"],
+  "visibility": {
+    "mode": "fog",
+    "radius": 1,
+    "shape": "square",
+    "memory": "persistent",
+    "source": "both"
+  }
 }

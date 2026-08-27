@@ -52,5 +52,12 @@
     "focus": "蓝踩住压板门才开；蓝离开后回合末门关闭",
     "direction": "LEFT"
   },
-  "tags": ["chapter-2", "tutorial", "M1", "plate-door"]
+  "tags": ["chapter-2", "tutorial", "M1", "plate-door", "V1-fog", "exploration-core"],
+  "visibility": {
+    "mode": "fog",
+    "radius": 1,
+    "shape": "square",
+    "memory": "persistent",
+    "source": "both"
+  }
 }

@@ -75,7 +75,14 @@
   "hint": {
     "focus": "蓝方的出口在上方，但左侧通道被墙堵住。必须先向右远离出口，绕到中央通道再向上，最后向左回到出口。"
   },
-  "tags": ["chapter-1", "M0", "detour"],
+  "tags": ["chapter-1", "M0", "detour", "V1-fog", "exploration-core"],
   "parMoves": 6,
-  "parMovesNote": "BFS 最短步数=6；parMoves 与求解器严格一致"
+  "parMovesNote": "BFS 最短步数=6；parMoves 与求解器严格一致",
+  "visibility": {
+    "mode": "fog",
+    "radius": 1,
+    "shape": "square",
+    "memory": "persistent",
+    "source": "both"
+  }
 }

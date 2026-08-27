@@ -38,5 +38,12 @@
     "focus": "← 键：蓝→左，橙→右（被墙挡住）。两个角色都响应方向指令。",
     "direction": "LEFT"
   },
-  "tags": ["chapter-1", "tutorial", "M0", "single-block"]
+  "tags": ["chapter-1", "tutorial", "M0", "single-block", "V1-fog", "exploration-core"],
+  "visibility": {
+    "mode": "fog",
+    "radius": 1,
+    "shape": "square",
+    "memory": "persistent",
+    "source": "both"
+  }
 }

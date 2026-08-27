@@ -91,14 +91,6 @@
       "y": 1
     },
     {
-      "x": 6,
-      "y": 1
-    },
-    {
-      "x": 7,
-      "y": 1
-    },
-    {
       "x": 12,
       "y": 1
     },
@@ -199,14 +191,6 @@
       "y": 4
     },
     {
-      "x": 7,
-      "y": 4
-    },
-    {
-      "x": 8,
-      "y": 4
-    },
-    {
       "x": 10,
       "y": 4
     },
@@ -248,10 +232,6 @@
     },
     {
       "x": 2,
-      "y": 6
-    },
-    {
-      "x": 3,
       "y": 6
     },
     {
@@ -287,10 +267,6 @@
       "y": 6
     },
     {
-      "x": 13,
-      "y": 6
-    },
-    {
       "x": 14,
       "y": 6
     },
@@ -304,10 +280,6 @@
     },
     {
       "x": 2,
-      "y": 7
-    },
-    {
-      "x": 3,
       "y": 7
     },
     {
@@ -347,10 +319,6 @@
       "y": 7
     },
     {
-      "x": 13,
-      "y": 7
-    },
-    {
       "x": 14,
       "y": 7
     },
@@ -364,10 +332,6 @@
     },
     {
       "x": 2,
-      "y": 8
-    },
-    {
-      "x": 3,
       "y": 8
     },
     {
@@ -404,10 +368,6 @@
     },
     {
       "x": 12,
-      "y": 8
-    },
-    {
-      "x": 13,
       "y": 8
     },
     {
@@ -464,10 +424,6 @@
     },
     {
       "x": 12,
-      "y": 9
-    },
-    {
-      "x": 13,
       "y": 9
     },
     {
@@ -821,6 +777,32 @@
       "pairId": "level-030-pulse",
       "x": 9,
       "y": 1
+    },
+    {
+      "type": "plate",
+      "id": "level-030-cross-1-bp",
+      "x": 5,
+      "y": 1,
+      "doorId": "level-030-cross-1-od"
+    },
+    {
+      "type": "door",
+      "id": "level-030-cross-1-od",
+      "x": 12,
+      "y": 5
+    },
+    {
+      "type": "plate",
+      "id": "level-030-cross-1-op",
+      "x": 13,
+      "y": 5,
+      "doorId": "level-030-cross-1-bd"
+    },
+    {
+      "type": "door",
+      "id": "level-030-cross-1-bd",
+      "x": 5,
+      "y": 2
     }
   ],
   "parMoves": 17,
@@ -828,5 +810,26 @@
   "hint": {
     "focus": "在旋转映射的大地图中串联专属门、暂停和脉冲。"
   },
-  "tags": ["chapter-3", "M2", "M3", "M8", "chapter-final", "large-map"]
+  "tags": [
+    "chapter-3",
+    "M2",
+    "M3",
+    "M8",
+    "chapter-final",
+    "large-map",
+    "V1-fog",
+    "exploration-core",
+    "maze",
+    "shared-maze",
+    "cross-interaction"
+  ],
+  "visibility": {
+    "mode": "fog",
+    "radius": 1,
+    "shape": "square",
+    "memory": "none",
+    "source": "both",
+    "pulseEvery": 5,
+    "pulseRadius": 20
+  }
 }

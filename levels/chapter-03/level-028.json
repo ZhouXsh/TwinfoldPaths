@@ -27,23 +27,7 @@
   },
   "walls": [
     {
-      "x": 0,
-      "y": 0
-    },
-    {
-      "x": 1,
-      "y": 0
-    },
-    {
-      "x": 2,
-      "y": 0
-    },
-    {
       "x": 3,
-      "y": 0
-    },
-    {
-      "x": 4,
       "y": 0
     },
     {
@@ -55,10 +39,6 @@
       "y": 0
     },
     {
-      "x": 7,
-      "y": 0
-    },
-    {
       "x": 8,
       "y": 0
     },
@@ -132,10 +112,6 @@
     },
     {
       "x": 0,
-      "y": 5
-    },
-    {
-      "x": 1,
       "y": 5
     },
     {
@@ -293,6 +269,32 @@
       "x": 5,
       "y": 7,
       "arrow": "UP"
+    },
+    {
+      "type": "plate",
+      "id": "level-028-cross-1-bp",
+      "x": 1,
+      "y": 4,
+      "doorId": "level-028-cross-1-od"
+    },
+    {
+      "type": "door",
+      "id": "level-028-cross-1-od",
+      "x": 2,
+      "y": 6
+    },
+    {
+      "type": "plate",
+      "id": "level-028-cross-1-op",
+      "x": 1,
+      "y": 6,
+      "doorId": "level-028-cross-1-bd"
+    },
+    {
+      "type": "door",
+      "id": "level-028-cross-1-bd",
+      "x": 2,
+      "y": 4
     }
   ],
   "parMoves": 19,
@@ -300,5 +302,24 @@
   "hint": {
     "focus": "暂停产生额外回合，随后要按单向格继续纵向镜像。"
   },
-  "tags": ["chapter-3", "M3", "M5", "large-map"]
+  "tags": [
+    "chapter-3",
+    "M3",
+    "M5",
+    "large-map",
+    "V1-fog",
+    "exploration-core",
+    "maze",
+    "shared-maze",
+    "cross-interaction"
+  ],
+  "visibility": {
+    "mode": "fog",
+    "radius": 1,
+    "shape": "square",
+    "memory": "persistent",
+    "source": "both",
+    "pulseEvery": 6,
+    "pulseRadius": 16
+  }
 }

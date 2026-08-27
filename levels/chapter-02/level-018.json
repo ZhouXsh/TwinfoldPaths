@@ -63,7 +63,14 @@
   "hint": {
     "focus": "蓝方踩压板开门，橙方通过专属门后，蓝方穿过门向上。谁站在什么位置决定一切。"
   },
-  "tags": ["chapter-2", "M1", "M2", "key-position"],
+  "tags": ["chapter-2", "M1", "M2", "key-position", "V1-fog", "exploration-core"],
   "parMoves": 4,
-  "parMovesNote": "BFS 最短步数=4；parMoves 与求解器严格一致"
+  "parMovesNote": "BFS 最短步数=4；parMoves 与求解器严格一致",
+  "visibility": {
+    "mode": "fog",
+    "radius": 1,
+    "shape": "square",
+    "memory": "persistent",
+    "source": "both"
+  }
 }

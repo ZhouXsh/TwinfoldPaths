@@ -27,23 +27,7 @@
   },
   "walls": [
     {
-      "x": 0,
-      "y": 0
-    },
-    {
-      "x": 1,
-      "y": 0
-    },
-    {
-      "x": 2,
-      "y": 0
-    },
-    {
       "x": 3,
-      "y": 0
-    },
-    {
-      "x": 4,
       "y": 0
     },
     {
@@ -51,18 +35,6 @@
       "y": 0
     },
     {
-      "x": 6,
-      "y": 0
-    },
-    {
-      "x": 7,
-      "y": 0
-    },
-    {
-      "x": 8,
-      "y": 0
-    },
-    {
       "x": 0,
       "y": 1
     },
@@ -77,10 +49,6 @@
     {
       "x": 8,
       "y": 1
-    },
-    {
-      "x": 0,
-      "y": 2
     },
     {
       "x": 2,
@@ -92,10 +60,6 @@
     },
     {
       "x": 6,
-      "y": 2
-    },
-    {
-      "x": 8,
       "y": 2
     },
     {
@@ -132,10 +96,6 @@
     },
     {
       "x": 0,
-      "y": 5
-    },
-    {
-      "x": 1,
       "y": 5
     },
     {
@@ -295,6 +255,58 @@
       "x": 5,
       "y": 7,
       "arrow": "UP"
+    },
+    {
+      "type": "plate",
+      "id": "level-042-cross-1-bp",
+      "x": 1,
+      "y": 4,
+      "doorId": "level-042-cross-1-od"
+    },
+    {
+      "type": "door",
+      "id": "level-042-cross-1-od",
+      "x": 2,
+      "y": 6
+    },
+    {
+      "type": "plate",
+      "id": "level-042-cross-1-op",
+      "x": 1,
+      "y": 6,
+      "doorId": "level-042-cross-1-bd"
+    },
+    {
+      "type": "door",
+      "id": "level-042-cross-1-bd",
+      "x": 2,
+      "y": 4
+    },
+    {
+      "type": "plate",
+      "id": "level-042-cross-2-bp",
+      "x": 5,
+      "y": 1,
+      "doorId": "level-042-cross-2-od"
+    },
+    {
+      "type": "door",
+      "id": "level-042-cross-2-od",
+      "x": 5,
+      "y": 8
+    },
+    {
+      "type": "plate",
+      "id": "level-042-cross-2-op",
+      "x": 5,
+      "y": 9,
+      "doorId": "level-042-cross-2-bd"
+    },
+    {
+      "type": "door",
+      "id": "level-042-cross-2-bd",
+      "x": 5,
+      "y": 2
     }
   ],
   "parMoves": 18,
@@ -302,5 +314,23 @@
   "hint": {
     "focus": "先对齐偶数相位，再遵守单向格离开方向。"
   },
-  "tags": ["chapter-5", "M5", "M9", "phase"]
+  "tags": [
+    "chapter-5",
+    "M5",
+    "M9",
+    "phase",
+    "V1-fog",
+    "exploration-core",
+    "maze",
+    "shared-maze",
+    "cross-interaction"
+  ],
+  "visibility": {
+    "mode": "fog",
+    "radius": 1,
+    "shape": "square",
+    "memory": "decay",
+    "source": "both",
+    "memoryTurns": 5
+  }
 }
