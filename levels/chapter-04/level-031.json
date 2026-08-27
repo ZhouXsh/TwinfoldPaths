@@ -3,7 +3,7 @@
   "id": "level-031",
   "chapter": 4,
   "order": 31,
-  "title": "雾中顺箭",
+  "title": "顺箭而行",
   "grid": { "width": 6, "height": 4 },
   "blueStart": { "x": 0, "y": 3 },
   "orangeStart": { "x": 5, "y": 3 },
