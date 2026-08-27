@@ -3,7 +3,7 @@
   "id": "level-007",
   "chapter": 1,
   "order": 7,
-  "title": "反向双解耦",
+  "title": "两次解耦",
   "initialMapping": "H_MIRROR",
   "grid": {
     "width": 6,
