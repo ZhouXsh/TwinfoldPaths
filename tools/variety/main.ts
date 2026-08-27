@@ -28,7 +28,11 @@ function levenshtein<T>(a: readonly T[], b: readonly T[]): number {
     curr[0] = i;
     for (let j = 1; j <= b.length; j++) {
       const cost = a[i - 1] === b[j - 1] ? 0 : 1;
-      curr[j] = Math.min((curr[j - 1] ?? 0) + 1, (prev[j] ?? 0) + 1, (prev[j - 1] ?? 0) + cost);
+      curr[j] = Math.min(
+        (curr[j - 1] ?? 0) + 1,
+        (prev[j] ?? 0) + 1,
+        (prev[j - 1] ?? 0) + cost
+      );
     }
     for (let j = 0; j < curr.length; j++) prev[j] = curr[j] ?? 0;
   }
@@ -91,31 +95,54 @@ function auditAdjacent(levels: SolvedLevel[]): PairAudit[] {
     const edit = editSimilarity(a.solution, b.solution);
     const bigram = jaccard(ngrams(a.solution, 2), ngrams(b.solution, 2));
     const tutorialPair = a.tags.includes('tutorial') || b.tags.includes('tutorial');
-    const risk: PairAudit['risk'] = !tutorialPair && exact ? 'fail' : edit > 0.85 && bigram > 0.8 ? 'review' : 'ok';
-    rows.push({ a: a.id, b: b.id, exact, editSimilarity: edit, bigramSimilarity: bigram, risk });
+    const risk: PairAudit['risk'] =
+      !tutorialPair && exact ? 'fail' : edit > 0.85 && bigram > 0.8 ? 'review' : 'ok';
+    rows.push({
+      a: a.id,
+      b: b.id,
+      exact,
+      editSimilarity: edit,
+      bigramSimilarity: bigram,
+      risk
+    });
   }
   return rows;
 }
 
+function exactDuplicateGroups(levels: SolvedLevel[], includeChapter: boolean) {
+  const groups = new Map<string, string[]>();
+  for (const level of levels) {
+    const solution = level.solution.join(',');
+    const key = includeChapter ? `${level.chapter}|${solution}` : solution;
+    const bucket = groups.get(key) ?? [];
+    bucket.push(level.id);
+    groups.set(key, bucket);
+  }
+  return [...groups.entries()]
+    .filter(([, ids]) => ids.length > 1)
+    .map(([key, ids]) => ({
+      solution: (includeChapter ? key.split('|').slice(1).join('|') : key) || '(empty)',
+      chapter: includeChapter ? Number(key.split('|')[0]) : undefined,
+      ids
+    }));
+}
+
 const solved = solveAll(loadLevels());
 const pairs = auditAdjacent(solved);
-const exactGroups = new Map<string, string[]>();
-for (const level of solved) {
-  const key = level.solution.join(',');
-  const bucket = exactGroups.get(key) ?? [];
-  bucket.push(level.id);
-  exactGroups.set(key, bucket);
-}
-const duplicateGroups = [...exactGroups.entries()]
-  .filter(([, ids]) => ids.length > 1)
-  .map(([solution, ids]) => ({ solution: solution || '(empty)', ids }));
+const duplicateGroups = exactDuplicateGroups(solved, false);
+const sameChapterDuplicateGroups = exactDuplicateGroups(solved, true);
+const adjacentFailures = pairs.filter((x) => x.risk === 'fail').length;
+const failCount = adjacentFailures + sameChapterDuplicateGroups.length;
 
 const report = {
   generatedAt: new Date().toISOString(),
   levelCount: solved.length,
-  failCount: pairs.filter((x) => x.risk === 'fail').length,
+  failCount,
+  adjacentFailureCount: adjacentFailures,
+  sameChapterDuplicateCount: sameChapterDuplicateGroups.length,
   reviewCount: pairs.filter((x) => x.risk === 'review').length,
   duplicateGroups,
+  sameChapterDuplicateGroups,
   levels: solved.map((x) => ({ ...x, solution: x.solution.join(' ') })),
   adjacentPairs: pairs
 };
@@ -123,5 +150,7 @@ const report = {
 const outPath = resolve(process.cwd(), 'reports', 'solution-variety-report.json');
 writeFileSync(outPath, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
 console.log(`solution variety report: ${outPath}`);
-console.log(`levels=${report.levelCount} fail=${report.failCount} review=${report.reviewCount}`);
+console.log(
+  `levels=${report.levelCount} fail=${report.failCount} sameChapterExact=${report.sameChapterDuplicateCount} review=${report.reviewCount}`
+);
 if (report.failCount > 0) process.exitCode = 2;
