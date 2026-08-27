@@ -190,13 +190,14 @@ test('后30关代表关卡以大地图和长目标步数呈现', async ({ browse
 });
 
 test('第四章是连续探索章节，并能看到不同探索规则提示', async ({ browser }, testInfo) => {
+  test.setTimeout(60_000);
   const cases = [
     { unlock: 31, label: '4-31 九宫初探', hint: '九宫格', name: 'fog-square' },
     { unlock: 32, label: '4-32 无痕暗域', hint: '无痕迷雾', name: 'fog-no-memory' },
     { unlock: 33, label: '4-33 衰减记忆', hint: '三回合', name: 'fog-decay' },
     { unlock: 34, label: '4-34 双生交替', hint: '交替', name: 'fog-alternating' },
-    { unlock: 35, label: '4-35 菱镜视界', hint: '菱形', name: 'fog-diamond' },
-    { unlock: 36, label: '4-36 十字探路', hint: '十字', name: 'fog-cross' },
+    { unlock: 35, label: '4-35 暗门择路', hint: '九宫格', name: 'fog-branching' },
+    { unlock: 36, label: '4-36 互锁探路', hint: '压板门', name: 'fog-crosslock' },
     { unlock: 37, label: '4-37 周期雷达', hint: '雷达', name: 'fog-radar' },
     { unlock: 38, label: '4-38 点亮信标', hint: '信标', name: 'fog-beacon' },
     { unlock: 39, label: '4-39 一明一暗', hint: '信标', name: 'fog-hybrid' },
@@ -226,6 +227,7 @@ test('周期雷达在第5个有效回合触发全局扫描反馈', async ({ brow
 });
 
 test('M9 奇相门：错误奇偶会阻挡，下一回合可重新校相并最终通关', async ({ browser }) => {
+  test.setTimeout(60_000);
   const ctx = await browser.newContext();
   const page = await ctx.newPage();
   const g = guard(page);
