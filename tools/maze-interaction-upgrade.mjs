@@ -39,10 +39,9 @@ function neighbors(level, p) {
 }
 
 function shortestPath(level, open, start, goal) {
-  const startKey = key(start);
   const goalKey = key(goal);
   const queue = [start];
-  const prev = new Map([[startKey, null]]);
+  const prev = new Map([[key(start), null]]);
   for (let head = 0; head < queue.length; head++) {
     const p = queue[head];
     if (key(p) === goalKey) break;
@@ -106,15 +105,12 @@ function pathCandidate(a, b, horizontalFirst) {
 }
 
 function chooseBridge(level, open, blueComp, orangeComp) {
-  const blueCells = [...blueComp].map((s) => {
+  const toPoint = (s) => {
     const [x, y] = s.split(',').map(Number);
     return { x, y };
-  });
-  const orangeCells = [...orangeComp].map((s) => {
-    const [x, y] = s.split(',').map(Number);
-    return { x, y };
-  });
-
+  };
+  const blueCells = [...blueComp].map(toPoint);
+  const orangeCells = [...orangeComp].map(toPoint);
   let best = null;
   for (const a of blueCells) {
     for (const b of orangeCells) {
@@ -161,14 +157,18 @@ function carveBridge(level, open) {
   return { open, carved };
 }
 
-function addDeadEnds(level, open, desired) {
-  const protectedCells = new Set([
+function protectedCells(level) {
+  return new Set([
     key(level.blueStart),
     key(level.orangeStart),
     key(level.blueExit),
     key(level.orangeExit),
     ...level.entities.map(key)
   ]);
+}
+
+function addDeadEnds(level, open, desired) {
+  const protectedSet = protectedCells(level);
   const origins = [...open]
     .map((s) => {
       const [x, y] = s.split(',').map(Number);
@@ -178,7 +178,7 @@ function addDeadEnds(level, open, desired) {
   let made = 0;
   for (const origin of origins) {
     if (made >= desired) break;
-    if (protectedCells.has(key(origin))) continue;
+    if (protectedSet.has(key(origin))) continue;
     const originDegree = neighbors(level, origin).filter((p) => open.has(key(p))).length;
     if (originDegree < 2 || originDegree > 3) continue;
     for (let d = 0; d < DIRS.length && made < desired; d++) {
@@ -190,7 +190,7 @@ function addDeadEnds(level, open, desired) {
       const temp = new Set(open);
       for (let step = 1; step <= length; step++) {
         const cell = { x: origin.x + dx * step, y: origin.y + dy * step };
-        if (!inBounds(level, cell) || protectedCells.has(key(cell)) || temp.has(key(cell))) {
+        if (!inBounds(level, cell) || protectedSet.has(key(cell)) || temp.has(key(cell))) {
           valid = false;
           break;
         }
@@ -209,6 +209,47 @@ function addDeadEnds(level, open, desired) {
     }
   }
   return made;
+}
+
+function countDeadEnds(level, open) {
+  const protectedSet = new Set([
+    key(level.blueStart),
+    key(level.orangeStart),
+    key(level.blueExit),
+    key(level.orangeExit)
+  ]);
+  let count = 0;
+  for (const s of open) {
+    if (protectedSet.has(s)) continue;
+    const [x, y] = s.split(',').map(Number);
+    const degree = neighbors(level, { x, y }).filter((p) => open.has(key(p))).length;
+    if (degree === 1) count++;
+  }
+  return count;
+}
+
+function ensureLeafDeadEnds(level, open, minCount) {
+  const protectedSet = protectedCells(level);
+  let added = 0;
+  while (countDeadEnds(level, open) < minCount) {
+    let chosen = null;
+    for (let y = 0; y < level.grid.height && !chosen; y++) {
+      for (let x = 0; x < level.grid.width; x++) {
+        const cell = { x, y };
+        const k = key(cell);
+        if (open.has(k) || protectedSet.has(k)) continue;
+        const linked = neighbors(level, cell).filter((p) => open.has(key(p)));
+        if (linked.length === 1) {
+          chosen = cell;
+          break;
+        }
+      }
+    }
+    if (!chosen) break;
+    open.add(key(chosen));
+    added++;
+  }
+  return added;
 }
 
 function setWallsFromOpen(level, open) {
@@ -298,23 +339,6 @@ function tryAddCrossGate(level, bluePath, orangePath, ratio, gateNo, minSteps) {
   return true;
 }
 
-function countDeadEnds(level, open) {
-  const protectedCells = new Set([
-    key(level.blueStart),
-    key(level.orangeStart),
-    key(level.blueExit),
-    key(level.orangeExit)
-  ]);
-  let count = 0;
-  for (const s of open) {
-    if (protectedCells.has(s)) continue;
-    const [x, y] = s.split(',').map(Number);
-    const degree = neighbors(level, { x, y }).filter((p) => open.has(key(p))).length;
-    if (degree === 1) count++;
-  }
-  return count;
-}
-
 function upgradeLate(level) {
   const originalPar = level.parMoves;
   const baseOpen = allOpen(level);
@@ -323,7 +347,9 @@ function upgradeLate(level) {
   const open = new Set(baseOpen);
   const bridge = carveBridge(level, open);
   const desiredDeadEnds = Math.min(3 + Math.floor((level.order - 21) / 5), 8);
-  const addedDeadEnds = addDeadEnds(level, open, desiredDeadEnds);
+  const addedLongDeadEnds = addDeadEnds(level, open, desiredDeadEnds);
+  const addedLeafDeadEnds = ensureLeafDeadEnds(level, open, Math.max(3, desiredDeadEnds));
+  const addedDeadEnds = addedLongDeadEnds + addedLeafDeadEnds;
   setWallsFromOpen(level, open);
 
   for (const tag of ['maze', 'shared-maze']) {
@@ -395,7 +421,10 @@ if (!late.every((row) => row.shared)) throw new Error('后 30 关仍存在双路
 if (!late.filter((row) => row.order >= 23).every((row) => row.crossGates >= 1)) {
   throw new Error('23–50 关存在缺少跨球互锁的关卡');
 }
-if (!late.every((row) => row.deadEnds >= 2)) throw new Error('后 30 关存在死胡同不足的关卡');
+if (!late.every((row) => row.deadEnds >= 2)) {
+  const bad = late.filter((row) => row.deadEnds < 2).map((row) => `${row.id}:${row.deadEnds}`);
+  throw new Error(`后 30 关存在死胡同不足的关卡: ${bad.join(', ')}`);
+}
 
 const summary = {
   generatedAt: new Date().toISOString(),
@@ -417,16 +446,19 @@ const markdown = [
   '- 50/50 关启用九宫格探索迷雾（square radius=1）。',
   '- 21–50 关双球起点处于同一连通迷宫网络，不再是两条完全分离的固定通道。',
   '- 23–50 关加入跨球互锁压板门：一侧角色的站位会直接决定另一侧能否通过。',
-  '- 21–50 关加入多格死胡同，保留误入、回退与路线判断空间。',
+  '- 21–50 关加入多格与叶节点死胡同，保留误入、回退与路线判断空间。',
   `- 后 30 关 BFS 平均最优步数：${avg.toFixed(2)}。`,
   '',
   '| 关卡 | 最优步数 | 新增死胡同 | 死胡同总数 | 共享走廊开格 | 跨球门组 |',
   '|---|---:|---:|---:|---:|---:|',
-  ...late.map((row) =>
-    `| ${row.id} | ${row.optimalSteps} | ${row.addedDeadEnds} | ${row.deadEnds} | ${row.bridgeCells} | ${row.crossGates} |`
+  ...late.map(
+    (row) =>
+      `| ${row.id} | ${row.optimalSteps} | ${row.addedDeadEnds} | ${row.deadEnds} | ${row.bridgeCells} | ${row.crossGates} |`
   ),
   ''
 ].join('\n');
 writeFileSync(resolve(ROOT, 'reports', 'global-fog-maze-interaction-summary.md'), markdown, 'utf8');
 
-console.log(`global fog=50/50; late avg=${avg.toFixed(2)}; shared=${late.length}/30; cross=${late.filter((x) => x.crossGates >= 1).length}/30`);
+console.log(
+  `global fog=50/50; late avg=${avg.toFixed(2)}; shared=${late.length}/30; cross=${late.filter((x) => x.crossGates >= 1).length}/30`
+);
