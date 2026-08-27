@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "initialMapping": "H_MIRROR",
   "id": "level-037",
-  "title": "单方传送",
+  "title": "雾中跃迁",
   "chapter": 4,
   "order": 37,
   "grid": {
@@ -64,9 +64,9 @@
     }
   ],
   "hint": {
-    "focus": "先让蓝进入传送门，再利用右侧缺口让橙穿过横墙；两人的路线不同但仍共用指令。"
+    "focus": "迷雾不会跟着传送一起消失：让蓝先跃迁侦察上层，再利用右侧缺口引导橙穿墙。"
   },
-  "tags": ["chapter-4", "tutorial", "M6", "single-portal"],
+  "tags": ["chapter-4", "combo", "M6", "single-portal", "V1-fog"],
   "parMoves": 6,
   "parMovesNote": "BFS 最短步数=6；打开右侧缺口以平滑传送机制的教学坡度"
 }
