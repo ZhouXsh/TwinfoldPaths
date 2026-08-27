@@ -9,22 +9,10 @@
     "width": 7,
     "height": 5
   },
-  "blueStart": {
-    "x": 0,
-    "y": 4
-  },
-  "orangeStart": {
-    "x": 6,
-    "y": 4
-  },
-  "blueExit": {
-    "x": 0,
-    "y": 0
-  },
-  "orangeExit": {
-    "x": 6,
-    "y": 0
-  },
+  "blueStart": { "x": 6, "y": 4 },
+  "orangeStart": { "x": 0, "y": 4 },
+  "blueExit": { "x": 6, "y": 0 },
+  "orangeExit": { "x": 0, "y": 0 },
   "walls": [
     { "x": 0, "y": 1 },
     { "x": 0, "y": 2 },
@@ -42,21 +30,13 @@
     { "x": 4, "y": 3 }
   ],
   "entities": [
-    {
-      "type": "fragile",
-      "x": 1,
-      "y": 2
-    },
-    {
-      "type": "fragile",
-      "x": 5,
-      "y": 2
-    }
+    { "type": "fragile", "x": 5, "y": 2 },
+    { "type": "fragile", "x": 1, "y": 2 }
   ],
   "parMoves": 6,
-  "parMovesNote": "BFS 最短步数=6",
+  "parMovesNote": "原关卡做水平镜像；脆弱格机制等价，但起手左右方向翻转，最短步数保持 6",
   "hint": {
-    "focus": "脆弱格离开即坍塌"
+    "focus": "起点左右互换了；脆弱格离开即坍塌，先判断哪一侧需要率先穿过。"
   },
-  "tags": ["chapter-5", "tutorial", "M7", "fragile-wall"]
+  "tags": ["chapter-5", "tutorial", "M7", "fragile-wall", "route-variation"]
 }

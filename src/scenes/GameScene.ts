@@ -28,6 +28,7 @@ import {
   hideDirectionPreview
 } from './dom-ui';
 import { recordEvent } from '../telemetry/telemetry';
+import { computeVisibleCells, fogCellKey, mergeExploredCells } from './fog-visibility';
 
 /** 移动动画时长（阶段 06 要求 150–220ms）。 */
 const MOVE_ANIM_MS = 180;
@@ -35,6 +36,7 @@ const CANCEL_SHAKE_MS = 120;
 const WIN_DELAY_MS = 700;
 const BOARD_SIZE = 360;
 const DIR_PREVIEW_MIN_MS = 80;
+const FOG_TAG = 'V1-fog';
 
 const MAPPING_NAMES: Record<MappingMode, string> = {
   H_MIRROR: '水平镜像',
@@ -98,6 +100,8 @@ export class GameScene extends Phaser.Scene {
     [];
   private blueToken: Phaser.GameObjects.Image | null = null;
   private orangeToken: Phaser.GameObjects.Image | null = null;
+  private fogGraphics: Phaser.GameObjects.Graphics | null = null;
+  private exploredCells = new Set<string>();
   private cleanupFns: Array<() => void> = [];
   private reducedAnim = false;
   private pointerDownPos: { x: number; y: number } | null = null;
@@ -128,17 +132,19 @@ export class GameScene extends Phaser.Scene {
     this.pulseSwitchSprites = [];
     this.blueToken = null;
     this.orangeToken = null;
+    this.fogGraphics = null;
+    this.exploredCells.clear();
     this.pointerDownPos = null;
     this.pointerDownTime = 0;
     this.hintRestoreTimer?.remove(false);
     this.hintRestoreTimer = null;
 
-    // 加载设置
     const settings = loadSettings(localStorageStore());
     this.reducedAnim = settings.reducedAnim;
     audioManager.setState({ music: settings.music, sfx: settings.sfx });
 
     this.drawBoard(level);
+    this.refreshFog(true);
     showBars('bar-hud', 'bar-controls');
     setLevelLabel(`${level.chapter}-${level.order} ${level.title}`);
     setMappingLabel(`映射：${MAPPING_NAMES[this.state.mapping]}`);
@@ -148,12 +154,13 @@ export class GameScene extends Phaser.Scene {
     this.syncEntityStates(this.state);
     this.bindInputs();
 
-    // 遥测：关卡开始
     recordEvent('level_start', level.id, 0);
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       this.hintRestoreTimer?.remove(false);
       this.hintRestoreTimer = null;
+      this.dirPreviewTimer?.remove(false);
+      this.dirPreviewTimer = null;
       setHintDirection(null);
       for (const fn of this.cleanupFns) fn();
       this.cleanupFns = [];
@@ -162,9 +169,11 @@ export class GameScene extends Phaser.Scene {
 
   private drawBoard(level: LevelRecord): void {
     const { width, height } = level.grid;
+    // 大地图自动使用更窄边距；10x10 在 360 逻辑画布上仍能获得约 34px 单元格。
+    const boardPadding = Math.max(width, height) >= 8 ? 12 : 24;
     this.tile = Math.min(
-      Math.floor((BOARD_SIZE - 24) / width),
-      Math.floor((BOARD_SIZE - 24) / height),
+      Math.floor((BOARD_SIZE - boardPadding) / width),
+      Math.floor((BOARD_SIZE - boardPadding) / height),
       64
     );
     this.originX = Math.floor((BOARD_SIZE - this.tile * width) / 2);
@@ -266,6 +275,57 @@ export class GameScene extends Phaser.Scene {
     };
   }
 
+  private isFogLevel(level: LevelRecord): boolean {
+    return level.visibility?.mode === 'fog' || level.tags.includes(FOG_TAG);
+  }
+
+  /**
+   * V1 探索迷雾：当前视野完全透明、已经探索的旧区域半透明、未知区域遮蔽。
+   * explored 不写入 GameState，因此撤销不会“忘记”已经看过的地图；重开会清空。
+   */
+  private refreshFog(resetExplored = false): void {
+    const level = this.level;
+    const state = this.state;
+    if (!level || !state) return;
+
+    if (!this.isFogLevel(level)) {
+      this.fogGraphics?.destroy();
+      this.fogGraphics = null;
+      return;
+    }
+
+    if (resetExplored) this.exploredCells.clear();
+    const radius = level.visibility?.radius ?? 1;
+    const visible = computeVisibleCells({
+      width: level.grid.width,
+      height: level.grid.height,
+      actors: [state.actors.blue.pos, state.actors.orange.pos],
+      radius
+    });
+    mergeExploredCells(this.exploredCells, visible);
+
+    if (!this.fogGraphics) {
+      this.fogGraphics = this.add.graphics().setDepth(1000);
+    }
+    const graphics = this.fogGraphics;
+    graphics.clear();
+
+    for (let y = 0; y < level.grid.height; y++) {
+      for (let x = 0; x < level.grid.width; x++) {
+        const key = fogCellKey(x, y);
+        if (visible.has(key)) continue;
+        const explored = this.exploredCells.has(key);
+        graphics.fillStyle(explored ? 0xdfe6ef : 0xf1f4f8, explored ? 0.58 : 0.96);
+        graphics.fillRect(
+          this.originX + x * this.tile,
+          this.originY + y * this.tile,
+          this.tile,
+          this.tile
+        );
+      }
+    }
+  }
+
   private bindInputs(): void {
     const keyboard = this.input.keyboard;
     if (keyboard) {
@@ -278,7 +338,6 @@ export class GameScene extends Phaser.Scene {
       }
     }
 
-    // 滑动方向预览：指针按下时记录位置
     const onPointerDown = (pointer: Phaser.Input.Pointer): void => {
       this.pointerDownPos = { x: pointer.x, y: pointer.y };
       this.pointerDownTime = this.time.now;
@@ -286,23 +345,18 @@ export class GameScene extends Phaser.Scene {
     this.input.on('pointerdown', onPointerDown);
     this.cleanupFns.push(() => this.input.off('pointerdown', onPointerDown));
 
-    // 滑动方向预览：移动时显示方向
     const onPointerMove = (pointer: Phaser.Input.Pointer): void => {
       if (!this.pointerDownPos) return;
       if (this.time.now - this.pointerDownTime < DIR_PREVIEW_MIN_MS) return;
       const dx = pointer.x - this.pointerDownPos.x;
       const dy = pointer.y - this.pointerDownPos.y;
       const dir = swipeToDirection(dx, dy, 15);
-      if (dir) {
-        showDirectionPreview(dir);
-      } else {
-        hideDirectionPreview();
-      }
+      if (dir) showDirectionPreview(dir);
+      else hideDirectionPreview();
     };
     this.input.on('pointermove', onPointerMove);
     this.cleanupFns.push(() => this.input.off('pointermove', onPointerMove));
 
-    // 滑动方向预览：释放时
     const onPointerUp = (pointer: Phaser.Input.Pointer): void => {
       hideDirectionPreview();
       if (this.pointerDownPos) {
@@ -364,7 +418,6 @@ export class GameScene extends Phaser.Scene {
   ): void {
     const animDuration = this.reducedAnim ? 30 : MOVE_ANIM_MS;
 
-    // 播放音效
     if (result.teleported.blue || result.teleported.orange) {
       audioManager.play('teleport');
     } else if (result.blue.blocked || result.orange.blocked) {
@@ -393,6 +446,7 @@ export class GameScene extends Phaser.Scene {
       this.refreshExitGlow();
       this.syncEntityStates(state);
       this.syncTokens(state);
+      this.refreshFog(false);
       const events: string[] = [];
       if (result.teleported.blue) events.push('蓝被传送');
       if (result.teleported.orange) events.push('橙被传送');
@@ -427,18 +481,13 @@ export class GameScene extends Phaser.Scene {
       if (blueOnExit !== orangeOnExit) {
         events.push(blueOnExit ? '蓝已到达出口，继续引导橙就位' : '橙已到达出口，继续引导蓝就位');
       }
-      // 暂停令牌获得
       if (state.actors.blue.hasPauseToken && !result.pauseConsumed.blue) {
         const prev = this.state?.history?.[this.state.history.length - 1];
-        if (prev && !prev.actors.blue.hasPauseToken) {
-          audioManager.play('token');
-        }
+        if (prev && !prev.actors.blue.hasPauseToken) audioManager.play('token');
       }
       if (state.actors.orange.hasPauseToken && !result.pauseConsumed.orange) {
         const prev = this.state?.history?.[this.state.history.length - 1];
-        if (prev && !prev.actors.orange.hasPauseToken) {
-          audioManager.play('token');
-        }
+        if (prev && !prev.actors.orange.hasPauseToken) audioManager.play('token');
       }
       setStatusText(
         events.length > 0 ? events.join('；') : level.hint.focus,
@@ -461,12 +510,7 @@ export class GameScene extends Phaser.Scene {
       sprite.setPosition(toPx.x, toPx.y);
       sprite.setAlpha(0.35);
       if (!this.reducedAnim) {
-        this.tweens.add({
-          targets: sprite,
-          alpha: 1,
-          duration,
-          ease: 'Quad.easeOut'
-        });
+        this.tweens.add({ targets: sprite, alpha: 1, duration, ease: 'Quad.easeOut' });
       } else {
         sprite.setAlpha(1);
       }
@@ -585,9 +629,7 @@ export class GameScene extends Phaser.Scene {
       }
       const c = this.cellCenter(pos);
       const scale = (this.tile * 0.34) / 64;
-      if (!token) {
-        token = this.add.image(c.x, c.y, 'token').setScale(scale);
-      }
+      if (!token) token = this.add.image(c.x, c.y, 'token').setScale(scale);
       token
         .setPosition(c.x + this.tile * 0.3, c.y - this.tile * 0.3)
         .setScale(scale)
@@ -616,6 +658,7 @@ export class GameScene extends Phaser.Scene {
     this.syncActors();
     this.syncEntityStates(prev);
     this.syncTokens(prev);
+    this.refreshFog(false);
     setMappingLabel(`映射：${MAPPING_NAMES[prev.mapping]}`);
     setMoveCount(prev.moveCount);
     this.refreshExitGlow();
@@ -632,6 +675,7 @@ export class GameScene extends Phaser.Scene {
     this.syncActors();
     this.syncEntityStates(this.state);
     this.syncTokens(this.state);
+    this.refreshFog(true);
     setMappingLabel(`映射：${MAPPING_NAMES[this.state.mapping]}`);
     setMoveCount(0);
     this.refreshExitGlow();

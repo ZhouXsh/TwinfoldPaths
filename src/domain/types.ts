@@ -111,6 +111,16 @@ export interface LevelHint {
   direction?: Direction | null;
 }
 
+/**
+ * 表现层信息可见性规则。`fog` 只限制玩家能看到的地图信息，
+ * 不参与领域层移动/碰撞/胜利判定，因此不会改变求解器语义。
+ */
+export interface LevelVisibility {
+  mode: 'full' | 'fog';
+  /** Chebyshev 半径；1 即角色周围 3x3 九宫格。 */
+  radius?: number;
+}
+
 export interface LevelDef {
   schemaVersion: number;
   id: string;
@@ -128,6 +138,7 @@ export interface LevelDef {
   parMovesNote?: string;
   hint: LevelHint;
   tags: string[];
+  visibility?: LevelVisibility;
 }
 
 export interface Snapshot {

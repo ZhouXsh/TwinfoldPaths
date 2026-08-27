@@ -21,6 +21,7 @@
     "solve:level": "npm run build:tools && node tools/solve-levels.mjs solve",
     "solve:levels": "npm run build:tools && node tools/solve-levels.mjs solve-all",
     "report:difficulty": "npm run build:tools && node tools/solve-levels.mjs report",
+    "report:solution-variety": "npm run build:tools && node tools-dist/variety.mjs",
     "editor": "npx vite --open tools/level-editor/index.html",
     "test:e2e": "playwright test",
     "build": "vite build",
