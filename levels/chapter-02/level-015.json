@@ -72,5 +72,12 @@
     "focus": "墙把橙逼向唯一的门；蓝踩板撑门，直到橙通过",
     "direction": "LEFT"
   },
-  "tags": ["chapter-2", "M0", "M1", "combo"]
+  "tags": ["chapter-2", "M0", "M1", "combo", "V1-fog", "exploration-core"],
+  "visibility": {
+    "mode": "fog",
+    "radius": 1,
+    "shape": "square",
+    "memory": "persistent",
+    "source": "both"
+  }
 }

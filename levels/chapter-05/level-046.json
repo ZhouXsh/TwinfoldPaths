@@ -27,19 +27,7 @@
   },
   "walls": [
     {
-      "x": 0,
-      "y": 0
-    },
-    {
-      "x": 1,
-      "y": 0
-    },
-    {
       "x": 2,
-      "y": 0
-    },
-    {
-      "x": 3,
       "y": 0
     },
     {
@@ -47,15 +35,7 @@
       "y": 0
     },
     {
-      "x": 5,
-      "y": 0
-    },
-    {
       "x": 6,
-      "y": 0
-    },
-    {
-      "x": 7,
       "y": 0
     },
     {
@@ -91,14 +71,6 @@
       "y": 1
     },
     {
-      "x": 6,
-      "y": 1
-    },
-    {
-      "x": 7,
-      "y": 1
-    },
-    {
       "x": 12,
       "y": 1
     },
@@ -248,10 +220,6 @@
     },
     {
       "x": 2,
-      "y": 6
-    },
-    {
-      "x": 3,
       "y": 6
     },
     {
@@ -304,10 +272,6 @@
     },
     {
       "x": 2,
-      "y": 7
-    },
-    {
-      "x": 3,
       "y": 7
     },
     {
@@ -364,10 +328,6 @@
     },
     {
       "x": 2,
-      "y": 8
-    },
-    {
-      "x": 3,
       "y": 8
     },
     {
@@ -811,6 +771,58 @@
       "phase": "EVEN",
       "x": 11,
       "y": 3
+    },
+    {
+      "type": "plate",
+      "id": "level-046-cross-1-bp",
+      "x": 3,
+      "y": 1,
+      "doorId": "level-046-cross-1-od"
+    },
+    {
+      "type": "door",
+      "id": "level-046-cross-1-od",
+      "x": 13,
+      "y": 4
+    },
+    {
+      "type": "plate",
+      "id": "level-046-cross-1-op",
+      "x": 13,
+      "y": 3,
+      "doorId": "level-046-cross-1-bd"
+    },
+    {
+      "type": "door",
+      "id": "level-046-cross-1-bd",
+      "x": 4,
+      "y": 1
+    },
+    {
+      "type": "plate",
+      "id": "level-046-cross-2-bp",
+      "x": 2,
+      "y": 3,
+      "doorId": "level-046-cross-2-od"
+    },
+    {
+      "type": "door",
+      "id": "level-046-cross-2-od",
+      "x": 11,
+      "y": 1
+    },
+    {
+      "type": "plate",
+      "id": "level-046-cross-2-op",
+      "x": 11,
+      "y": 2,
+      "doorId": "level-046-cross-2-bd"
+    },
+    {
+      "type": "door",
+      "id": "level-046-cross-2-bd",
+      "x": 1,
+      "y": 3
     }
   ],
   "parMoves": 16,
@@ -818,5 +830,24 @@
   "hint": {
     "focus": "先同步点亮脉冲，再把旋转路线的回合数对齐偶相门。"
   },
-  "tags": ["chapter-5", "M8", "M9", "phase"]
+  "tags": [
+    "chapter-5",
+    "M8",
+    "M9",
+    "phase",
+    "V1-fog",
+    "exploration-core",
+    "maze",
+    "shared-maze",
+    "cross-interaction"
+  ],
+  "visibility": {
+    "mode": "fog",
+    "radius": 1,
+    "shape": "square",
+    "memory": "persistent",
+    "source": "both",
+    "pulseEvery": 7,
+    "pulseRadius": 12
+  }
 }

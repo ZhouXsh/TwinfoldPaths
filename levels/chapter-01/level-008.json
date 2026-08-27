@@ -65,5 +65,12 @@
   "hint": {
     "focus": "先看两侧缺口，再规划折线路线；墙会在不同回合分别挡住两人。"
   },
-  "tags": ["chapter-1", "M0", "asymmetric", "pre-final"]
+  "tags": ["chapter-1", "M0", "asymmetric", "pre-final", "V1-fog", "exploration-core"],
+  "visibility": {
+    "mode": "fog",
+    "radius": 1,
+    "shape": "square",
+    "memory": "persistent",
+    "source": "both"
+  }
 }

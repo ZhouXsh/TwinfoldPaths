@@ -71,5 +71,12 @@
   "hint": {
     "focus": "蓝方走到压板上开门，通过门后继续向上。压板可被双方反复利用来开门。"
   },
-  "tags": ["chapter-2", "tutorial", "M1", "reuse-plate"]
+  "tags": ["chapter-2", "tutorial", "M1", "reuse-plate", "V1-fog", "exploration-core"],
+  "visibility": {
+    "mode": "fog",
+    "radius": 1,
+    "shape": "square",
+    "memory": "persistent",
+    "source": "both"
+  }
 }

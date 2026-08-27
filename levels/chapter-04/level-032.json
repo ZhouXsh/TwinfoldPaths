@@ -27,23 +27,7 @@
   },
   "walls": [
     {
-      "x": 0,
-      "y": 0
-    },
-    {
-      "x": 1,
-      "y": 0
-    },
-    {
-      "x": 2,
-      "y": 0
-    },
-    {
       "x": 3,
-      "y": 0
-    },
-    {
-      "x": 4,
       "y": 0
     },
     {
@@ -51,24 +35,12 @@
       "y": 0
     },
     {
-      "x": 6,
-      "y": 0
-    },
-    {
       "x": 0,
       "y": 1
     },
     {
       "x": 2,
       "y": 1
-    },
-    {
-      "x": 6,
-      "y": 1
-    },
-    {
-      "x": 0,
-      "y": 2
     },
     {
       "x": 2,
@@ -112,10 +84,6 @@
     },
     {
       "x": 0,
-      "y": 5
-    },
-    {
-      "x": 1,
       "y": 5
     },
     {
@@ -235,6 +203,32 @@
       "x": 3,
       "y": 7,
       "arrow": "DOWN"
+    },
+    {
+      "type": "plate",
+      "id": "level-032-cross-1-bp",
+      "x": 1,
+      "y": 3,
+      "doorId": "level-032-cross-1-od"
+    },
+    {
+      "type": "door",
+      "id": "level-032-cross-1-od",
+      "x": 1,
+      "y": 6
+    },
+    {
+      "type": "plate",
+      "id": "level-032-cross-1-op",
+      "x": 1,
+      "y": 7,
+      "doorId": "level-032-cross-1-bd"
+    },
+    {
+      "type": "door",
+      "id": "level-032-cross-1-bd",
+      "x": 1,
+      "y": 4
     }
   ],
   "parMoves": 13,
@@ -242,7 +236,17 @@
   "hint": {
     "focus": "无痕迷雾不会保留旧地图；记住转角和单向格的位置。"
   },
-  "tags": ["chapter-4", "M5", "V1-fog", "fog-no-memory", "exploration"],
+  "tags": [
+    "chapter-4",
+    "M5",
+    "V1-fog",
+    "fog-no-memory",
+    "exploration",
+    "exploration-core",
+    "maze",
+    "shared-maze",
+    "cross-interaction"
+  ],
   "visibility": {
     "mode": "fog",
     "radius": 1,

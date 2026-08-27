@@ -27,19 +27,7 @@
   },
   "walls": [
     {
-      "x": 0,
-      "y": 0
-    },
-    {
-      "x": 1,
-      "y": 0
-    },
-    {
       "x": 2,
-      "y": 0
-    },
-    {
-      "x": 3,
       "y": 0
     },
     {
@@ -47,15 +35,7 @@
       "y": 0
     },
     {
-      "x": 5,
-      "y": 0
-    },
-    {
       "x": 6,
-      "y": 0
-    },
-    {
-      "x": 7,
       "y": 0
     },
     {
@@ -63,36 +43,16 @@
       "y": 0
     },
     {
-      "x": 9,
-      "y": 0
-    },
-    {
       "x": 10,
       "y": 0
     },
     {
-      "x": 11,
-      "y": 0
-    },
-    {
-      "x": 12,
-      "y": 0
-    },
-    {
       "x": 0,
-      "y": 1
-    },
-    {
-      "x": 6,
       "y": 1
     },
     {
       "x": 12,
       "y": 1
-    },
-    {
-      "x": 0,
-      "y": 2
     },
     {
       "x": 1,
@@ -135,15 +95,7 @@
       "y": 2
     },
     {
-      "x": 0,
-      "y": 3
-    },
-    {
       "x": 6,
-      "y": 3
-    },
-    {
-      "x": 12,
       "y": 3
     },
     {
@@ -379,6 +331,58 @@
       "pairId": "level-050-pulse",
       "x": 7,
       "y": 7
+    },
+    {
+      "type": "plate",
+      "id": "level-050-cross-1-bp",
+      "x": 5,
+      "y": 1,
+      "doorId": "level-050-cross-1-od"
+    },
+    {
+      "type": "door",
+      "id": "level-050-cross-1-od",
+      "x": 7,
+      "y": 2
+    },
+    {
+      "type": "plate",
+      "id": "level-050-cross-1-op",
+      "x": 7,
+      "y": 1,
+      "doorId": "level-050-cross-1-bd"
+    },
+    {
+      "type": "door",
+      "id": "level-050-cross-1-bd",
+      "x": 5,
+      "y": 2
+    },
+    {
+      "type": "plate",
+      "id": "level-050-cross-2-bp",
+      "x": 4,
+      "y": 5,
+      "doorId": "level-050-cross-2-od"
+    },
+    {
+      "type": "door",
+      "id": "level-050-cross-2-od",
+      "x": 7,
+      "y": 5
+    },
+    {
+      "type": "plate",
+      "id": "level-050-cross-2-op",
+      "x": 8,
+      "y": 5,
+      "doorId": "level-050-cross-2-bd"
+    },
+    {
+      "type": "door",
+      "id": "level-050-cross-2-bd",
+      "x": 5,
+      "y": 5
     }
   ],
   "parMoves": 24,
@@ -386,5 +390,29 @@
   "hint": {
     "focus": "最后一关把长路径、暂停、坍塌、相位和脉冲合在同一条双生折线中。"
   },
-  "tags": ["chapter-5", "M2", "M3", "M7", "M8", "M9", "phase", "final", "chapter-final"]
+  "tags": [
+    "chapter-5",
+    "M2",
+    "M3",
+    "M7",
+    "M8",
+    "M9",
+    "phase",
+    "final",
+    "chapter-final",
+    "V1-fog",
+    "exploration-core",
+    "maze",
+    "shared-maze",
+    "cross-interaction"
+  ],
+  "visibility": {
+    "mode": "fog",
+    "radius": 1,
+    "shape": "square",
+    "memory": "none",
+    "source": "both",
+    "pulseEvery": 5,
+    "pulseRadius": 20
+  }
 }

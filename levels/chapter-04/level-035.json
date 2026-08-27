@@ -3,7 +3,7 @@
   "id": "level-035",
   "chapter": 4,
   "order": 35,
-  "title": "菱镜视界",
+  "title": "暗门择路",
   "initialMapping": "H_MIRROR",
   "grid": {
     "width": 11,
@@ -27,19 +27,7 @@
   },
   "walls": [
     {
-      "x": 0,
-      "y": 0
-    },
-    {
-      "x": 1,
-      "y": 0
-    },
-    {
       "x": 2,
-      "y": 0
-    },
-    {
-      "x": 3,
       "y": 0
     },
     {
@@ -47,23 +35,11 @@
       "y": 0
     },
     {
-      "x": 5,
-      "y": 0
-    },
-    {
       "x": 6,
       "y": 0
     },
     {
-      "x": 7,
-      "y": 0
-    },
-    {
       "x": 8,
-      "y": 0
-    },
-    {
-      "x": 9,
       "y": 0
     },
     {
@@ -72,10 +48,6 @@
     },
     {
       "x": 0,
-      "y": 1
-    },
-    {
-      "x": 5,
       "y": 1
     },
     {
@@ -295,18 +267,54 @@
       "x": 7,
       "y": 5,
       "color": "ORANGE"
+    },
+    {
+      "type": "plate",
+      "id": "level-035-cross-1-bp",
+      "x": 4,
+      "y": 1,
+      "doorId": "level-035-cross-1-od"
+    },
+    {
+      "type": "door",
+      "id": "level-035-cross-1-od",
+      "x": 6,
+      "y": 2
+    },
+    {
+      "type": "plate",
+      "id": "level-035-cross-1-op",
+      "x": 6,
+      "y": 1,
+      "doorId": "level-035-cross-1-bd"
+    },
+    {
+      "type": "door",
+      "id": "level-035-cross-1-bd",
+      "x": 4,
+      "y": 2
     }
   ],
   "parMoves": 18,
   "parMovesNote": "BFS 最短步数=18；parMoves 与求解器严格一致",
   "hint": {
-    "focus": "视野从九宫格收束为菱形，转角处的信息更少。"
+    "focus": "九宫格视野保持不变；单向格和专属门藏在岔路中，先探索再决定哪条路值得深入。"
   },
-  "tags": ["chapter-4", "M2", "M5", "V1-fog", "fog-diamond", "exploration"],
+  "tags": [
+    "chapter-4",
+    "M2",
+    "M5",
+    "V1-fog",
+    "exploration",
+    "exploration-core",
+    "maze",
+    "shared-maze",
+    "cross-interaction"
+  ],
   "visibility": {
     "mode": "fog",
     "radius": 1,
-    "shape": "diamond",
+    "shape": "square",
     "memory": "persistent",
     "source": "both"
   }

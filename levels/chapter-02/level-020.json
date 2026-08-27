@@ -81,5 +81,21 @@
   "hint": {
     "focus": "这一章的收尾不再沿用向上折线：从上方出发，综合利用墙、压板门和专属门向下汇合。"
   },
-  "tags": ["chapter-2", "M0", "M1", "M2", "chapter-final", "route-variation"]
+  "tags": [
+    "chapter-2",
+    "M0",
+    "M1",
+    "M2",
+    "chapter-final",
+    "route-variation",
+    "V1-fog",
+    "exploration-core"
+  ],
+  "visibility": {
+    "mode": "fog",
+    "radius": 1,
+    "shape": "square",
+    "memory": "persistent",
+    "source": "both"
+  }
 }

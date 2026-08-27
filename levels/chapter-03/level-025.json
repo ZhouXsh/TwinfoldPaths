@@ -27,27 +27,11 @@
   },
   "walls": [
     {
-      "x": 0,
-      "y": 0
-    },
-    {
-      "x": 1,
-      "y": 0
-    },
-    {
       "x": 2,
       "y": 0
     },
     {
-      "x": 3,
-      "y": 0
-    },
-    {
       "x": 4,
-      "y": 0
-    },
-    {
-      "x": 5,
       "y": 0
     },
     {
@@ -72,10 +56,6 @@
     },
     {
       "x": 0,
-      "y": 1
-    },
-    {
-      "x": 5,
       "y": 1
     },
     {
@@ -295,6 +275,32 @@
       "pairId": "level-025-pulse",
       "x": 7,
       "y": 5
+    },
+    {
+      "type": "plate",
+      "id": "level-025-cross-1-bp",
+      "x": 4,
+      "y": 1,
+      "doorId": "level-025-cross-1-od"
+    },
+    {
+      "type": "door",
+      "id": "level-025-cross-1-od",
+      "x": 6,
+      "y": 2
+    },
+    {
+      "type": "plate",
+      "id": "level-025-cross-1-op",
+      "x": 6,
+      "y": 1,
+      "doorId": "level-025-cross-1-bd"
+    },
+    {
+      "type": "door",
+      "id": "level-025-cross-1-bd",
+      "x": 4,
+      "y": 2
     }
   ],
   "parMoves": 18,
@@ -302,5 +308,21 @@
   "hint": {
     "focus": "先让双球同时经过脉冲开关，再进入后半段长廊。"
   },
-  "tags": ["chapter-3", "M8", "large-map"]
+  "tags": [
+    "chapter-3",
+    "M8",
+    "large-map",
+    "V1-fog",
+    "exploration-core",
+    "maze",
+    "shared-maze",
+    "cross-interaction"
+  ],
+  "visibility": {
+    "mode": "fog",
+    "radius": 1,
+    "shape": "square",
+    "memory": "none",
+    "source": "both"
+  }
 }

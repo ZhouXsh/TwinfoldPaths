@@ -27,19 +27,7 @@
   },
   "walls": [
     {
-      "x": 0,
-      "y": 0
-    },
-    {
-      "x": 1,
-      "y": 0
-    },
-    {
       "x": 2,
-      "y": 0
-    },
-    {
-      "x": 3,
       "y": 0
     },
     {
@@ -91,14 +79,6 @@
       "y": 1
     },
     {
-      "x": 6,
-      "y": 1
-    },
-    {
-      "x": 7,
-      "y": 1
-    },
-    {
       "x": 12,
       "y": 1
     },
@@ -248,10 +228,6 @@
     },
     {
       "x": 2,
-      "y": 6
-    },
-    {
-      "x": 3,
       "y": 6
     },
     {
@@ -304,10 +280,6 @@
     },
     {
       "x": 2,
-      "y": 7
-    },
-    {
-      "x": 3,
       "y": 7
     },
     {
@@ -364,10 +336,6 @@
     },
     {
       "x": 2,
-      "y": 8
-    },
-    {
-      "x": 3,
       "y": 8
     },
     {
@@ -833,6 +801,32 @@
       "pairId": "level-040-pulse",
       "x": 9,
       "y": 1
+    },
+    {
+      "type": "plate",
+      "id": "level-040-cross-1-bp",
+      "x": 3,
+      "y": 1,
+      "doorId": "level-040-cross-1-od"
+    },
+    {
+      "type": "door",
+      "id": "level-040-cross-1-od",
+      "x": 13,
+      "y": 4
+    },
+    {
+      "type": "plate",
+      "id": "level-040-cross-1-op",
+      "x": 13,
+      "y": 3,
+      "doorId": "level-040-cross-1-bd"
+    },
+    {
+      "type": "door",
+      "id": "level-040-cross-1-bd",
+      "x": 4,
+      "y": 1
     }
   ],
   "parMoves": 17,
@@ -840,11 +834,23 @@
   "hint": {
     "focus": "最终暗域同时包含菱形视野、衰减记忆、信标和周期雷达。"
   },
-  "tags": ["chapter-4", "M8", "V1-fog", "V2-beacon", "fog-radar", "chapter-final", "exploration"],
+  "tags": [
+    "chapter-4",
+    "M8",
+    "V1-fog",
+    "V2-beacon",
+    "fog-radar",
+    "chapter-final",
+    "exploration",
+    "exploration-core",
+    "maze",
+    "shared-maze",
+    "cross-interaction"
+  ],
   "visibility": {
     "mode": "fog",
     "radius": 1,
-    "shape": "diamond",
+    "shape": "square",
     "memory": "decay",
     "source": "both",
     "memoryTurns": 3,

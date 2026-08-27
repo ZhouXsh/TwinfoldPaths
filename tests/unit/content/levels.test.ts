@@ -154,7 +154,9 @@ describe('关卡注册表（levels/chapter-01..05）', () => {
         canReach(level, level.blueStart, level.orangeStart),
         `${level.id} 双球区域仍然几何隔离`
       ).toBe(true);
-      expect(deadEndCount(level), `${level.id} 至少应有两个非起终点死胡同`).toBeGreaterThanOrEqual(2);
+      expect(deadEndCount(level), `${level.id} 至少应有两个非起终点死胡同`).toBeGreaterThanOrEqual(
+        2
+      );
     }
   });
 
@@ -192,13 +194,21 @@ describe('关卡注册表（levels/chapter-01..05）', () => {
   it('第五章完整引入 M9 相位门，且每章仍至少有一个教学关', () => {
     const chapter5 = LEVELS.filter((level) => level.chapter === 5);
     expect(chapter5.every((level) => level.tags.includes('M9'))).toBe(true);
-    expect(chapter5.every((level) => level.entities.some((e) => e.type === 'phaseDoor'))).toBe(true);
+    expect(chapter5.every((level) => level.entities.some((e) => e.type === 'phaseDoor'))).toBe(
+      true
+    );
     for (let chapter = 1; chapter <= 5; chapter++) {
       const rows = LEVELS.filter((level) => level.chapter === chapter);
-      expect(rows.some((level) => level.tags.includes('tutorial')), `第${chapter}章缺教学关`).toBe(true);
+      expect(
+        rows.some((level) => level.tags.includes('tutorial')),
+        `第${chapter}章缺教学关`
+      ).toBe(true);
       for (const level of rows) {
         expect(level.tags).toContain(`chapter-${chapter}`);
-        expect(level.tags.some((t) => /^M\d+$/.test(t)), `${level.id} 缺机制标签`).toBe(true);
+        expect(
+          level.tags.some((t) => /^M\d+$/.test(t)),
+          `${level.id} 缺机制标签`
+        ).toBe(true);
       }
     }
   });

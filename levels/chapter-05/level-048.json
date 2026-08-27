@@ -27,19 +27,7 @@
   },
   "walls": [
     {
-      "x": 0,
-      "y": 0
-    },
-    {
-      "x": 1,
-      "y": 0
-    },
-    {
       "x": 2,
-      "y": 0
-    },
-    {
-      "x": 3,
       "y": 0
     },
     {
@@ -47,15 +35,7 @@
       "y": 0
     },
     {
-      "x": 5,
-      "y": 0
-    },
-    {
       "x": 6,
-      "y": 0
-    },
-    {
-      "x": 7,
       "y": 0
     },
     {
@@ -63,36 +43,16 @@
       "y": 0
     },
     {
-      "x": 9,
-      "y": 0
-    },
-    {
       "x": 10,
       "y": 0
     },
     {
-      "x": 11,
-      "y": 0
-    },
-    {
-      "x": 12,
-      "y": 0
-    },
-    {
       "x": 0,
-      "y": 1
-    },
-    {
-      "x": 6,
       "y": 1
     },
     {
       "x": 12,
       "y": 1
-    },
-    {
-      "x": 0,
-      "y": 2
     },
     {
       "x": 1,
@@ -135,15 +95,7 @@
       "y": 2
     },
     {
-      "x": 0,
-      "y": 3
-    },
-    {
       "x": 6,
-      "y": 3
-    },
-    {
-      "x": 12,
       "y": 3
     },
     {
@@ -371,6 +323,58 @@
       "x": 7,
       "y": 6,
       "color": "ORANGE"
+    },
+    {
+      "type": "plate",
+      "id": "level-048-cross-1-bp",
+      "x": 5,
+      "y": 1,
+      "doorId": "level-048-cross-1-od"
+    },
+    {
+      "type": "door",
+      "id": "level-048-cross-1-od",
+      "x": 7,
+      "y": 2
+    },
+    {
+      "type": "plate",
+      "id": "level-048-cross-1-op",
+      "x": 7,
+      "y": 1,
+      "doorId": "level-048-cross-1-bd"
+    },
+    {
+      "type": "door",
+      "id": "level-048-cross-1-bd",
+      "x": 5,
+      "y": 2
+    },
+    {
+      "type": "plate",
+      "id": "level-048-cross-2-bp",
+      "x": 2,
+      "y": 5,
+      "doorId": "level-048-cross-2-od"
+    },
+    {
+      "type": "door",
+      "id": "level-048-cross-2-od",
+      "x": 9,
+      "y": 5
+    },
+    {
+      "type": "plate",
+      "id": "level-048-cross-2-op",
+      "x": 10,
+      "y": 5,
+      "doorId": "level-048-cross-2-bd"
+    },
+    {
+      "type": "door",
+      "id": "level-048-cross-2-bd",
+      "x": 3,
+      "y": 5
     }
   ],
   "parMoves": 24,
@@ -378,5 +382,26 @@
   "hint": {
     "focus": "压板门、相位门和专属门连续出现，别只盯着空间位置，还要数回合。"
   },
-  "tags": ["chapter-5", "M1", "M2", "M9", "phase", "large-map"]
+  "tags": [
+    "chapter-5",
+    "M1",
+    "M2",
+    "M9",
+    "phase",
+    "large-map",
+    "V1-fog",
+    "exploration-core",
+    "maze",
+    "shared-maze",
+    "cross-interaction"
+  ],
+  "visibility": {
+    "mode": "fog",
+    "radius": 1,
+    "shape": "square",
+    "memory": "persistent",
+    "source": "both",
+    "pulseEvery": 6,
+    "pulseRadius": 16
+  }
 }

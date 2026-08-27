@@ -109,5 +109,12 @@
   "hint": {
     "focus": "蓝方踩板开门，橙方通过专属门，然后各自向上到达出口。双门需交替使用。"
   },
-  "tags": ["chapter-2", "M1", "M2", "key-position"]
+  "tags": ["chapter-2", "M1", "M2", "key-position", "V1-fog", "exploration-core"],
+  "visibility": {
+    "mode": "fog",
+    "radius": 1,
+    "shape": "square",
+    "memory": "persistent",
+    "source": "both"
+  }
 }

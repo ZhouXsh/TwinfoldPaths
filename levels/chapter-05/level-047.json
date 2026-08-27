@@ -27,23 +27,7 @@
   },
   "walls": [
     {
-      "x": 0,
-      "y": 0
-    },
-    {
-      "x": 1,
-      "y": 0
-    },
-    {
-      "x": 2,
-      "y": 0
-    },
-    {
       "x": 3,
-      "y": 0
-    },
-    {
-      "x": 4,
       "y": 0
     },
     {
@@ -51,18 +35,6 @@
       "y": 0
     },
     {
-      "x": 6,
-      "y": 0
-    },
-    {
-      "x": 7,
-      "y": 0
-    },
-    {
-      "x": 8,
-      "y": 0
-    },
-    {
       "x": 0,
       "y": 1
     },
@@ -77,10 +49,6 @@
     {
       "x": 8,
       "y": 1
-    },
-    {
-      "x": 0,
-      "y": 2
     },
     {
       "x": 2,
@@ -92,10 +60,6 @@
     },
     {
       "x": 6,
-      "y": 2
-    },
-    {
-      "x": 8,
       "y": 2
     },
     {
@@ -117,10 +81,6 @@
     {
       "x": 8,
       "y": 3
-    },
-    {
-      "x": 0,
-      "y": 4
     },
     {
       "x": 2,
@@ -152,10 +112,6 @@
     },
     {
       "x": 0,
-      "y": 6
-    },
-    {
-      "x": 1,
       "y": 6
     },
     {
@@ -345,6 +301,58 @@
       "type": "pauseTile",
       "x": 5,
       "y": 7
+    },
+    {
+      "type": "plate",
+      "id": "level-047-cross-1-bp",
+      "x": 1,
+      "y": 4,
+      "doorId": "level-047-cross-1-od"
+    },
+    {
+      "type": "door",
+      "id": "level-047-cross-1-od",
+      "x": 1,
+      "y": 7
+    },
+    {
+      "type": "plate",
+      "id": "level-047-cross-1-op",
+      "x": 1,
+      "y": 8,
+      "doorId": "level-047-cross-1-bd"
+    },
+    {
+      "type": "door",
+      "id": "level-047-cross-1-bd",
+      "x": 1,
+      "y": 5
+    },
+    {
+      "type": "plate",
+      "id": "level-047-cross-2-bp",
+      "x": 5,
+      "y": 2,
+      "doorId": "level-047-cross-2-od"
+    },
+    {
+      "type": "door",
+      "id": "level-047-cross-2-od",
+      "x": 5,
+      "y": 9
+    },
+    {
+      "type": "plate",
+      "id": "level-047-cross-2-op",
+      "x": 5,
+      "y": 10,
+      "doorId": "level-047-cross-2-bd"
+    },
+    {
+      "type": "door",
+      "id": "level-047-cross-2-bd",
+      "x": 5,
+      "y": 3
     }
   ],
   "parMoves": 23,
@@ -352,5 +360,25 @@
   "hint": {
     "focus": "长地图上先锁定单向方向，中段校相，后段暂停再次改变节拍。"
   },
-  "tags": ["chapter-5", "M3", "M5", "M9", "phase", "large-map"]
+  "tags": [
+    "chapter-5",
+    "M3",
+    "M5",
+    "M9",
+    "phase",
+    "large-map",
+    "V1-fog",
+    "exploration-core",
+    "maze",
+    "shared-maze",
+    "cross-interaction"
+  ],
+  "visibility": {
+    "mode": "fog",
+    "radius": 1,
+    "shape": "square",
+    "memory": "decay",
+    "source": "alternating",
+    "memoryTurns": 3
+  }
 }

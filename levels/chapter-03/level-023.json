@@ -27,27 +27,11 @@
   },
   "walls": [
     {
-      "x": 0,
-      "y": 0
-    },
-    {
-      "x": 1,
-      "y": 0
-    },
-    {
       "x": 2,
       "y": 0
     },
     {
-      "x": 3,
-      "y": 0
-    },
-    {
       "x": 4,
-      "y": 0
-    },
-    {
-      "x": 5,
       "y": 0
     },
     {
@@ -80,10 +64,6 @@
     },
     {
       "x": 0,
-      "y": 1
-    },
-    {
-      "x": 6,
       "y": 1
     },
     {
@@ -275,6 +255,32 @@
       "type": "fragile",
       "x": 11,
       "y": 3
+    },
+    {
+      "type": "plate",
+      "id": "level-023-cross-1-bp",
+      "x": 4,
+      "y": 1,
+      "doorId": "level-023-cross-1-od"
+    },
+    {
+      "type": "door",
+      "id": "level-023-cross-1-od",
+      "x": 7,
+      "y": 1
+    },
+    {
+      "type": "plate",
+      "id": "level-023-cross-1-op",
+      "x": 8,
+      "y": 1,
+      "doorId": "level-023-cross-1-bd"
+    },
+    {
+      "type": "door",
+      "id": "level-023-cross-1-bd",
+      "x": 5,
+      "y": 1
     }
   ],
   "parMoves": 17,
@@ -282,5 +288,22 @@
   "hint": {
     "focus": "暂停令牌会插入一个节拍；脆弱格让回头路变得昂贵。"
   },
-  "tags": ["chapter-3", "M3", "M7", "large-map"]
+  "tags": [
+    "chapter-3",
+    "M3",
+    "M7",
+    "large-map",
+    "V1-fog",
+    "exploration-core",
+    "maze",
+    "shared-maze",
+    "cross-interaction"
+  ],
+  "visibility": {
+    "mode": "fog",
+    "radius": 1,
+    "shape": "square",
+    "memory": "persistent",
+    "source": "alternating"
+  }
 }

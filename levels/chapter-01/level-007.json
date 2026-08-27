@@ -73,5 +73,12 @@
   "hint": {
     "focus": "蓝橙起手侧对调了。两道错开的墙仍需要两次解耦，但左右绕行顺序与上一版相反。"
   },
-  "tags": ["chapter-1", "M0", "double-decouple", "route-variation"]
+  "tags": ["chapter-1", "M0", "double-decouple", "route-variation", "V1-fog", "exploration-core"],
+  "visibility": {
+    "mode": "fog",
+    "radius": 1,
+    "shape": "square",
+    "memory": "persistent",
+    "source": "both"
+  }
 }

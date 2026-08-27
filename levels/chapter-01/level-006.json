@@ -55,7 +55,22 @@
   "hint": {
     "focus": "这次从上方向下走。两人仍可能在中央交换位置；对穿是合法的，不要把上一关的向上节奏机械照搬。"
   },
-  "tags": ["chapter-1", "tutorial", "M0", "cross-through", "route-variation"],
+  "tags": [
+    "chapter-1",
+    "tutorial",
+    "M0",
+    "cross-through",
+    "route-variation",
+    "V1-fog",
+    "exploration-core"
+  ],
   "parMoves": 6,
-  "parMovesNote": "BFS 最短步数=6；parMoves 与求解器严格一致"
+  "parMovesNote": "BFS 最短步数=6；parMoves 与求解器严格一致",
+  "visibility": {
+    "mode": "fog",
+    "radius": 1,
+    "shape": "square",
+    "memory": "persistent",
+    "source": "both"
+  }
 }

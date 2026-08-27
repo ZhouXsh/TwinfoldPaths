@@ -39,7 +39,14 @@
   "hint": {
     "focus": "章末挑战：先让橙直线上行，再让蓝绕过横墙；观察每次受阻带来的错位。"
   },
-  "tags": ["chapter-1", "M0", "chapter-final"],
+  "tags": ["chapter-1", "M0", "chapter-final", "V1-fog", "exploration-core"],
   "parMoves": 9,
-  "parMovesNote": "BFS 最短步数=9；parMoves 与求解器严格一致"
+  "parMovesNote": "BFS 最短步数=9；parMoves 与求解器严格一致",
+  "visibility": {
+    "mode": "fog",
+    "radius": 1,
+    "shape": "square",
+    "memory": "persistent",
+    "source": "both"
+  }
 }

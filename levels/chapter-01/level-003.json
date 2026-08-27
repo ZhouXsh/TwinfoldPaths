@@ -38,5 +38,20 @@
     "focus": "出口不锁定：先到的人等待另一人。橙向下2步到出口后会被墙挡住，蓝继续向下4步",
     "direction": "DOWN"
   },
-  "tags": ["chapter-1", "tutorial", "M0", "sync-exit", "exit-no-lock"]
+  "tags": [
+    "chapter-1",
+    "tutorial",
+    "M0",
+    "sync-exit",
+    "exit-no-lock",
+    "V1-fog",
+    "exploration-core"
+  ],
+  "visibility": {
+    "mode": "fog",
+    "radius": 1,
+    "shape": "square",
+    "memory": "persistent",
+    "source": "both"
+  }
 }

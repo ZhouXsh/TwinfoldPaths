@@ -27,23 +27,7 @@
   },
   "walls": [
     {
-      "x": 0,
-      "y": 0
-    },
-    {
-      "x": 1,
-      "y": 0
-    },
-    {
-      "x": 2,
-      "y": 0
-    },
-    {
       "x": 3,
-      "y": 0
-    },
-    {
-      "x": 4,
       "y": 0
     },
     {
@@ -51,18 +35,6 @@
       "y": 0
     },
     {
-      "x": 6,
-      "y": 0
-    },
-    {
-      "x": 7,
-      "y": 0
-    },
-    {
-      "x": 8,
-      "y": 0
-    },
-    {
       "x": 0,
       "y": 1
     },
@@ -77,10 +49,6 @@
     {
       "x": 8,
       "y": 1
-    },
-    {
-      "x": 0,
-      "y": 2
     },
     {
       "x": 2,
@@ -152,10 +120,6 @@
     },
     {
       "x": 0,
-      "y": 6
-    },
-    {
-      "x": 1,
       "y": 6
     },
     {
@@ -335,6 +299,32 @@
       "radius": 2,
       "x": 5,
       "y": 9
+    },
+    {
+      "type": "plate",
+      "id": "level-038-cross-1-bp",
+      "x": 1,
+      "y": 5,
+      "doorId": "level-038-cross-1-od"
+    },
+    {
+      "type": "door",
+      "id": "level-038-cross-1-od",
+      "x": 2,
+      "y": 7
+    },
+    {
+      "type": "plate",
+      "id": "level-038-cross-1-op",
+      "x": 1,
+      "y": 7,
+      "doorId": "level-038-cross-1-bd"
+    },
+    {
+      "type": "door",
+      "id": "level-038-cross-1-bd",
+      "x": 2,
+      "y": 5
     }
   ],
   "parMoves": 22,
@@ -342,7 +332,17 @@
   "hint": {
     "focus": "踩过青色信标后，它周围的区域会永久点亮，建立属于你的地图锚点。"
   },
-  "tags": ["chapter-4", "M0", "V1-fog", "V2-beacon", "exploration"],
+  "tags": [
+    "chapter-4",
+    "M0",
+    "V1-fog",
+    "V2-beacon",
+    "exploration",
+    "exploration-core",
+    "maze",
+    "shared-maze",
+    "cross-interaction"
+  ],
   "visibility": {
     "mode": "fog",
     "radius": 1,
