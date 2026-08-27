@@ -3,7 +3,7 @@
   "id": "level-040",
   "chapter": 4,
   "order": 40,
-  "title": "第四章综合",
+  "title": "迷雾折叠",
   "initialMapping": "H_MIRROR",
   "grid": {
     "width": 7,
@@ -79,7 +79,7 @@
   "parMoves": 7,
   "parMovesNote": "BFS 最短步数=7",
   "hint": {
-    "focus": "综合运用传送、单向格和压板门"
+    "focus": "把探索当成解题的一部分：先确认传送后的落点，再找单向格与压板门的先后关系。"
   },
-  "tags": ["chapter-4", "M1", "M5", "M6", "chapter-final"]
+  "tags": ["chapter-4", "M1", "M5", "M6", "chapter-final", "V1-fog"]
 }
