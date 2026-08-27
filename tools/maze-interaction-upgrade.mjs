@@ -262,7 +262,7 @@ function setWallsFromOpen(level, open) {
   level.walls = walls;
 }
 
-function fogRules(order) {
+function progressiveFog(order) {
   const base = { mode: 'fog', radius: 1, shape: 'square', memory: 'persistent', source: 'both' };
   if (order <= 20) return base;
   const index = (order - 21) % 10;
@@ -282,11 +282,32 @@ function fogRules(order) {
 }
 
 function normalizeExploration(level) {
-  level.visibility = fogRules(level.order);
+  // “九宫格探索”是固定底座；已有章节的记忆、交替视野、雷达等差异化规则继续保留。
+  const previous = level.visibility;
+  const fallback = progressiveFog(level.order);
+  level.visibility = {
+    ...(previous ?? fallback),
+    mode: 'fog',
+    radius: 1,
+    shape: 'square',
+    memory: previous?.memory ?? fallback.memory ?? 'persistent',
+    source: previous?.source ?? fallback.source ?? 'both'
+  };
+
+  // 旧的菱形/十字视野不再改变基础 3x3 形状，改用机关与记忆规则形成区分度。
   const remove = new Set(['fog-diamond', 'fog-cross']);
   level.tags = level.tags.filter((tag) => !remove.has(tag));
   for (const tag of ['V1-fog', 'exploration-core']) {
     if (!level.tags.includes(tag)) level.tags.push(tag);
+  }
+
+  if (level.id === 'level-035') {
+    level.title = '暗门择路';
+    level.hint.focus = '九宫格视野保持不变；单向格和专属门藏在岔路中，先探索再决定哪条路值得深入。';
+  }
+  if (level.id === 'level-036') {
+    level.title = '互锁探路';
+    level.hint.focus = '九宫格视野保持不变；压板门要求两球互相提供通路，先找压板，再判断另一侧的门。';
   }
 }
 
@@ -444,6 +465,7 @@ const markdown = [
   '# 全局九宫格迷雾 / 迷宫化 / 双球互动升级验收',
   '',
   '- 50/50 关启用九宫格探索迷雾（square radius=1）。',
+  '- 既有无痕、衰减记忆、交替视野、周期雷达、信标等差异化规则继续保留，基础视野统一为九宫格。',
   '- 21–50 关双球起点处于同一连通迷宫网络，不再是两条完全分离的固定通道。',
   '- 23–50 关加入跨球互锁压板门：一侧角色的站位会直接决定另一侧能否通过。',
   '- 21–50 关加入多格与叶节点死胡同，保留误入、回退与路线判断空间。',
