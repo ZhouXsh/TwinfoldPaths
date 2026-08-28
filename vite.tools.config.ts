@@ -6,6 +6,8 @@ export default defineConfig({
   build: {
     outDir: 'tools-dist',
     rollupOptions: {
+      // solverApi 被 Node 生成器直接按 named exports 引用，必须禁止入口导出被 tree-shake。
+      preserveEntrySignatures: 'strict',
       input: {
         solver: resolve(__dirname, 'tools/solver/main.ts'),
         solverApi: resolve(__dirname, 'tools/solver/bfs-solver.ts'),
