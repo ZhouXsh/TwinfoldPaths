@@ -2,16 +2,18 @@
 
 ## 当前事实
 
+- 计划外迭代（2026-08-28，探索难度/教学/难度提示）：首页新增简单/标准/困难三档探索难度并持久化；简单全图常亮，标准九宫格 + 永久探索记忆，困难九宫格 + 不保留离开区域；首页新增集中教学弹窗；level-011 初始提示加入“难度飙升”。难度只覆盖实际游玩视图，不改正式关卡、领域规则、parMoves 或 BFS。ADR：`docs/adr/ADR-021-difficulty-visibility-and-tutorial.md`；报告：`reports/difficulty-tutorial-2026-08-28.md`。验收：Optimize CI run 33145524827 全绿，23 文件/293 单测、50/50 校验、50/50 BFS、variety fail=0/review=0、Chromium + mobile-320 E2E 66/66。
+- 计划外迭代（2026-08-28，后 40 关开放迷宫重制）：level-011..050 全量重建为开放共享迷宫；40/40 最优解真实发生双球对穿，33/40 禁止对穿后不可解或最短解变长，37/40 出现双向单侧受阻解耦；后 30 关平均 BFS 最优步数 21.33。报告：`reports/open-maze-redesign-summary.md`。
 - 计划外迭代（2026-08-27，后 30 关重制）：level-021..050 全量重建为大地图长路径；第四章 031..040 全章探索迷雾，逐关加入无痕/衰减记忆、交替视野、菱形/十字视野、雷达与信标；第五章新增 M9 奇偶相位门。parMoves 全部由 BFS 自动回填并强制等于最短步数；21–50 平均最优步数 18.90。报告：reports/late-game-redesign-summary.md。
 
-- 当前版本：MVP V0.8 + UI/难度/提示体验打磨（单元 265 测试 + 集成 + 属性 + 内容 + 遥测；50 关全部自动回放胜利；第一章难度峰值收束至章末；常驻提示卡、显式提示按钮与建议方向高亮；既有浏览器兼容、离线验证与开发版匿名遥测能力保持）
+- 当前版本：MVP V0.8 + 开放共享迷宫 + 三档探索难度 + 首页教学（23 文件 293 单测；50 关全部自动回放胜利；后 40 关开放迷宫/双球对穿验收通过；Chromium + mobile-320 E2E 66/66；既有离线验证与开发版匿名遥测能力保持）
 - 当前阶段：14 已完成，下一阶段 15（发布候选与参赛材料）
-- 最后更新：2026-08-26
-- 最近通过命令：`npm run check`（12 步全过，退出码 0，含 27 文件依赖检查）；`npm test`（19 文件 265 用例，含 10 新增遥测测试）；`npm run coverage`（领域层 100% 分支，阈值 ≥90%）；`npm run validate:levels`（50/50 通过）；`npm run solve:levels`（50/50 可解，0 par 错误）；`npm run test:e2e`（96/96，chromium+webkit+mobile-320）；`npm run build`（1.29MB）；`npm run verify:dist`（零外部请求/零密钥/零 source map）
-- 当前阻塞：功能无阻塞；本次执行环境缺少 Playwright Chromium/WebKit 二进制，更新后的 E2E 断言尚待在既有 Windows/Playwright 环境复跑
-- 下一步：执行 `prompts/15_发布候选与参赛材料.md`；基于阶段 14 真人试玩反馈和认知走查结论，形成发布候选（RC）
+- 最后更新：2026-08-28
+- 最近通过命令/门禁：Optimize CI run `33145524827`：`npm run typecheck`；`npm test`（23 文件 293 用例）；`npm run validate:levels`（50/50）；`npm run solve:levels`（50/50 可解）；`npm run report:solution-variety`（fail=0 / sameChapterExact=0 / review=0）；`npm run build`（dist/index.html 约 1.28MB）；`npm run verify:dist`（无外部请求/密钥/source map/绝对路径）；Playwright `chromium` + `mobile-320`（66/66）。
+- 当前阻塞：功能无阻塞。
+- 下一步：执行 `prompts/15_发布候选与参赛材料.md`；基于阶段 14 真人试玩反馈和认知走查结论，形成发布候选（RC）。
 - 计划外迭代（2026-08-27，阶段 14 与 15 之间）：小清新 UI 重设计与布局错位修复（报告 `reports/ui-redesign-2026-08-27.md`）。改动范围：`index.html`（CSS 主题变量化 + 布局修复）、`src/main.ts`、`src/scenes/BootScene.ts`（全部机关纹理浅色化）、`src/scenes/HomeScene.ts`、`src/scenes/ResultScene.ts`；领域层与 DEMO/ 零改动（git diff 验证）。验收：`npm run check` 12 步全过（含 prettier 格式修复）、E2E 96/96（chromium+webkit+mobile-320，4 workers）、双视口（320×568 / 390×844）程序化布局与配色校验全过（棋盘居中偏移 0px、无重叠、浅色主题生效）。注意：E2E 8 workers 并行存在 pre-existing flaky（资源竞争超时），验收基线为 4 workers。
-- 计划外迭代（2026-08-27，阶段 14 与 15 之间）：UI、难度曲线与提示系统打磨（报告 `reports/gameplay-polish-2026-08-27.md`）。首页/HUD/选关层级重做；第一章曲线调整为 `1→3→4→6→6→6→6→7→6→9`；037 传送教学从 9 步降至 6 步；常驻提示卡、提示按钮、建议方向高亮与动态状态反馈完成。验证：typecheck、265 单测、50 关校验与 50 关求解回放通过；E2E 因当前 Linux 环境缺少浏览器二进制未启动，断言已同步更新。
+- 计划外迭代（2026-08-27，阶段 14 与 15 之间）：UI、难度曲线与提示系统打磨（报告 `reports/gameplay-polish-2026-08-27.md`）。首页/HUD/选关层级重做；第一章曲线调整为 `1→3→4→6→6→6→6→7→6→9`；037 传送教学从 9 步降至 6 步；常驻提示卡、提示按钮、建议方向高亮与动态状态反馈完成。验证：typecheck、265 单测、50 关校验与 50 关求解回放通过；E2E 因当时 Linux 环境缺少浏览器二进制未启动，断言已同步更新。
 
 ## 阶段状态
 
@@ -41,12 +43,12 @@
 ## 关键路径与决策
 
 - 当前发布候选：无（MVP 可玩，未进入 RC）
-- 最近决策记录：ADR-001~006（需求/规则类，全文在 `docs/decision-log.md`）；ADR-007~013（架构类，全文在 `docs/adr/`）；ADR-014（MVP 表现层 UI 形态与动画期输入策略，`docs/adr/ADR-014-mvp-ui-and-input-gate.md`）；ADR-015（M3 令牌授予时机：抵达授予、停留不重授，`docs/decision-log.md`）；ADR-016（M7 坍塌对穿精化：D2 后格上有角色则不坍塌，`docs/decision-log.md`）；ADR-017（存档版本升级至 3，新增 settings 字段，`docs/decision-log.md`）；ADR-018（振动 API 未集成到 GameScene 反馈，不属于阶段 12 范围，`docs/decision-log.md`）
-- 用户提供的外部材料：无（除仓库内执行包文档外）；并行会话遗留沙箱已更名 `DEMO/`（原 `tmp/`，曾误删并从 opencode 快照库逐字节完整恢复）：**受保护目录，任何代理不得删除/覆盖/移动**，仅排除于门禁（eslint/prettier/gitignore），阶段 09 可参考其 BFS 思路；`test-results/` 为可再生 scratch 已删除
+- 最近决策记录：ADR-001~006（需求/规则类，全文在 `docs/decision-log.md`）；ADR-007~013（架构类，全文在 `docs/adr/`）；ADR-014（MVP 表现层 UI 形态与动画期输入策略，`docs/adr/ADR-014-mvp-ui-and-input-gate.md`）；ADR-015（M3 令牌授予时机：抵达授予、停留不重授，`docs/decision-log.md`）；ADR-016（M7 坍塌对穿精化：D2 后格上有角色则不坍塌，`docs/decision-log.md`）；ADR-017（存档版本升级至 3，新增 settings 字段，`docs/decision-log.md`）；ADR-018（振动 API 未集成到 GameScene 反馈，不属于阶段 12 范围，`docs/decision-log.md`）；ADR-021（三档探索难度、首页教学与第 11 关难度提示，`docs/adr/ADR-021-difficulty-visibility-and-tutorial.md`）。
+- 用户提供的外部材料：无（除仓库内执行包文档外）；并行会话遗留沙箱已更名 `DEMO/`（原 `tmp/`，曾误删并从 opencode 快照库逐字节完整恢复）：**受保护目录，任何代理不得删除/覆盖/移动**，仅排除于门禁（eslint/prettier/gitignore），阶段 09 可参考其 BFS 思路；`test-results/` 为可再生 scratch 已删除。
 - 阶段 14 新增事实：
   - 遥测模块 `src/telemetry/telemetry.ts`：开发版默认开启，生产版默认关闭；URL 参数 `?telemetry=0/1` 覆盖；localStorage 存储，最多 5000 条；CSV 导出。
   - 首 3 关教学提示已增强（level-001/002/003 hint.focus 更新）。
-  - 认知走查报告已生成：`reports/cognitive-walkthrough.md`（标注"非真人试玩"）。
+  - 认知走查报告已生成：`reports/cognitive-walkthrough.md`（标注“非真人试玩”）。
   - AI 迭代文档已生成：`docs/AI协作与迭代优化过程.md`。
   - 真人试玩数据：无（尚未开展）。
 - 不得遗忘的限制：
@@ -55,7 +57,7 @@
   - 正式关卡必须通过 Schema、内容校验器和 BFS 求解器。
   - 不得伪造真人试玩、性能、浏览器测试或覆盖率数据；未验证必须标注。
   - 规则 R-01 至 R-07、机制 M0 至 M8 的任何修改必须走 `docs/decision-log.md`。
-  - M3 令牌按 ADR-015"抵达授予、停留不重授"实现；M7 坍塌按 ADR-016 追加占位条件（D2 后格上有角色不坍塌）；M8 为占用语义（同时占用即闩锁，不限本回合抵达）；多压板联动同一 doorId、同格多传送入口、oneWay/portal 压出口均未形式化，阶段 09 校验器须禁止或以 ADR 定义。
+  - M3 令牌按 ADR-015“抵达授予、停留不重授”实现；M7 坍塌按 ADR-016 追加占位条件（D2 后格上有角色不坍塌）；M8 为占用语义（同时占用即闩锁，不限本回合抵达）；多压板联动同一 doorId、同格多传送入口、oneWay/portal 压出口均未形式化，阶段 09 校验器须禁止或以 ADR 定义。
   - 存档 SAVE_VERSION=3（阶段 11 升级）：highestUnlocked 为全局线性序号（ADR-004），v1 旧存档按损坏回退，v2 旧存档兼容读取（新增 settings 字段，读取时容错）。
   - 遥测模块 `src/telemetry/telemetry.ts` 属于表现层/基础设施，不得放入 `src/domain/`。正式版（生产构建）默认关闭，仅开发版启用。现有开关：URL 参数 `?telemetry=0/1` 和构建环境变量。
 
