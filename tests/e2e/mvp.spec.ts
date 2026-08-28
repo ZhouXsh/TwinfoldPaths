@@ -1,9 +1,13 @@
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { expect, test, type Page, type TestInfo } from '@playwright/test';
-import { LEVELS } from '../../src/content/levels';
+import type { LevelDef } from '../../src/domain/types';
 import { bfsSolve } from '../../tools/solver/bfs-solver';
 
 type Guard = { errors: string[]; assertClean: () => void };
 type UiDir = 'up' | 'down' | 'left' | 'right';
+
+const levelCache = new Map<number, LevelDef>();
 
 function guard(page: Page): Guard {
   const errors: string[] = [];
@@ -24,9 +28,16 @@ function guard(page: Page): Guard {
   return { errors, assertClean: () => expect(errors).toEqual([]) };
 }
 
-function levelByOrder(order: number) {
-  const level = LEVELS.find((item) => item.order === order);
-  if (!level) throw new Error(`找不到第 ${order} 关`);
+function levelByOrder(order: number): LevelDef {
+  const cached = levelCache.get(order);
+  if (cached) return cached;
+  const chapter = Math.ceil(order / 10);
+  const path = resolve(
+    process.cwd(),
+    `levels/chapter-${String(chapter).padStart(2, '0')}/level-${String(order).padStart(3, '0')}.json`
+  );
+  const level = JSON.parse(readFileSync(path, 'utf8')) as LevelDef;
+  levelCache.set(order, level);
   return level;
 }
 
