@@ -1,4 +1,4 @@
-import type { Direction, GameState, LevelDef } from '../../src/domain/types';
+import type { Direction, GameState, LevelDef, MoveResult } from '../../src/domain/types';
 import { DIRECTIONS } from '../../src/domain/types';
 import { applyCommand } from '../../src/domain/engine';
 import { createInitialState } from '../../src/domain/level';
@@ -33,6 +33,27 @@ function fnv1a32(text: string): number {
   return hash >>> 0;
 }
 
+function samePoint(a: { x: number; y: number }, b: { x: number; y: number }): boolean {
+  return a.x === b.x && a.y === b.y;
+}
+
+function pointKey(p: { x: number; y: number }): string {
+  return `${p.x},${p.y}`;
+}
+
+/** R-04：两球本回合从相邻格互换位置，属于允许的“对穿交换”。 */
+export function isPassThroughSwap(result: MoveResult): boolean {
+  if (!result.applied) return false;
+  const blueMoved = !samePoint(result.blue.from, result.blue.to);
+  const orangeMoved = !samePoint(result.orange.from, result.orange.to);
+  return (
+    blueMoved &&
+    orangeMoved &&
+    samePoint(result.blue.to, result.orange.from) &&
+    samePoint(result.orange.to, result.blue.from)
+  );
+}
+
 export interface SolverResult {
   solvable: boolean;
   optimalSteps: number;
@@ -55,7 +76,15 @@ export const DEFAULT_BUDGET: SolverBudget = {
   maxDepth: 100
 };
 
-export function bfsSolve(level: LevelDef, budget: SolverBudget = DEFAULT_BUDGET): SolverResult {
+interface InternalSolveOptions {
+  allowPassThrough: boolean;
+}
+
+function solveInternal(
+  level: LevelDef,
+  budget: SolverBudget,
+  options: InternalSolveOptions
+): SolverResult {
   const start = Date.now();
   const initial = createInitialState(level);
   const includeTurnParity = level.entities.some((entity) => entity.type === 'phaseDoor');
@@ -113,6 +142,8 @@ export function bfsSolve(level: LevelDef, budget: SolverBudget = DEFAULT_BUDGET)
 
       for (const dir of DIRECTIONS) {
         const outcome = applyCommand(level, node.state, dir);
+        if (!options.allowPassThrough && isPassThroughSwap(outcome.result)) continue;
+
         const nextState = outcome.state;
         const hash = bfsHash(nextState, includeTurnParity);
 
@@ -181,6 +212,94 @@ export function bfsSolve(level: LevelDef, budget: SolverBudget = DEFAULT_BUDGET)
     budgetExhausted: true,
     reachedDepth,
     reason: `深度预算超限: 已达最大深度 ${budget.maxDepth}`
+  };
+}
+
+export function bfsSolve(level: LevelDef, budget: SolverBudget = DEFAULT_BUDGET): SolverResult {
+  return solveInternal(level, budget, { allowPassThrough: true });
+}
+
+/**
+ * 质量审计用 BFS：禁止使用 R-04 对穿交换。
+ * 若该结果不可解或显著变长，可量化证明“对穿”不是纯视觉偶遇，而是有解法价值。
+ */
+export function bfsSolveWithoutPassThrough(
+  level: LevelDef,
+  budget: SolverBudget = DEFAULT_BUDGET
+): SolverResult {
+  return solveInternal(level, budget, { allowPassThrough: false });
+}
+
+export interface SolutionTraceStats {
+  appliedTurns: number;
+  cancelledTurns: number;
+  passThroughSwaps: number;
+  jointMoveTurns: number;
+  blueSoloMoveTurns: number;
+  orangeSoloMoveTurns: number;
+  blueBlockedOrangeMoved: number;
+  orangeBlockedBlueMoved: number;
+  blueVisitedCells: number;
+  orangeVisitedCells: number;
+  sharedVisitedCells: number;
+  mappingChanges: number;
+}
+
+/** 对一条解序列逐回合回放，统计真正的双球空间交互，而非只看 walls 外形。 */
+export function analyzeSolutionTrace(level: LevelDef, moves: Direction[]): SolutionTraceStats {
+  let state = createInitialState(level);
+  const blueVisited = new Set([pointKey(state.actors.blue.pos)]);
+  const orangeVisited = new Set([pointKey(state.actors.orange.pos)]);
+  let appliedTurns = 0;
+  let cancelledTurns = 0;
+  let passThroughSwaps = 0;
+  let jointMoveTurns = 0;
+  let blueSoloMoveTurns = 0;
+  let orangeSoloMoveTurns = 0;
+  let blueBlockedOrangeMoved = 0;
+  let orangeBlockedBlueMoved = 0;
+  let mappingChanges = 0;
+
+  for (const dir of moves) {
+    const beforeMapping = state.mapping;
+    const outcome = applyCommand(level, state, dir);
+    const { result } = outcome;
+    const blueMoved = !samePoint(result.blue.from, result.blue.to);
+    const orangeMoved = !samePoint(result.orange.from, result.orange.to);
+
+    if (result.applied) appliedTurns++;
+    else cancelledTurns++;
+    if (isPassThroughSwap(result)) passThroughSwaps++;
+    if (blueMoved && orangeMoved) jointMoveTurns++;
+    else if (blueMoved) blueSoloMoveTurns++;
+    else if (orangeMoved) orangeSoloMoveTurns++;
+    if (result.blue.blocked && orangeMoved) blueBlockedOrangeMoved++;
+    if (result.orange.blocked && blueMoved) orangeBlockedBlueMoved++;
+
+    state = outcome.state;
+    if (state.mapping !== beforeMapping) mappingChanges++;
+    blueVisited.add(pointKey(state.actors.blue.pos));
+    orangeVisited.add(pointKey(state.actors.orange.pos));
+  }
+
+  let sharedVisitedCells = 0;
+  for (const cell of blueVisited) {
+    if (orangeVisited.has(cell)) sharedVisitedCells++;
+  }
+
+  return {
+    appliedTurns,
+    cancelledTurns,
+    passThroughSwaps,
+    jointMoveTurns,
+    blueSoloMoveTurns,
+    orangeSoloMoveTurns,
+    blueBlockedOrangeMoved,
+    orangeBlockedBlueMoved,
+    blueVisitedCells: blueVisited.size,
+    orangeVisitedCells: orangeVisited.size,
+    sharedVisitedCells,
+    mappingChanges
   };
 }
 
