@@ -212,7 +212,7 @@ export class HomeScene extends Phaser.Scene {
           <section><b style="color:var(--text)">基本移动</b><br />蓝球按你输入的方向移动；橙球默认执行水平镜像方向（左↔右，上下不变）。一侧被墙、边界或机关挡住时会停留，另一侧仍可移动；结算后两球若落在同一格，本回合取消；相邻两球允许互相对穿交换。</section>
           <section><b style="color:var(--text)">操作</b><br />可直接在棋盘上滑动，也可点击方向键。顶部 ↩ 用于撤销，↻ 用于重开，? 会显示当前关卡提示。游戏不限时、撤销不限次数。</section>
           <section><b style="color:var(--text)">地图互动</b><br />墙体/边界会阻挡；压板控制门；暂停格可提供一次停留机会；映射切换器会改变橙球响应；彩色门只允许对应颜色通过；单向格限制离开方向；传送门成对传送；脆弱格经过后可能坍塌；脉冲机关需要同步触发；相位门按奇偶回合开放；视野信标会扩展探索区域。</section>
-          <section><b style="color:var(--text)">探索难度</b><br />简单：全图常亮。标准：当前九宫格可见，探索过的路径永久保留。困难：使用关卡原始迷雾规则，可能出现失忆、交替视野、雷达与信标等变化。</section>
+          <section><b style="color:var(--text)">探索难度</b><br />简单：全图常亮。标准：当前九宫格可见，探索过的路径永久保留。困难：只显示当前附近九宫格，离开后的区域重新被迷雾覆盖。</section>
         </div>
         <button id="btn-tutorial-close" data-testid="btn-tutorial-close" type="button" class="btn-primary" style="width:100%;margin-top:16px;min-height:44px;font-size:15px">明白了</button>
       </div>
