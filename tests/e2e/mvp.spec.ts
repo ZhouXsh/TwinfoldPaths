@@ -1,8 +1,13 @@
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { expect, test, type Page, type TestInfo } from '@playwright/test';
+import type { LevelRecord } from '../../src/content/validate';
+import { bfsSolve } from '../../tools/solver/bfs-solver';
 
 type Guard = { errors: string[]; assertClean: () => void };
-
 type UiDir = 'up' | 'down' | 'left' | 'right';
+
+const levelCache = new Map<number, LevelRecord>();
 
 function guard(page: Page): Guard {
   const errors: string[] = [];
@@ -21,6 +26,30 @@ function guard(page: Page): Guard {
     }
   });
   return { errors, assertClean: () => expect(errors).toEqual([]) };
+}
+
+function levelByOrder(order: number): LevelRecord {
+  const cached = levelCache.get(order);
+  if (cached) return cached;
+  const chapter = Math.ceil(order / 10);
+  const path = resolve(
+    process.cwd(),
+    `levels/chapter-${String(chapter).padStart(2, '0')}/level-${String(order).padStart(3, '0')}.json`
+  );
+  const level = JSON.parse(readFileSync(path, 'utf8')) as LevelRecord;
+  levelCache.set(order, level);
+  return level;
+}
+
+function levelLabel(order: number): string {
+  const level = levelByOrder(order);
+  return `${level.chapter}-${level.order} ${level.title}`;
+}
+
+function uiSolution(order: number): UiDir[] {
+  const result = bfsSolve(levelByOrder(order), { maxNodes: 700_000, maxDepth: 120 });
+  if (!result.solvable) throw new Error(`第 ${order} 关 BFS 不可解: ${result.reason ?? ''}`);
+  return result.solution.map((dir) => dir.toLowerCase() as UiDir);
 }
 
 async function openHome(page: Page): Promise<void> {
@@ -89,7 +118,7 @@ async function shot(page: Page, testInfo: TestInfo, name: string): Promise<void>
   await page.screenshot({ path: `artifacts/stage-08/${testInfo.project.name}-${name}.png` });
 }
 
-async function unlockAndStart(page: Page, unlock: number, label: string): Promise<void> {
+async function unlockAndStart(page: Page, unlock: number, label = levelLabel(unlock)): Promise<void> {
   await page.addInitScript((highestUnlocked: number) => {
     localStorage.setItem(
       'twinfold-paths:save:a',
@@ -103,6 +132,14 @@ async function unlockAndStart(page: Page, unlock: number, label: string): Promis
 
 async function play(page: Page, sequence: readonly UiDir[]): Promise<void> {
   for (let i = 0; i < sequence.length; i++) await pressMove(page, sequence[i]!, i + 1);
+}
+
+async function solveInBrowser(page: Page, order: number): Promise<number> {
+  const level = levelByOrder(order);
+  const sequence = uiSolution(order);
+  await play(page, sequence);
+  await expectResult(page, level.parMoves);
+  return level.parMoves;
 }
 
 test('首页一键进入第1关（FR-01）', async ({ page }, testInfo) => {
@@ -174,19 +211,21 @@ test('刷新后从最高解锁关继续（FR-07）', async ({ page }) => {
   g.assertClean();
 });
 
-test('后30关代表关卡以大地图和长目标步数呈现', async ({ browser }, testInfo) => {
+test('后40关代表关卡展示开放大地图与动态 BFS 目标', async ({ browser }, testInfo) => {
   const cases = [
-    { unlock: 21, label: '3-21 扩域起步', par: '13', name: 'large-ch3' },
-    { unlock: 31, label: '4-31 九宫初探', par: '13', name: 'fog-ch4' },
-    { unlock: 41, label: '5-41 奇相之门', par: '19', name: 'phase-ch5' },
-    { unlock: 50, label: '5-50 双生终极折线', par: '24', name: 'final-50' }
+    { unlock: 11, name: 'open-ch2' },
+    { unlock: 21, name: 'open-ch3' },
+    { unlock: 31, name: 'fog-ch4' },
+    { unlock: 41, name: 'phase-ch5' },
+    { unlock: 50, name: 'final-50' }
   ];
   for (const c of cases) {
     const ctx = await browser.newContext();
     const page = await ctx.newPage();
     const g = guard(page);
-    await unlockAndStart(page, c.unlock, c.label);
-    await expect(page.getByTestId('target-count')).toHaveText(c.par);
+    const level = levelByOrder(c.unlock);
+    await unlockAndStart(page, c.unlock);
+    await expect(page.getByTestId('target-count')).toHaveText(String(level.parMoves));
     await shot(page, testInfo, c.name);
     g.assertClean();
     await ctx.close();
@@ -196,22 +235,22 @@ test('后30关代表关卡以大地图和长目标步数呈现', async ({ browse
 test('第四章是连续探索章节，并能看到不同探索规则提示', async ({ browser }, testInfo) => {
   test.setTimeout(60_000);
   const cases = [
-    { unlock: 31, label: '4-31 九宫初探', hint: '九宫格', name: 'fog-square' },
-    { unlock: 32, label: '4-32 无痕暗域', hint: '无痕迷雾', name: 'fog-no-memory' },
-    { unlock: 33, label: '4-33 衰减记忆', hint: '三回合', name: 'fog-decay' },
-    { unlock: 34, label: '4-34 双生交替', hint: '交替', name: 'fog-alternating' },
-    { unlock: 35, label: '4-35 暗门择路', hint: '九宫格', name: 'fog-branching' },
-    { unlock: 36, label: '4-36 互锁探路', hint: '压板门', name: 'fog-crosslock' },
-    { unlock: 37, label: '4-37 周期雷达', hint: '雷达', name: 'fog-radar' },
-    { unlock: 38, label: '4-38 点亮信标', hint: '信标', name: 'fog-beacon' },
-    { unlock: 39, label: '4-39 一明一暗', hint: '信标', name: 'fog-hybrid' },
-    { unlock: 40, label: '4-40 暗域全景', hint: '最终暗域', name: 'fog-finale' }
+    { unlock: 31, hint: '九宫格', name: 'fog-square' },
+    { unlock: 32, hint: '无痕迷雾', name: 'fog-no-memory' },
+    { unlock: 33, hint: '三回合', name: 'fog-decay' },
+    { unlock: 34, hint: '交替', name: 'fog-alternating' },
+    { unlock: 35, hint: '九宫格', name: 'fog-branching' },
+    { unlock: 36, hint: '压板门', name: 'fog-crosslock' },
+    { unlock: 37, hint: '雷达', name: 'fog-radar' },
+    { unlock: 38, hint: '信标', name: 'fog-beacon' },
+    { unlock: 39, hint: '信标', name: 'fog-hybrid' },
+    { unlock: 40, hint: '最终暗域', name: 'fog-finale' }
   ];
   for (const c of cases) {
     const ctx = await browser.newContext();
     const page = await ctx.newPage();
     const g = guard(page);
-    await unlockAndStart(page, c.unlock, c.label);
+    await unlockAndStart(page, c.unlock);
     await expect(page.getByTestId('status')).toContainText(c.hint);
     await shot(page, testInfo, c.name);
     g.assertClean();
@@ -223,40 +262,24 @@ test('周期雷达在第5个有效回合触发全局扫描反馈', async ({ brow
   const ctx = await browser.newContext();
   const page = await ctx.newPage();
   const g = guard(page);
-  await unlockAndStart(page, 37, '4-37 周期雷达');
-  await play(page, ['right', 'right', 'right', 'right', 'down']);
+  await unlockAndStart(page, 37);
+  const prefix = uiSolution(37).slice(0, 5);
+  expect(prefix).toHaveLength(5);
+  await play(page, prefix);
   await expect(page.getByTestId('status')).toContainText('雷达脉冲');
   g.assertClean();
   await ctx.close();
 });
 
-test('M9 奇相门：错误奇偶会阻挡，下一回合可重新校相并最终通关', async ({ browser }) => {
+test('M9 相位门在开放迷宫中仍可按 BFS 最短解完整通关', async ({ browser }) => {
   test.setTimeout(60_000);
   const ctx = await browser.newContext();
   const page = await ctx.newPage();
   const g = guard(page);
-  await unlockAndStart(page, 41, '5-41 奇相之门');
-
-  // 沿几何最短路前进，不提前空等：第8回合进入 ODD 门时正好是 EVEN 相位。
-  await play(page, ['right', 'right', 'right', 'down', 'down', 'left', 'left', 'left']);
-  await expect(page.getByTestId('status')).toContainText('相位不匹配');
-
-  // 同方向再试一次，奇偶已经翻转，此时穿门。
-  await pressMove(page, 'left', 9);
-  const suffix: UiDir[] = [
-    'down',
-    'down',
-    'right',
-    'right',
-    'right',
-    'down',
-    'down',
-    'left',
-    'left',
-    'left'
-  ];
-  for (let i = 0; i < suffix.length; i++) await pressMove(page, suffix[i]!, 10 + i);
-  await expectResult(page, 19);
+  const level = levelByOrder(41);
+  expect(level.entities.some((entity) => entity.type === 'phaseDoor')).toBe(true);
+  await unlockAndStart(page, 41);
+  await solveInBrowser(page, 41);
   g.assertClean();
   await ctx.close();
 });

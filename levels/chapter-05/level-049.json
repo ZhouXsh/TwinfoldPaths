@@ -1,388 +1,244 @@
 {
   "schemaVersion": 1,
   "id": "level-049",
+  "title": "终局预演",
   "chapter": 5,
   "order": 49,
-  "title": "终局预演",
-  "initialMapping": "V_MIRROR",
   "grid": {
-    "width": 9,
-    "height": 13
+    "width": 11,
+    "height": 11
   },
   "blueStart": {
-    "x": 1,
-    "y": 1
+    "x": 0,
+    "y": 4
   },
   "orangeStart": {
-    "x": 1,
-    "y": 11
-  },
-  "blueExit": {
-    "x": 7,
+    "x": 10,
     "y": 1
   },
-  "orangeExit": {
-    "x": 7,
-    "y": 11
+  "blueExit": {
+    "x": 10,
+    "y": 3
   },
+  "orangeExit": {
+    "x": 0,
+    "y": 6
+  },
+  "initialMapping": "H_MIRROR",
   "walls": [
     {
-      "x": 3,
-      "y": 0
-    },
-    {
-      "x": 5,
-      "y": 0
-    },
-    {
-      "x": 0,
-      "y": 1
-    },
-    {
-      "x": 2,
+      "x": 8,
       "y": 1
     },
     {
       "x": 6,
       "y": 1
-    },
-    {
-      "x": 8,
-      "y": 1
-    },
-    {
-      "x": 2,
-      "y": 2
-    },
-    {
-      "x": 4,
-      "y": 2
-    },
-    {
-      "x": 6,
-      "y": 2
-    },
-    {
-      "x": 0,
-      "y": 3
-    },
-    {
-      "x": 2,
-      "y": 3
-    },
-    {
-      "x": 4,
-      "y": 3
-    },
-    {
-      "x": 6,
-      "y": 3
-    },
-    {
-      "x": 8,
-      "y": 3
-    },
-    {
-      "x": 2,
-      "y": 4
-    },
-    {
-      "x": 4,
-      "y": 4
-    },
-    {
-      "x": 6,
-      "y": 4
-    },
-    {
-      "x": 8,
-      "y": 4
-    },
-    {
-      "x": 0,
-      "y": 5
-    },
-    {
-      "x": 4,
-      "y": 5
-    },
-    {
-      "x": 8,
-      "y": 5
-    },
-    {
-      "x": 0,
-      "y": 6
-    },
-    {
-      "x": 2,
-      "y": 6
-    },
-    {
-      "x": 3,
-      "y": 6
-    },
-    {
-      "x": 4,
-      "y": 6
-    },
-    {
-      "x": 5,
-      "y": 6
-    },
-    {
-      "x": 6,
-      "y": 6
     },
     {
       "x": 7,
-      "y": 6
+      "y": 2
     },
     {
-      "x": 8,
-      "y": 6
-    },
-    {
-      "x": 0,
-      "y": 7
-    },
-    {
-      "x": 4,
-      "y": 7
-    },
-    {
-      "x": 8,
-      "y": 7
-    },
-    {
-      "x": 0,
+      "x": 10,
       "y": 8
+    },
+    {
+      "x": 8,
+      "y": 8
+    },
+    {
+      "x": 9,
+      "y": 9
+    },
+    {
+      "x": 8,
+      "y": 4
+    },
+    {
+      "x": 6,
+      "y": 4
+    },
+    {
+      "x": 7,
+      "y": 5
+    },
+    {
+      "x": 9,
+      "y": 2
     },
     {
       "x": 2,
       "y": 8
     },
     {
-      "x": 4,
-      "y": 8
-    },
-    {
-      "x": 6,
-      "y": 8
-    },
-    {
-      "x": 8,
-      "y": 8
-    },
-    {
-      "x": 0,
-      "y": 9
-    },
-    {
       "x": 2,
       "y": 9
-    },
-    {
-      "x": 4,
-      "y": 9
-    },
-    {
-      "x": 6,
-      "y": 9
-    },
-    {
-      "x": 8,
-      "y": 9
-    },
-    {
-      "x": 0,
-      "y": 10
-    },
-    {
-      "x": 2,
-      "y": 10
-    },
-    {
-      "x": 4,
-      "y": 10
-    },
-    {
-      "x": 6,
-      "y": 10
-    },
-    {
-      "x": 8,
-      "y": 10
-    },
-    {
-      "x": 0,
-      "y": 11
-    },
-    {
-      "x": 2,
-      "y": 11
-    },
-    {
-      "x": 6,
-      "y": 11
-    },
-    {
-      "x": 8,
-      "y": 11
-    },
-    {
-      "x": 0,
-      "y": 12
     },
     {
       "x": 1,
-      "y": 12
+      "y": 5
     },
     {
-      "x": 2,
-      "y": 12
+      "x": 1,
+      "y": 6
     },
     {
-      "x": 3,
-      "y": 12
+      "x": 1,
+      "y": 7
+    },
+    {
+      "x": 1,
+      "y": 8
+    },
+    {
+      "x": 1,
+      "y": 9
     },
     {
       "x": 4,
-      "y": 12
+      "y": 2
     },
     {
-      "x": 5,
-      "y": 12
+      "x": 4,
+      "y": 3
+    },
+    {
+      "x": 4,
+      "y": 4
+    },
+    {
+      "x": 4,
+      "y": 5
+    },
+    {
+      "x": 1,
+      "y": 2
+    },
+    {
+      "x": 2,
+      "y": 2
     },
     {
       "x": 6,
-      "y": 12
+      "y": 7
     },
     {
       "x": 7,
-      "y": 12
+      "y": 7
     },
     {
       "x": 8,
-      "y": 12
+      "y": 7
+    },
+    {
+      "x": 7,
+      "y": 8
+    },
+    {
+      "x": 7,
+      "y": 9
+    },
+    {
+      "x": 5,
+      "y": 6
+    },
+    {
+      "x": 5,
+      "y": 7
+    },
+    {
+      "x": 5,
+      "y": 8
+    },
+    {
+      "x": 5,
+      "y": 9
+    },
+    {
+      "x": 5,
+      "y": 1
+    },
+    {
+      "x": 5,
+      "y": 2
+    },
+    {
+      "x": 5,
+      "y": 3
+    },
+    {
+      "x": 6,
+      "y": 3
+    },
+    {
+      "x": 6,
+      "y": 2
     }
   ],
   "entities": [
     {
-      "type": "fragile",
-      "x": 1,
-      "y": 5
+      "type": "oneWay",
+      "arrow": "UP",
+      "x": 0,
+      "y": 3
+    },
+    {
+      "type": "oneWay",
+      "arrow": "LEFT",
+      "x": 10,
+      "y": 0
     },
     {
       "type": "fragile",
       "x": 1,
-      "y": 7
+      "y": 10
     },
     {
-      "type": "pulseSwitch",
-      "pairId": "level-049-pulse",
-      "x": 3,
-      "y": 4
-    },
-    {
-      "type": "pulseSwitch",
-      "pairId": "level-049-pulse",
-      "x": 3,
-      "y": 8
-    },
-    {
-      "type": "pulseDoor",
-      "pairId": "level-049-pulse",
-      "x": 6,
+      "type": "fragile",
+      "x": 8,
       "y": 5
     },
     {
-      "type": "pulseDoor",
-      "pairId": "level-049-pulse",
-      "x": 6,
-      "y": 7
-    },
-    {
-      "type": "phaseDoor",
-      "phase": "ODD",
-      "x": 5,
+      "type": "pulseSwitch",
+      "pairId": "level-049-m8-pulse",
+      "x": 1,
       "y": 1
     },
     {
+      "type": "pulseSwitch",
+      "pairId": "level-049-m8-pulse",
+      "x": 9,
+      "y": 0
+    },
+    {
+      "type": "pulseDoor",
+      "pairId": "level-049-m8-pulse",
+      "x": 4,
+      "y": 1
+    },
+    {
+      "type": "pulseDoor",
+      "pairId": "level-049-m8-pulse",
+      "x": 5,
+      "y": 0
+    },
+    {
+      "type": "phaseDoor",
+      "phase": "EVEN",
+      "x": 0,
+      "y": 2
+    },
+    {
       "type": "phaseDoor",
       "phase": "ODD",
-      "x": 5,
-      "y": 11
-    },
-    {
-      "type": "oneWay",
-      "x": 5,
-      "y": 4,
-      "arrow": "DOWN"
-    },
-    {
-      "type": "oneWay",
-      "x": 5,
-      "y": 8,
-      "arrow": "UP"
-    },
-    {
-      "type": "plate",
-      "id": "level-049-cross-1-bp",
-      "x": 2,
-      "y": 5,
-      "doorId": "level-049-cross-1-od"
-    },
-    {
-      "type": "door",
-      "id": "level-049-cross-1-od",
-      "x": 3,
-      "y": 7
-    },
-    {
-      "type": "plate",
-      "id": "level-049-cross-1-op",
-      "x": 2,
-      "y": 7,
-      "doorId": "level-049-cross-1-bd"
-    },
-    {
-      "type": "door",
-      "id": "level-049-cross-1-bd",
-      "x": 3,
-      "y": 5
-    },
-    {
-      "type": "plate",
-      "id": "level-049-cross-2-bp",
-      "x": 5,
-      "y": 2,
-      "doorId": "level-049-cross-2-od"
-    },
-    {
-      "type": "door",
-      "id": "level-049-cross-2-od",
-      "x": 5,
-      "y": 9
-    },
-    {
-      "type": "plate",
-      "id": "level-049-cross-2-op",
-      "x": 5,
-      "y": 10,
-      "doorId": "level-049-cross-2-bd"
-    },
-    {
-      "type": "door",
-      "id": "level-049-cross-2-bd",
-      "x": 5,
-      "y": 3
+      "x": 0,
+      "y": 1
     }
   ],
-  "parMoves": 23,
-  "parMovesNote": "BFS 最短步数=23；parMoves 与求解器严格一致",
+  "parMoves": 22,
+  "parMovesNote": "BFS 最短步数=22；parMoves 与求解器严格一致",
   "hint": {
-    "focus": "脆弱格、同步脉冲、相位门、单向格四种约束连续叠加。"
+    "focus": "开放迷宫没有固定双线：先利用墙体让两球错位，再观察会车时的对穿交换。 脆弱格、同步脉冲、相位门、单向格四种约束连续叠加。"
   },
   "tags": [
     "chapter-5",
@@ -395,8 +251,13 @@
     "V1-fog",
     "exploration-core",
     "maze",
+    "open-maze",
     "shared-maze",
-    "cross-interaction"
+    "branching-map",
+    "pass-through-design",
+    "cross-interaction",
+    "swap-optimal",
+    "swap-value"
   ],
   "visibility": {
     "mode": "fog",

@@ -2,9 +2,16 @@
  * E2E 测试：首次用户流程、设置页、刷新恢复、章节解锁，以及重制后的后期章节。
  */
 
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { expect, test, type Page } from '@playwright/test';
+import type { LevelRecord } from '../../src/content/validate';
+import { bfsSolve } from '../../tools/solver/bfs-solver';
 
 type Guard = { errors: string[]; assertClean: () => void };
+type UiDir = 'up' | 'down' | 'left' | 'right';
+
+const levelCache = new Map<number, LevelRecord>();
 
 function guard(page: Page): Guard {
   const errors: string[] = [];
@@ -25,6 +32,30 @@ function guard(page: Page): Guard {
   return { errors, assertClean: () => expect(errors).toEqual([]) };
 }
 
+function levelByOrder(order: number): LevelRecord {
+  const cached = levelCache.get(order);
+  if (cached) return cached;
+  const chapter = Math.ceil(order / 10);
+  const path = resolve(
+    process.cwd(),
+    `levels/chapter-${String(chapter).padStart(2, '0')}/level-${String(order).padStart(3, '0')}.json`
+  );
+  const level = JSON.parse(readFileSync(path, 'utf8')) as LevelRecord;
+  levelCache.set(order, level);
+  return level;
+}
+
+function levelLabel(order: number): string {
+  const level = levelByOrder(order);
+  return `${level.chapter}-${level.order} ${level.title}`;
+}
+
+function uiSolution(order: number): UiDir[] {
+  const result = bfsSolve(levelByOrder(order), { maxNodes: 700_000, maxDepth: 120 });
+  if (!result.solvable) throw new Error(`第 ${order} 关 BFS 不可解: ${result.reason ?? ''}`);
+  return result.solution.map((dir) => dir.toLowerCase() as UiDir);
+}
+
 async function openHome(page: Page): Promise<void> {
   await page.goto('/');
   await expect(page.getByTestId('btn-start')).toBeVisible({ timeout: 20000 });
@@ -37,11 +68,7 @@ async function startGame(page: Page): Promise<void> {
 
 const SETTLE_MS = 260;
 
-async function pressMove(
-  page: Page,
-  dir: 'up' | 'down' | 'left' | 'right',
-  count: number
-): Promise<void> {
+async function pressMove(page: Page, dir: UiDir, count: number): Promise<void> {
   await page.getByTestId(`btn-${dir}`).click();
   await expect(page.getByTestId('move-count')).toHaveText(String(count), { timeout: 3000 });
   await page.waitForTimeout(SETTLE_MS);
@@ -51,7 +78,7 @@ async function expectResult(page: Page, moves: number): Promise<void> {
   await expect(page.getByTestId('result-text')).toContainText(`步数 ${moves}`, { timeout: 5000 });
 }
 
-async function unlockAndStart(page: Page, unlock: number, label: string): Promise<void> {
+async function unlockAndStart(page: Page, unlock: number, label = levelLabel(unlock)): Promise<void> {
   await page.addInitScript((highestUnlocked: number) => {
     localStorage.setItem(
       'twinfold-paths:save:a',
@@ -151,44 +178,31 @@ test('章节选择展示新的后半程章节身份', async ({ page }) => {
   g.assertClean();
 });
 
-test('第四章从 4-31 起即进入整章探索迷雾', async ({ browser }) => {
+test('第四章从 4-31 起仍是探索迷雾，但地图已经换成开放共享迷宫', async ({ browser }) => {
   const ctx = await browser.newContext();
   const page = await ctx.newPage();
   const g = guard(page);
-  await unlockAndStart(page, 31, '4-31 九宫初探');
-  await expect(page.getByTestId('target-count')).toHaveText('13');
+  const level = levelByOrder(31);
+  await unlockAndStart(page, 31);
+  await expect(page.getByTestId('target-count')).toHaveText(String(level.parMoves));
   await expect(page.getByTestId('status')).toContainText('本章全程探索迷雾');
-  await pressMove(page, 'right', 1);
-  await pressMove(page, 'right', 2);
-  await pressMove(page, 'right', 3);
-  await pressMove(page, 'down', 4);
+  const prefix = uiSolution(31).slice(0, 4);
+  for (let i = 0; i < prefix.length; i++) await pressMove(page, prefix[i]!, i + 1);
   g.assertClean();
   await ctx.close();
 });
 
-test('第五章 M9 相位门会因奇偶回合阻挡并允许重新校相', async ({ browser }) => {
+test('第五章 M9 相位门与开放迷宫组合后仍可完整求解', async ({ browser }) => {
+  test.setTimeout(60_000);
   const ctx = await browser.newContext();
   const page = await ctx.newPage();
   const g = guard(page);
-  await unlockAndStart(page, 41, '5-41 奇相之门');
-
-  // 不提前空等：第 8 步尝试进入 ODD 相位门时会处于 EVEN 回合并被挡住。
-  const prefix: Array<'right' | 'down' | 'left'> = [
-    'right',
-    'right',
-    'right',
-    'down',
-    'down',
-    'left',
-    'left',
-    'left'
-  ];
-  for (let i = 0; i < prefix.length; i++) await pressMove(page, prefix[i]!, i + 1);
-  await expect(page.getByTestId('status')).toContainText('相位不匹配');
-
-  // 第 9 步奇偶翻转，同方向即可穿门。
-  await pressMove(page, 'left', 9);
-  await expect(page.getByTestId('move-count')).toHaveText('9');
+  const level = levelByOrder(41);
+  expect(level.entities.some((entity) => entity.type === 'phaseDoor')).toBe(true);
+  await unlockAndStart(page, 41);
+  const solution = uiSolution(41);
+  for (let i = 0; i < solution.length; i++) await pressMove(page, solution[i]!, i + 1);
+  await expectResult(page, level.parMoves);
   g.assertClean();
   await ctx.close();
 });

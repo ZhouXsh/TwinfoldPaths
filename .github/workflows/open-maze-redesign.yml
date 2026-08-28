@@ -1,0 +1,52 @@
+name: Open Maze Redesign
+
+on:
+  push:
+    branches:
+      - optimize/redesign-40-open-maze-crossing-20260828
+
+permissions:
+  contents: write
+
+jobs:
+  generate-and-verify:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Build solver tools
+        run: npm run build:tools
+      - name: Rebuild level 011-050 as open shared mazes
+        run: node tools/redesign-open-mazes.mjs
+      - name: Recompute authoritative parMoves
+        run: node tools/sync-par.mjs
+      - name: Format generated content
+        run: npx prettier --write levels reports/open-maze-redesign-summary.md reports/open-maze-redesign-summary.json tests/unit/content/open-maze-redesign.test.ts tools/solver/bfs-solver.ts tools/redesign-open-mazes.mjs
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run validate:levels
+      - run: npm run solve:levels
+      - run: npm run report:solution-variety
+      - run: npm run build
+      - run: npm run verify:dist
+      - name: Install Chromium for UI regression
+        run: npx playwright install --with-deps chromium
+      - name: Run Chromium E2E
+        run: npx playwright test --project=chromium --project=mobile-320 --workers=4
+      - name: Commit generated level content and factual report
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add levels reports/open-maze-redesign-summary.md reports/open-maze-redesign-summary.json
+          if git diff --cached --quiet; then
+            echo "No generated changes to commit"
+          else
+            git commit -m "content: rebuild level 011-050 as open shared mazes"
+            git push
+          fi

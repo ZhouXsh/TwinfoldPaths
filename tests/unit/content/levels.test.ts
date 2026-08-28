@@ -7,10 +7,21 @@ import {
   nextLevelId
 } from '../../../src/content/levels';
 import { parseLevel } from '../../../src/content/validate';
-import { bfsSolve, replaySolution } from '../../../tools/solver/bfs-solver';
+import {
+  analyzeSolutionTrace,
+  bfsSolve,
+  replaySolution
+} from '../../../tools/solver/bfs-solver';
+
+let solvedCache: ReturnType<typeof buildSolveAll> | null = null;
+
+function buildSolveAll() {
+  return LEVELS.map((level) => ({ level, result: bfsSolve(level) }));
+}
 
 function solveAll() {
-  return LEVELS.map((level) => ({ level, result: bfsSolve(level) }));
+  solvedCache ??= buildSolveAll();
+  return solvedCache;
 }
 
 function pointKey(p: { x: number; y: number }): string {
@@ -86,6 +97,16 @@ function deadEndCount(level: (typeof LEVELS)[number]): number {
   return count;
 }
 
+function branchCount(level: (typeof LEVELS)[number]): number {
+  const open = openCells(level);
+  let count = 0;
+  for (const cell of open) {
+    const [x, y] = cell.split(',').map(Number);
+    if (openNeighbors(level, open, { x: x!, y: y! }).length >= 3) count++;
+  }
+  return count;
+}
+
 describe('关卡注册表（levels/chapter-01..05）', () => {
   it('注册表恰有 50 关，按章节/序号排序', () => {
     const ids = LEVELS.map((l) => l.id);
@@ -129,7 +150,7 @@ describe('关卡注册表（levels/chapter-01..05）', () => {
     expect(late.some((level) => (level.visibility?.pulseEvery ?? 0) > 0)).toBe(true);
   });
 
-  it('后 30 关确实重制为更长的大地图谜题', () => {
+  it('后 30 关继续保持长解大地图，而不是为开放地图牺牲难度', () => {
     const solved = solveAll().filter(({ level }) => level.order >= 21);
     const avg = solved.reduce((sum, x) => sum + x.result.optimalSteps, 0) / solved.length;
     expect(avg, `后30关平均最优步数=${avg.toFixed(2)}，仍然过短`).toBeGreaterThanOrEqual(18);
@@ -146,9 +167,10 @@ describe('关卡注册表（levels/chapter-01..05）', () => {
     }
   });
 
-  it('21–50 关改为共享迷宫网络并具有真实死胡同，不再是两条彼此隔离的单通道', () => {
-    for (const level of LEVELS.filter((item) => item.order >= 21)) {
+  it('11–50 关是同一开放迷宫网络，具有分岔与死胡同，不再是两条细管', () => {
+    for (const level of LEVELS.filter((item) => item.order >= 11)) {
       expect(level.tags, `${level.id} 缺 maze 标签`).toContain('maze');
+      expect(level.tags, `${level.id} 缺 open-maze 标签`).toContain('open-maze');
       expect(level.tags, `${level.id} 缺 shared-maze 标签`).toContain('shared-maze');
       expect(
         canReach(level, level.blueStart, level.orangeStart),
@@ -157,24 +179,21 @@ describe('关卡注册表（levels/chapter-01..05）', () => {
       expect(deadEndCount(level), `${level.id} 至少应有两个非起终点死胡同`).toBeGreaterThanOrEqual(
         2
       );
+      expect(branchCount(level), `${level.id} 至少应有四个三向/四向分岔`).toBeGreaterThanOrEqual(4);
     }
   });
 
-  it('23–50 关必须包含跨球互锁：一侧压板直接控制另一侧门', () => {
-    for (const level of LEVELS.filter((item) => item.order >= 23)) {
+  it('11–50 关最优解都真实利用对穿交换与共享空间，而不是靠固定独立路线', () => {
+    for (const { level, result } of solveAll().filter(({ level }) => level.order >= 11)) {
+      const stats = analyzeSolutionTrace(level, result.solution);
+      expect(level.tags, `${level.id} 缺 pass-through-design 标签`).toContain('pass-through-design');
       expect(level.tags, `${level.id} 缺 cross-interaction 标签`).toContain('cross-interaction');
-      const plates = level.entities.filter((entity) => entity.type === 'plate');
-      const doors = level.entities.filter((entity) => entity.type === 'door');
-      const crossPlates = plates.filter((entity) => entity.id.includes('-cross-'));
-      const crossDoors = doors.filter((entity) => entity.id.includes('-cross-'));
-      expect(crossPlates.length, `${level.id} 至少需要一组双向跨球压板`).toBeGreaterThanOrEqual(2);
-      expect(crossDoors.length, `${level.id} 至少需要一组双向跨球门`).toBeGreaterThanOrEqual(2);
-      for (const plate of crossPlates) {
-        expect(
-          crossDoors.some((door) => door.id === plate.doorId),
-          `${level.id} 跨球压板必须指向有效门`
-        ).toBe(true);
-      }
+      expect(stats.passThroughSwaps, `${level.id} 最优解未出现双球对穿交换`).toBeGreaterThanOrEqual(1);
+      expect(stats.sharedVisitedCells, `${level.id} 双球没有共享走过的空间`).toBeGreaterThanOrEqual(2);
+      expect(
+        stats.blueBlockedOrangeMoved + stats.orangeBlockedBlueMoved,
+        `${level.id} 缺少单侧受阻造成的同步解耦`
+      ).toBeGreaterThanOrEqual(2);
     }
   });
 

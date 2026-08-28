@@ -1,4 +1,4 @@
-import type { Direction, GameState, LevelDef } from '../../src/domain/types';
+import type { Direction, GameState, LevelDef, MoveResult } from '../../src/domain/types';
 import { DIRECTIONS } from '../../src/domain/types';
 import { applyCommand } from '../../src/domain/engine';
 import { createInitialState } from '../../src/domain/level';
@@ -33,6 +33,27 @@ function fnv1a32(text: string): number {
   return hash >>> 0;
 }
 
+function samePoint(a: { x: number; y: number }, b: { x: number; y: number }): boolean {
+  return a.x === b.x && a.y === b.y;
+}
+
+function pointKey(p: { x: number; y: number }): string {
+  return `${p.x},${p.y}`;
+}
+
+/** R-04：两球本回合从相邻格互换位置，属于允许的“对穿交换”。 */
+export function isPassThroughSwap(result: MoveResult): boolean {
+  if (!result.applied) return false;
+  const blueMoved = !samePoint(result.blue.from, result.blue.to);
+  const orangeMoved = !samePoint(result.orange.from, result.orange.to);
+  return (
+    blueMoved &&
+    orangeMoved &&
+    samePoint(result.blue.to, result.orange.from) &&
+    samePoint(result.orange.to, result.blue.from)
+  );
+}
+
 export interface SolverResult {
   solvable: boolean;
   optimalSteps: number;
@@ -55,7 +76,15 @@ export const DEFAULT_BUDGET: SolverBudget = {
   maxDepth: 100
 };
 
-export function bfsSolve(level: LevelDef, budget: SolverBudget = DEFAULT_BUDGET): SolverResult {
+interface InternalSolveOptions {
+  allowPassThrough: boolean;
+}
+
+function solveInternal(
+  level: LevelDef,
+  budget: SolverBudget,
+  options: InternalSolveOptions
+): SolverResult {
   const start = Date.now();
   const initial = createInitialState(level);
   const includeTurnParity = level.entities.some((entity) => entity.type === 'phaseDoor');
@@ -113,6 +142,8 @@ export function bfsSolve(level: LevelDef, budget: SolverBudget = DEFAULT_BUDGET)
 
       for (const dir of DIRECTIONS) {
         const outcome = applyCommand(level, node.state, dir);
+        if (!options.allowPassThrough && isPassThroughSwap(outcome.result)) continue;
+
         const nextState = outcome.state;
         const hash = bfsHash(nextState, includeTurnParity);
 
@@ -181,6 +212,134 @@ export function bfsSolve(level: LevelDef, budget: SolverBudget = DEFAULT_BUDGET)
     budgetExhausted: true,
     reachedDepth,
     reason: `深度预算超限: 已达最大深度 ${budget.maxDepth}`
+  };
+}
+
+export function bfsSolve(level: LevelDef, budget: SolverBudget = DEFAULT_BUDGET): SolverResult {
+  return solveInternal(level, budget, { allowPassThrough: true });
+}
+
+/**
+ * 质量审计用 BFS：禁止使用 R-04 对穿交换。
+ * 若该结果不可解或显著变长，可量化证明“对穿”不是纯视觉偶遇，而是有解法价值。
+ */
+export function bfsSolveWithoutPassThrough(
+  level: LevelDef,
+  budget: SolverBudget = DEFAULT_BUDGET
+): SolverResult {
+  return solveInternal(level, budget, { allowPassThrough: false });
+}
+
+export interface SolutionTraceStep {
+  turn: number;
+  direction: Direction;
+  blueFrom: { x: number; y: number };
+  orangeFrom: { x: number; y: number };
+  blueTo: { x: number; y: number };
+  orangeTo: { x: number; y: number };
+  blueBlocked: boolean;
+  orangeBlocked: boolean;
+  blueReason: MoveResult['blue']['reason'];
+  orangeReason: MoveResult['orange']['reason'];
+  applied: boolean;
+  passThrough: boolean;
+  mappingBefore: GameState['mapping'];
+  mappingAfter: GameState['mapping'];
+}
+
+/** 生成可供内容生成器和审计报告消费的逐回合轨迹。 */
+export function traceSolution(level: LevelDef, moves: Direction[]): SolutionTraceStep[] {
+  let state = createInitialState(level);
+  const trace: SolutionTraceStep[] = [];
+  for (let i = 0; i < moves.length; i++) {
+    const direction = moves[i]!;
+    const mappingBefore = state.mapping;
+    const outcome = applyCommand(level, state, direction);
+    trace.push({
+      turn: i + 1,
+      direction,
+      blueFrom: { ...outcome.result.blue.from },
+      orangeFrom: { ...outcome.result.orange.from },
+      blueTo: { ...outcome.result.blue.to },
+      orangeTo: { ...outcome.result.orange.to },
+      blueBlocked: outcome.result.blue.blocked,
+      orangeBlocked: outcome.result.orange.blocked,
+      blueReason: outcome.result.blue.reason,
+      orangeReason: outcome.result.orange.reason,
+      applied: outcome.result.applied,
+      passThrough: isPassThroughSwap(outcome.result),
+      mappingBefore,
+      mappingAfter: outcome.state.mapping
+    });
+    state = outcome.state;
+  }
+  return trace;
+}
+
+export interface SolutionTraceStats {
+  appliedTurns: number;
+  cancelledTurns: number;
+  passThroughSwaps: number;
+  jointMoveTurns: number;
+  blueSoloMoveTurns: number;
+  orangeSoloMoveTurns: number;
+  blueBlockedOrangeMoved: number;
+  orangeBlockedBlueMoved: number;
+  blueVisitedCells: number;
+  orangeVisitedCells: number;
+  sharedVisitedCells: number;
+  mappingChanges: number;
+}
+
+/** 对一条解序列逐回合回放，统计真正的双球空间交互，而非只看 walls 外形。 */
+export function analyzeSolutionTrace(level: LevelDef, moves: Direction[]): SolutionTraceStats {
+  const trace = traceSolution(level, moves);
+  const blueVisited = new Set([pointKey(level.blueStart)]);
+  const orangeVisited = new Set([pointKey(level.orangeStart)]);
+  let appliedTurns = 0;
+  let cancelledTurns = 0;
+  let passThroughSwaps = 0;
+  let jointMoveTurns = 0;
+  let blueSoloMoveTurns = 0;
+  let orangeSoloMoveTurns = 0;
+  let blueBlockedOrangeMoved = 0;
+  let orangeBlockedBlueMoved = 0;
+  let mappingChanges = 0;
+
+  for (const step of trace) {
+    const blueMoved = !samePoint(step.blueFrom, step.blueTo);
+    const orangeMoved = !samePoint(step.orangeFrom, step.orangeTo);
+    if (step.applied) appliedTurns++;
+    else cancelledTurns++;
+    if (step.passThrough) passThroughSwaps++;
+    if (blueMoved && orangeMoved) jointMoveTurns++;
+    else if (blueMoved) blueSoloMoveTurns++;
+    else if (orangeMoved) orangeSoloMoveTurns++;
+    if (step.blueBlocked && orangeMoved) blueBlockedOrangeMoved++;
+    if (step.orangeBlocked && blueMoved) orangeBlockedBlueMoved++;
+    if (step.mappingBefore !== step.mappingAfter) mappingChanges++;
+    blueVisited.add(pointKey(step.blueTo));
+    orangeVisited.add(pointKey(step.orangeTo));
+  }
+
+  let sharedVisitedCells = 0;
+  for (const cell of blueVisited) {
+    if (orangeVisited.has(cell)) sharedVisitedCells++;
+  }
+
+  return {
+    appliedTurns,
+    cancelledTurns,
+    passThroughSwaps,
+    jointMoveTurns,
+    blueSoloMoveTurns,
+    orangeSoloMoveTurns,
+    blueBlockedOrangeMoved,
+    orangeBlockedBlueMoved,
+    blueVisitedCells: blueVisited.size,
+    orangeVisitedCells: orangeVisited.size,
+    sharedVisitedCells,
+    mappingChanges
   };
 }
 

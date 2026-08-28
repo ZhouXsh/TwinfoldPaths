@@ -1,52 +1,119 @@
 {
   "schemaVersion": 1,
   "id": "level-016",
+  "title": "角色专属门",
   "chapter": 2,
   "order": 16,
-  "title": "角色专属门",
   "grid": {
-    "width": 5,
-    "height": 3
+    "width": 8,
+    "height": 7
   },
   "blueStart": {
-    "x": 1,
+    "x": 2,
     "y": 0
   },
   "orangeStart": {
-    "x": 3,
-    "y": 2
+    "x": 5,
+    "y": 6
   },
   "blueExit": {
-    "x": 4,
-    "y": 0
+    "x": 1,
+    "y": 6
   },
   "orangeExit": {
-    "x": 0,
-    "y": 2
+    "x": 3,
+    "y": 0
   },
-  "initialMapping": "H_MIRROR",
-  "walls": [],
+  "initialMapping": "V_MIRROR",
+  "walls": [
+    {
+      "x": 4,
+      "y": 4
+    },
+    {
+      "x": 5,
+      "y": 5
+    },
+    {
+      "x": 5,
+      "y": 3
+    },
+    {
+      "x": 6,
+      "y": 2
+    },
+    {
+      "x": 5,
+      "y": 1
+    },
+    {
+      "x": 3,
+      "y": 3
+    },
+    {
+      "x": 2,
+      "y": 4
+    },
+    {
+      "x": 2,
+      "y": 2
+    },
+    {
+      "x": 4,
+      "y": 1
+    },
+    {
+      "x": 6,
+      "y": 1
+    },
+    {
+      "x": 1,
+      "y": 1
+    },
+    {
+      "x": 1,
+      "y": 2
+    },
+    {
+      "x": 1,
+      "y": 4
+    }
+  ],
   "entities": [
     {
       "type": "colorDoor",
-      "x": 2,
-      "y": 0,
-      "color": "BLUE"
+      "color": "BLUE",
+      "x": 0,
+      "y": 6
     },
     {
       "type": "colorDoor",
-      "x": 2,
-      "y": 2,
-      "color": "ORANGE"
+      "color": "ORANGE",
+      "x": 4,
+      "y": 6
     }
   ],
-  "parMoves": 3,
-  "parMovesNote": "BFS 最短步数=3；parMoves 与求解器严格一致",
+  "parMoves": 18,
+  "parMovesNote": "BFS 最短步数=18；parMoves 与求解器严格一致",
   "hint": {
-    "focus": "方框门只认蓝色，菱形门只认橙色：各走各的门",
-    "direction": "RIGHT"
+    "focus": "开放迷宫没有固定双线：先利用墙体让两球错位，再观察会车时的对穿交换。 方框门只认蓝色，菱形门只认橙色：各走各的门"
   },
-  "tags": ["chapter-2", "tutorial", "M2", "color-door", "V1-fog", "exploration-core"],
+  "tags": [
+    "chapter-2",
+    "tutorial",
+    "M2",
+    "color-door",
+    "V1-fog",
+    "exploration-core",
+    "maze",
+    "open-maze",
+    "shared-maze",
+    "branching-map",
+    "pass-through-design",
+    "cross-interaction",
+    "swap-optimal",
+    "swap-value"
+  ],
   "visibility": {
     "mode": "fog",
     "radius": 1,
