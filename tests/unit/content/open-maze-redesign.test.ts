@@ -80,9 +80,24 @@ function staticReachable(level: (typeof LEVELS)[number], start: { x: number; y: 
   return seen;
 }
 
-describe('O7：后40关开放迷宫与双球对穿交互', () => {
-  const redesigned = LEVELS.filter((level) => level.order >= 11);
+const redesigned = LEVELS.filter((level) => level.order >= 11);
+let auditCache:
+  | Array<{
+      level: (typeof LEVELS)[number];
+      result: ReturnType<typeof bfsSolve>;
+      stats: ReturnType<typeof analyzeSolutionTrace>;
+    }>
+  | null = null;
 
+function audits() {
+  auditCache ??= redesigned.map((level) => {
+    const result = bfsSolve(level, { maxNodes: 700_000, maxDepth: 120 });
+    return { level, result, stats: analyzeSolutionTrace(level, result.solution) };
+  });
+  return auditCache;
+}
+
+describe('O7：后40关开放迷宫与双球对穿交互', () => {
   it('level-011..050 全量采用开放共享迷宫，而不是双单通道', () => {
     expect(redesigned).toHaveLength(40);
     for (const level of redesigned) {
@@ -104,14 +119,11 @@ describe('O7：后40关开放迷宫与双球对穿交互', () => {
   });
 
   it('40/40 最优解真实发生对穿交换，并共享双方走过的空间', () => {
-    for (const level of redesigned) {
-      const result = bfsSolve(level, { maxNodes: 700_000, maxDepth: 120 });
+    for (const { level, result, stats } of audits()) {
       expect(result.solvable, `${level.id} 应可解: ${result.reason ?? ''}`).toBe(true);
       expect(result.budgetExhausted, `${level.id} 不应超预算`).toBe(false);
       expect(replaySolution(level, result.solution), `${level.id} 最短解应可回放`).toBe(true);
       expect(level.parMoves, `${level.id} parMoves 必须精确`).toBe(result.optimalSteps);
-
-      const stats = analyzeSolutionTrace(level, result.solution);
       expect(stats.passThroughSwaps, `${level.id} 最优解没有利用 R-04 对穿交换`).toBeGreaterThanOrEqual(1);
       expect(stats.sharedVisitedCells, `${level.id} 双球轨迹没有共享空间`).toBeGreaterThanOrEqual(2);
       expect(
@@ -122,20 +134,14 @@ describe('O7：后40关开放迷宫与双球对穿交互', () => {
   });
 
   it('至少24/40关在最优解中双向体现“一球停、另一球走”', () => {
-    let count = 0;
-    for (const level of redesigned) {
-      const result = bfsSolve(level, { maxNodes: 700_000, maxDepth: 120 });
-      const stats = analyzeSolutionTrace(level, result.solution);
-      if (stats.blueBlockedOrangeMoved > 0 && stats.orangeBlockedBlueMoved > 0) count++;
-    }
+    const count = audits().filter(
+      ({ stats }) => stats.blueBlockedOrangeMoved > 0 && stats.orangeBlockedBlueMoved > 0
+    ).length;
     expect(count).toBeGreaterThanOrEqual(24);
   });
 
   it('难度仍保持后程增长，后30关平均最优步数不低于18', () => {
-    const rows = redesigned.map((level) => ({
-      level,
-      result: bfsSolve(level, { maxNodes: 700_000, maxDepth: 120 })
-    }));
+    const rows = audits();
     const late30 = rows.filter(({ level }) => level.order >= 21);
     const lateAvg = late30.reduce((sum, row) => sum + row.result.optimalSteps, 0) / late30.length;
     expect(lateAvg).toBeGreaterThanOrEqual(18);
