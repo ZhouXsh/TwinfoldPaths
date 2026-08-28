@@ -66,16 +66,18 @@ describe('主界面探索难度', () => {
     expect(playable.visibility?.source).toBe('both');
   });
 
-  it('困难难度完整保留关卡原始迷雾规则', () => {
-    const source = LEVELS.find(
-      (level) => level.visibility?.memory === 'none' || level.visibility?.source === 'alternating'
-    );
+  it('困难难度只保留当前九宫格，不保留离开后的探索记忆', () => {
+    const source = LEVELS.find((level) => level.visibility?.memory === 'persistent');
     expect(source).toBeDefined();
 
     setActiveDifficulty('hard');
     const playable = applyDifficultyToLevel(source!);
-    expect(playable).toBe(source);
-    expect(playable.visibility).toEqual(source!.visibility);
+    expect(playable.visibility?.mode).toBe('fog');
+    expect(playable.visibility?.radius).toBe(1);
+    expect(playable.visibility?.shape).toBe('square');
+    expect(playable.visibility?.memory).toBe('none');
+    expect(playable.visibility?.source).toBe('both');
+    expect(source!.visibility?.memory).toBe('persistent');
   });
 
   it.each<GameDifficulty>(['easy', 'standard', 'hard'])(
@@ -89,7 +91,7 @@ describe('主界面探索难度', () => {
       } else if (difficulty === 'standard') {
         expect(playable?.visibility?.memory).toBe('persistent');
       } else {
-        expect(playable?.visibility).toEqual(LEVELS.find((level) => level.id === 'level-031')?.visibility);
+        expect(playable?.visibility?.memory).toBe('none');
       }
     }
   );
