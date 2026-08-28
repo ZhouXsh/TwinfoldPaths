@@ -230,6 +230,52 @@ export function bfsSolveWithoutPassThrough(
   return solveInternal(level, budget, { allowPassThrough: false });
 }
 
+export interface SolutionTraceStep {
+  turn: number;
+  direction: Direction;
+  blueFrom: { x: number; y: number };
+  orangeFrom: { x: number; y: number };
+  blueTo: { x: number; y: number };
+  orangeTo: { x: number; y: number };
+  blueBlocked: boolean;
+  orangeBlocked: boolean;
+  blueReason: MoveResult['blue']['reason'];
+  orangeReason: MoveResult['orange']['reason'];
+  applied: boolean;
+  passThrough: boolean;
+  mappingBefore: GameState['mapping'];
+  mappingAfter: GameState['mapping'];
+}
+
+/** 生成可供内容生成器和审计报告消费的逐回合轨迹。 */
+export function traceSolution(level: LevelDef, moves: Direction[]): SolutionTraceStep[] {
+  let state = createInitialState(level);
+  const trace: SolutionTraceStep[] = [];
+  for (let i = 0; i < moves.length; i++) {
+    const direction = moves[i]!;
+    const mappingBefore = state.mapping;
+    const outcome = applyCommand(level, state, direction);
+    trace.push({
+      turn: i + 1,
+      direction,
+      blueFrom: { ...outcome.result.blue.from },
+      orangeFrom: { ...outcome.result.orange.from },
+      blueTo: { ...outcome.result.blue.to },
+      orangeTo: { ...outcome.result.orange.to },
+      blueBlocked: outcome.result.blue.blocked,
+      orangeBlocked: outcome.result.orange.blocked,
+      blueReason: outcome.result.blue.reason,
+      orangeReason: outcome.result.orange.reason,
+      applied: outcome.result.applied,
+      passThrough: isPassThroughSwap(outcome.result),
+      mappingBefore,
+      mappingAfter: outcome.state.mapping
+    });
+    state = outcome.state;
+  }
+  return trace;
+}
+
 export interface SolutionTraceStats {
   appliedTurns: number;
   cancelledTurns: number;
@@ -247,9 +293,9 @@ export interface SolutionTraceStats {
 
 /** 对一条解序列逐回合回放，统计真正的双球空间交互，而非只看 walls 外形。 */
 export function analyzeSolutionTrace(level: LevelDef, moves: Direction[]): SolutionTraceStats {
-  let state = createInitialState(level);
-  const blueVisited = new Set([pointKey(state.actors.blue.pos)]);
-  const orangeVisited = new Set([pointKey(state.actors.orange.pos)]);
+  const trace = traceSolution(level, moves);
+  const blueVisited = new Set([pointKey(level.blueStart)]);
+  const orangeVisited = new Set([pointKey(level.orangeStart)]);
   let appliedTurns = 0;
   let cancelledTurns = 0;
   let passThroughSwaps = 0;
@@ -260,26 +306,20 @@ export function analyzeSolutionTrace(level: LevelDef, moves: Direction[]): Solut
   let orangeBlockedBlueMoved = 0;
   let mappingChanges = 0;
 
-  for (const dir of moves) {
-    const beforeMapping = state.mapping;
-    const outcome = applyCommand(level, state, dir);
-    const { result } = outcome;
-    const blueMoved = !samePoint(result.blue.from, result.blue.to);
-    const orangeMoved = !samePoint(result.orange.from, result.orange.to);
-
-    if (result.applied) appliedTurns++;
+  for (const step of trace) {
+    const blueMoved = !samePoint(step.blueFrom, step.blueTo);
+    const orangeMoved = !samePoint(step.orangeFrom, step.orangeTo);
+    if (step.applied) appliedTurns++;
     else cancelledTurns++;
-    if (isPassThroughSwap(result)) passThroughSwaps++;
+    if (step.passThrough) passThroughSwaps++;
     if (blueMoved && orangeMoved) jointMoveTurns++;
     else if (blueMoved) blueSoloMoveTurns++;
     else if (orangeMoved) orangeSoloMoveTurns++;
-    if (result.blue.blocked && orangeMoved) blueBlockedOrangeMoved++;
-    if (result.orange.blocked && blueMoved) orangeBlockedBlueMoved++;
-
-    state = outcome.state;
-    if (state.mapping !== beforeMapping) mappingChanges++;
-    blueVisited.add(pointKey(state.actors.blue.pos));
-    orangeVisited.add(pointKey(state.actors.orange.pos));
+    if (step.blueBlocked && orangeMoved) blueBlockedOrangeMoved++;
+    if (step.orangeBlocked && blueMoved) orangeBlockedBlueMoved++;
+    if (step.mappingBefore !== step.mappingAfter) mappingChanges++;
+    blueVisited.add(pointKey(step.blueTo));
+    orangeVisited.add(pointKey(step.orangeTo));
   }
 
   let sharedVisitedCells = 0;
