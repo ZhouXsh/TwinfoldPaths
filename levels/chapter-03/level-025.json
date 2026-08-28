@@ -1,322 +1,144 @@
 {
   "schemaVersion": 1,
   "id": "level-025",
+  "title": "脉冲远征",
   "chapter": 3,
   "order": 25,
-  "title": "脉冲远征",
-  "initialMapping": "H_MIRROR",
   "grid": {
-    "width": 11,
-    "height": 9
+    "width": 8,
+    "height": 8
   },
   "blueStart": {
-    "x": 1,
-    "y": 1
+    "x": 0,
+    "y": 4
   },
   "orangeStart": {
-    "x": 9,
+    "x": 7,
     "y": 1
   },
   "blueExit": {
-    "x": 1,
-    "y": 7
+    "x": 7,
+    "y": 3
   },
   "orangeExit": {
-    "x": 9,
-    "y": 7
+    "x": 0,
+    "y": 6
   },
+  "initialMapping": "H_MIRROR",
   "walls": [
     {
       "x": 2,
-      "y": 0
-    },
-    {
-      "x": 4,
-      "y": 0
-    },
-    {
-      "x": 6,
-      "y": 0
-    },
-    {
-      "x": 7,
-      "y": 0
-    },
-    {
-      "x": 8,
-      "y": 0
-    },
-    {
-      "x": 9,
-      "y": 0
-    },
-    {
-      "x": 10,
-      "y": 0
+      "y": 3
     },
     {
       "x": 0,
+      "y": 3
+    },
+    {
+      "x": 1,
+      "y": 4
+    },
+    {
+      "x": 6,
       "y": 1
     },
     {
-      "x": 10,
+      "x": 4,
       "y": 1
     },
     {
-      "x": 0,
-      "y": 2
-    },
-    {
-      "x": 1,
-      "y": 2
-    },
-    {
-      "x": 2,
-      "y": 2
-    },
-    {
-      "x": 3,
-      "y": 2
-    },
-    {
       "x": 5,
       "y": 2
-    },
-    {
-      "x": 7,
-      "y": 2
-    },
-    {
-      "x": 8,
-      "y": 2
-    },
-    {
-      "x": 9,
-      "y": 2
-    },
-    {
-      "x": 10,
-      "y": 2
-    },
-    {
-      "x": 0,
-      "y": 3
-    },
-    {
-      "x": 5,
-      "y": 3
-    },
-    {
-      "x": 10,
-      "y": 3
-    },
-    {
-      "x": 0,
-      "y": 4
-    },
-    {
-      "x": 2,
-      "y": 4
-    },
-    {
-      "x": 3,
-      "y": 4
-    },
-    {
-      "x": 4,
-      "y": 4
-    },
-    {
-      "x": 5,
-      "y": 4
     },
     {
       "x": 6,
-      "y": 4
-    },
-    {
-      "x": 7,
-      "y": 4
-    },
-    {
-      "x": 8,
-      "y": 4
-    },
-    {
-      "x": 10,
-      "y": 4
-    },
-    {
-      "x": 0,
-      "y": 5
+      "y": 3
     },
     {
       "x": 5,
-      "y": 5
-    },
-    {
-      "x": 10,
-      "y": 5
-    },
-    {
-      "x": 0,
-      "y": 6
-    },
-    {
-      "x": 1,
-      "y": 6
-    },
-    {
-      "x": 2,
-      "y": 6
+      "y": 4
     },
     {
       "x": 3,
-      "y": 6
-    },
-    {
-      "x": 5,
-      "y": 6
-    },
-    {
-      "x": 7,
-      "y": 6
-    },
-    {
-      "x": 8,
-      "y": 6
-    },
-    {
-      "x": 9,
-      "y": 6
-    },
-    {
-      "x": 10,
-      "y": 6
-    },
-    {
-      "x": 0,
-      "y": 7
-    },
-    {
-      "x": 5,
-      "y": 7
-    },
-    {
-      "x": 10,
-      "y": 7
-    },
-    {
-      "x": 0,
-      "y": 8
-    },
-    {
-      "x": 1,
-      "y": 8
-    },
-    {
-      "x": 2,
-      "y": 8
-    },
-    {
-      "x": 3,
-      "y": 8
+      "y": 5
     },
     {
       "x": 4,
-      "y": 8
+      "y": 5
     },
     {
       "x": 5,
-      "y": 8
+      "y": 5
     },
     {
-      "x": 6,
-      "y": 8
+      "x": 3,
+      "y": 6
     },
     {
-      "x": 7,
-      "y": 8
+      "x": 4,
+      "y": 6
     },
     {
-      "x": 8,
-      "y": 8
+      "x": 3,
+      "y": 7
     },
     {
-      "x": 9,
-      "y": 8
+      "x": 4,
+      "y": 7
     },
     {
-      "x": 10,
-      "y": 8
+      "x": 2,
+      "y": 6
+    },
+    {
+      "x": 2,
+      "y": 7
     }
   ],
   "entities": [
     {
       "type": "pulseSwitch",
-      "pairId": "level-025-pulse",
-      "x": 4,
-      "y": 3
+      "pairId": "level-025-m8-pulse",
+      "x": 2,
+      "y": 4
     },
     {
       "type": "pulseSwitch",
-      "pairId": "level-025-pulse",
-      "x": 6,
-      "y": 3
-    },
-    {
-      "type": "pulseDoor",
-      "pairId": "level-025-pulse",
-      "x": 3,
-      "y": 5
-    },
-    {
-      "type": "pulseDoor",
-      "pairId": "level-025-pulse",
+      "pairId": "level-025-m8-pulse",
       "x": 7,
-      "y": 5
+      "y": 0
     },
     {
-      "type": "plate",
-      "id": "level-025-cross-1-bp",
-      "x": 4,
-      "y": 1,
-      "doorId": "level-025-cross-1-od"
+      "type": "pulseDoor",
+      "pairId": "level-025-m8-pulse",
+      "x": 3,
+      "y": 1
     },
     {
-      "type": "door",
-      "id": "level-025-cross-1-od",
+      "type": "pulseDoor",
+      "pairId": "level-025-m8-pulse",
       "x": 6,
-      "y": 2
-    },
-    {
-      "type": "plate",
-      "id": "level-025-cross-1-op",
-      "x": 6,
-      "y": 1,
-      "doorId": "level-025-cross-1-bd"
-    },
-    {
-      "type": "door",
-      "id": "level-025-cross-1-bd",
-      "x": 4,
-      "y": 2
+      "y": 0
     }
   ],
-  "parMoves": 18,
-  "parMovesNote": "BFS 最短步数=18；parMoves 与求解器严格一致",
+  "parMoves": 23,
+  "parMovesNote": "BFS 最短步数=23；parMoves 与求解器严格一致",
   "hint": {
-    "focus": "先让双球同时经过脉冲开关，再进入后半段长廊。"
+    "focus": "开放迷宫没有固定双线：先利用墙体让两球错位，再观察会车时的对穿交换。 先让双球同时经过脉冲开关，再进入后半段长廊。"
   },
   "tags": [
     "chapter-3",
     "M8",
-    "large-map",
     "V1-fog",
     "exploration-core",
     "maze",
+    "open-maze",
     "shared-maze",
-    "cross-interaction"
+    "branching-map",
+    "pass-through-design",
+    "cross-interaction",
+    "swap-optimal",
+    "swap-value"
   ],
   "visibility": {
     "mode": "fog",

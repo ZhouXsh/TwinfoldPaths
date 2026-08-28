@@ -1,373 +1,166 @@
 {
   "schemaVersion": 1,
   "id": "level-027",
+  "title": "双门深行",
   "chapter": 3,
   "order": 27,
-  "title": "双门深行",
-  "initialMapping": "H_MIRROR",
   "grid": {
-    "width": 13,
-    "height": 9
+    "width": 8,
+    "height": 8
   },
   "blueStart": {
-    "x": 1,
+    "x": 0,
     "y": 1
   },
   "orangeStart": {
-    "x": 11,
-    "y": 1
+    "x": 7,
+    "y": 5
   },
   "blueExit": {
-    "x": 1,
-    "y": 7
+    "x": 7,
+    "y": 3
   },
   "orangeExit": {
-    "x": 11,
-    "y": 7
+    "x": 0,
+    "y": 4
   },
+  "initialMapping": "H_MIRROR",
   "walls": [
     {
-      "x": 2,
-      "y": 0
-    },
-    {
       "x": 4,
-      "y": 0
-    },
-    {
-      "x": 6,
-      "y": 0
-    },
-    {
-      "x": 8,
-      "y": 0
-    },
-    {
-      "x": 9,
-      "y": 0
-    },
-    {
-      "x": 10,
-      "y": 0
-    },
-    {
-      "x": 11,
-      "y": 0
-    },
-    {
-      "x": 12,
-      "y": 0
-    },
-    {
-      "x": 0,
-      "y": 1
-    },
-    {
-      "x": 12,
-      "y": 1
-    },
-    {
-      "x": 0,
-      "y": 2
-    },
-    {
-      "x": 1,
-      "y": 2
+      "y": 6
     },
     {
       "x": 2,
-      "y": 2
+      "y": 6
     },
     {
       "x": 3,
-      "y": 2
+      "y": 5
     },
     {
-      "x": 4,
-      "y": 2
-    },
-    {
-      "x": 6,
-      "y": 2
-    },
-    {
-      "x": 8,
-      "y": 2
-    },
-    {
-      "x": 9,
-      "y": 2
-    },
-    {
-      "x": 10,
-      "y": 2
-    },
-    {
-      "x": 11,
-      "y": 2
-    },
-    {
-      "x": 12,
-      "y": 2
-    },
-    {
-      "x": 0,
+      "x": 3,
       "y": 3
-    },
-    {
-      "x": 6,
-      "y": 3
-    },
-    {
-      "x": 12,
-      "y": 3
-    },
-    {
-      "x": 0,
-      "y": 4
     },
     {
       "x": 2,
       "y": 4
     },
     {
-      "x": 3,
-      "y": 4
-    },
-    {
-      "x": 4,
-      "y": 4
+      "x": 2,
+      "y": 2
     },
     {
       "x": 5,
-      "y": 4
-    },
-    {
-      "x": 6,
-      "y": 4
-    },
-    {
-      "x": 7,
-      "y": 4
-    },
-    {
-      "x": 8,
-      "y": 4
-    },
-    {
-      "x": 9,
-      "y": 4
-    },
-    {
-      "x": 10,
-      "y": 4
-    },
-    {
-      "x": 12,
-      "y": 4
-    },
-    {
-      "x": 0,
-      "y": 5
-    },
-    {
-      "x": 6,
-      "y": 5
-    },
-    {
-      "x": 12,
-      "y": 5
-    },
-    {
-      "x": 0,
-      "y": 6
-    },
-    {
-      "x": 1,
-      "y": 6
-    },
-    {
-      "x": 2,
-      "y": 6
-    },
-    {
-      "x": 3,
-      "y": 6
+      "y": 3
     },
     {
       "x": 4,
-      "y": 6
-    },
-    {
-      "x": 6,
-      "y": 6
-    },
-    {
-      "x": 8,
-      "y": 6
-    },
-    {
-      "x": 9,
-      "y": 6
-    },
-    {
-      "x": 10,
-      "y": 6
-    },
-    {
-      "x": 11,
-      "y": 6
-    },
-    {
-      "x": 12,
-      "y": 6
-    },
-    {
-      "x": 0,
-      "y": 7
-    },
-    {
-      "x": 6,
-      "y": 7
-    },
-    {
-      "x": 12,
-      "y": 7
-    },
-    {
-      "x": 0,
-      "y": 8
-    },
-    {
-      "x": 1,
-      "y": 8
+      "y": 4
     },
     {
       "x": 2,
-      "y": 8
+      "y": 5
     },
     {
-      "x": 3,
-      "y": 8
+      "x": 1,
+      "y": 1
     },
     {
-      "x": 4,
-      "y": 8
+      "x": 2,
+      "y": 1
+    },
+    {
+      "x": 1,
+      "y": 2
     },
     {
       "x": 5,
-      "y": 8
+      "y": 2
+    },
+    {
+      "x": 3,
+      "y": 2
     },
     {
       "x": 6,
-      "y": 8
+      "y": 6
     },
     {
       "x": 7,
-      "y": 8
+      "y": 6
     },
     {
-      "x": 8,
-      "y": 8
+      "x": 6,
+      "y": 7
     },
     {
-      "x": 9,
-      "y": 8
+      "x": 7,
+      "y": 7
     },
     {
-      "x": 10,
-      "y": 8
-    },
-    {
-      "x": 11,
-      "y": 8
-    },
-    {
-      "x": 12,
-      "y": 8
+      "x": 3,
+      "y": 4
     }
   ],
   "entities": [
     {
-      "type": "colorDoor",
-      "x": 5,
-      "y": 2,
-      "color": "BLUE"
-    },
-    {
-      "type": "colorDoor",
-      "x": 7,
-      "y": 2,
-      "color": "ORANGE"
-    },
-    {
       "type": "plate",
-      "id": "level-027-pb",
+      "id": "level-027-m1-blue-opens-orange-plate",
       "x": 1,
-      "y": 5,
-      "doorId": "level-027-db"
+      "y": 0,
+      "doorId": "level-027-m1-blue-opens-orange-door"
     },
     {
       "type": "door",
-      "id": "level-027-db",
-      "x": 2,
-      "y": 5
+      "id": "level-027-m1-blue-opens-orange-door",
+      "x": 5,
+      "y": 0
     },
     {
       "type": "plate",
-      "id": "level-027-po",
-      "x": 11,
-      "y": 5,
-      "doorId": "level-027-do"
+      "id": "level-027-m1-orange-opens-blue-plate",
+      "x": 0,
+      "y": 0,
+      "doorId": "level-027-m1-orange-opens-blue-door"
     },
     {
       "type": "door",
-      "id": "level-027-do",
-      "x": 10,
-      "y": 5
-    },
-    {
-      "type": "plate",
-      "id": "level-027-cross-1-bp",
-      "x": 4,
-      "y": 1,
-      "doorId": "level-027-cross-1-od"
-    },
-    {
-      "type": "door",
-      "id": "level-027-cross-1-od",
+      "id": "level-027-m1-orange-opens-blue-door",
       "x": 7,
       "y": 1
     },
     {
-      "type": "plate",
-      "id": "level-027-cross-1-op",
-      "x": 8,
-      "y": 1,
-      "doorId": "level-027-cross-1-bd"
+      "type": "colorDoor",
+      "color": "BLUE",
+      "x": 6,
+      "y": 3
     },
     {
-      "type": "door",
-      "id": "level-027-cross-1-bd",
-      "x": 5,
-      "y": 1
+      "type": "colorDoor",
+      "color": "ORANGE",
+      "x": 7,
+      "y": 4
     }
   ],
-  "parMoves": 22,
-  "parMovesNote": "BFS 最短步数=22；parMoves 与求解器严格一致",
+  "parMoves": 18,
+  "parMovesNote": "BFS 最短步数=18；parMoves 与求解器严格一致",
   "hint": {
-    "focus": "前段识别专属门，后段再用压板门完成长距离同步。"
+    "focus": "开放迷宫没有固定双线：先利用墙体让两球错位，再观察会车时的对穿交换。 前段识别专属门，后段再用压板门完成长距离同步。"
   },
   "tags": [
     "chapter-3",
     "M1",
     "M2",
-    "large-map",
     "V1-fog",
     "exploration-core",
     "maze",
+    "open-maze",
     "shared-maze",
-    "cross-interaction"
+    "branching-map",
+    "pass-through-design",
+    "cross-interaction",
+    "swap-optimal"
   ],
   "visibility": {
     "mode": "fog",

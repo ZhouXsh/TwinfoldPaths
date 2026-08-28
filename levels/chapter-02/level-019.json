@@ -1,115 +1,144 @@
 {
   "schemaVersion": 1,
   "id": "level-019",
+  "title": "双压板双门",
   "chapter": 2,
   "order": 19,
-  "title": "双压板双门",
-  "initialMapping": "H_MIRROR",
   "grid": {
     "width": 7,
-    "height": 5
+    "height": 7
   },
   "blueStart": {
     "x": 0,
-    "y": 4
+    "y": 2
   },
   "orangeStart": {
     "x": 6,
-    "y": 4
+    "y": 5
   },
   "blueExit": {
-    "x": 0,
-    "y": 0
+    "x": 6,
+    "y": 4
   },
   "orangeExit": {
-    "x": 6,
-    "y": 0
+    "x": 0,
+    "y": 3
   },
+  "initialMapping": "H_MIRROR",
   "walls": [
     {
-      "x": 0,
-      "y": 1
-    },
-    {
-      "x": 0,
-      "y": 2
-    },
-    {
-      "x": 0,
-      "y": 3
-    },
-    {
-      "x": 6,
-      "y": 1
-    },
-    {
-      "x": 6,
-      "y": 2
-    },
-    {
-      "x": 6,
-      "y": 3
-    },
-    {
       "x": 2,
+      "y": 1
+    },
+    {
+      "x": 1,
+      "y": 2
+    },
+    {
+      "x": 1,
       "y": 0
     },
     {
-      "x": 2,
+      "x": 6,
       "y": 1
     },
     {
-      "x": 2,
-      "y": 2
-    },
-    {
-      "x": 2,
-      "y": 3
-    },
-    {
       "x": 4,
+      "y": 1
+    },
+    {
+      "x": 5,
       "y": 0
     },
     {
-      "x": 4,
-      "y": 1
+      "x": 3,
+      "y": 3
     },
     {
-      "x": 4,
+      "x": 2,
+      "y": 4
+    },
+    {
+      "x": 2,
       "y": 2
     },
     {
       "x": 4,
       "y": 3
+    },
+    {
+      "x": 3,
+      "y": 4
+    },
+    {
+      "x": 4,
+      "y": 4
+    },
+    {
+      "x": 6,
+      "y": 0
     }
   ],
   "entities": [
     {
       "type": "plate",
-      "id": "p1",
+      "id": "level-019-m1-blue-opens-orange-plate",
       "x": 1,
-      "y": 2,
-      "doorId": "d1"
+      "y": 4,
+      "doorId": "level-019-m1-blue-opens-orange-door"
     },
     {
       "type": "door",
-      "id": "d1",
-      "x": 1,
-      "y": 1
+      "id": "level-019-m1-blue-opens-orange-door",
+      "x": 4,
+      "y": 6
+    },
+    {
+      "type": "plate",
+      "id": "level-019-m1-orange-opens-blue-plate",
+      "x": 2,
+      "y": 5,
+      "doorId": "level-019-m1-orange-opens-blue-door"
+    },
+    {
+      "type": "door",
+      "id": "level-019-m1-orange-opens-blue-door",
+      "x": 4,
+      "y": 5
     },
     {
       "type": "colorDoor",
+      "color": "BLUE",
       "x": 5,
-      "y": 2,
-      "color": "ORANGE"
+      "y": 5
+    },
+    {
+      "type": "colorDoor",
+      "color": "ORANGE",
+      "x": 6,
+      "y": 6
     }
   ],
-  "parMoves": 6,
-  "parMovesNote": "BFS 最短步数=6；parMoves 与求解器严格一致",
+  "parMoves": 13,
+  "parMovesNote": "BFS 最短步数=13；parMoves 与求解器严格一致",
   "hint": {
-    "focus": "蓝方踩板开门，橙方通过专属门，然后各自向上到达出口。双门需交替使用。"
+    "focus": "开放迷宫没有固定双线：先利用墙体让两球错位，再观察会车时的对穿交换。 蓝方踩板开门，橙方通过专属门，然后各自向上到达出口。双门需交替使用。"
   },
-  "tags": ["chapter-2", "M1", "M2", "key-position", "V1-fog", "exploration-core"],
+  "tags": [
+    "chapter-2",
+    "M1",
+    "M2",
+    "key-position",
+    "V1-fog",
+    "exploration-core",
+    "maze",
+    "open-maze",
+    "shared-maze",
+    "branching-map",
+    "pass-through-design",
+    "cross-interaction",
+    "swap-optimal"
+  ],
   "visibility": {
     "mode": "fog",
     "radius": 1,

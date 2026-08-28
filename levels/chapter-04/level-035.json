@@ -1,193 +1,105 @@
 {
   "schemaVersion": 1,
   "id": "level-035",
+  "title": "暗门择路",
   "chapter": 4,
   "order": 35,
-  "title": "暗门择路",
-  "initialMapping": "H_MIRROR",
   "grid": {
-    "width": 11,
+    "width": 9,
     "height": 9
   },
   "blueStart": {
-    "x": 1,
-    "y": 1
+    "x": 0,
+    "y": 2
   },
   "orangeStart": {
-    "x": 9,
-    "y": 1
+    "x": 8,
+    "y": 7
   },
   "blueExit": {
-    "x": 1,
-    "y": 7
+    "x": 8,
+    "y": 6
   },
   "orangeExit": {
-    "x": 9,
-    "y": 7
+    "x": 0,
+    "y": 1
   },
+  "initialMapping": "H_MIRROR",
   "walls": [
     {
-      "x": 2,
-      "y": 0
-    },
-    {
-      "x": 4,
-      "y": 0
+      "x": 7,
+      "y": 2
     },
     {
       "x": 6,
-      "y": 0
+      "y": 3
     },
     {
-      "x": 8,
-      "y": 0
-    },
-    {
-      "x": 10,
-      "y": 0
-    },
-    {
-      "x": 0,
+      "x": 6,
       "y": 1
     },
     {
-      "x": 10,
-      "y": 1
-    },
-    {
-      "x": 0,
-      "y": 2
+      "x": 2,
+      "y": 4
     },
     {
       "x": 1,
-      "y": 2
+      "y": 5
     },
     {
-      "x": 2,
-      "y": 2
+      "x": 1,
+      "y": 3
     },
     {
       "x": 3,
-      "y": 2
-    },
-    {
-      "x": 5,
-      "y": 2
-    },
-    {
-      "x": 7,
-      "y": 2
-    },
-    {
-      "x": 8,
-      "y": 2
-    },
-    {
-      "x": 9,
-      "y": 2
-    },
-    {
-      "x": 10,
-      "y": 2
-    },
-    {
-      "x": 0,
-      "y": 3
-    },
-    {
-      "x": 5,
-      "y": 3
-    },
-    {
-      "x": 10,
-      "y": 3
-    },
-    {
-      "x": 0,
-      "y": 4
+      "y": 7
     },
     {
       "x": 2,
-      "y": 4
+      "y": 8
+    },
+    {
+      "x": 2,
+      "y": 6
     },
     {
       "x": 3,
-      "y": 4
+      "y": 5
     },
     {
-      "x": 4,
-      "y": 4
-    },
-    {
-      "x": 5,
-      "y": 4
+      "x": 3,
+      "y": 3
     },
     {
       "x": 6,
-      "y": 4
+      "y": 7
     },
     {
       "x": 7,
-      "y": 4
-    },
-    {
-      "x": 8,
-      "y": 4
-    },
-    {
-      "x": 10,
-      "y": 4
-    },
-    {
-      "x": 0,
-      "y": 5
-    },
-    {
-      "x": 5,
-      "y": 5
-    },
-    {
-      "x": 10,
-      "y": 5
-    },
-    {
-      "x": 0,
-      "y": 6
-    },
-    {
-      "x": 1,
-      "y": 6
-    },
-    {
-      "x": 2,
-      "y": 6
-    },
-    {
-      "x": 3,
-      "y": 6
-    },
-    {
-      "x": 5,
-      "y": 6
+      "y": 7
     },
     {
       "x": 7,
-      "y": 6
+      "y": 8
     },
     {
       "x": 8,
-      "y": 6
+      "y": 8
     },
     {
-      "x": 9,
-      "y": 6
+      "x": 4,
+      "y": 2
     },
     {
-      "x": 10,
-      "y": 6
+      "x": 4,
+      "y": 3
     },
     {
-      "x": 0,
+      "x": 5,
+      "y": 3
+    },
+    {
+      "x": 4,
       "y": 7
     },
     {
@@ -195,20 +107,16 @@
       "y": 7
     },
     {
-      "x": 10,
-      "y": 7
-    },
-    {
-      "x": 0,
-      "y": 8
-    },
-    {
-      "x": 1,
-      "y": 8
+      "x": 2,
+      "y": 2
     },
     {
       "x": 2,
-      "y": 8
+      "y": 3
+    },
+    {
+      "x": 2,
+      "y": 5
     },
     {
       "x": 3,
@@ -224,81 +132,39 @@
     },
     {
       "x": 6,
-      "y": 8
-    },
-    {
-      "x": 7,
-      "y": 8
-    },
-    {
-      "x": 8,
-      "y": 8
-    },
-    {
-      "x": 9,
-      "y": 8
-    },
-    {
-      "x": 10,
       "y": 8
     }
   ],
   "entities": [
     {
-      "type": "oneWay",
-      "x": 3,
-      "y": 3,
-      "arrow": "LEFT"
-    },
-    {
-      "type": "oneWay",
-      "x": 7,
-      "y": 3,
-      "arrow": "RIGHT"
+      "type": "colorDoor",
+      "color": "BLUE",
+      "x": 0,
+      "y": 0
     },
     {
       "type": "colorDoor",
-      "x": 3,
-      "y": 5,
-      "color": "BLUE"
+      "color": "ORANGE",
+      "x": 2,
+      "y": 1
     },
     {
-      "type": "colorDoor",
-      "x": 7,
-      "y": 5,
-      "color": "ORANGE"
+      "type": "oneWay",
+      "arrow": "UP",
+      "x": 8,
+      "y": 5
     },
     {
-      "type": "plate",
-      "id": "level-035-cross-1-bp",
-      "x": 4,
-      "y": 1,
-      "doorId": "level-035-cross-1-od"
-    },
-    {
-      "type": "door",
-      "id": "level-035-cross-1-od",
-      "x": 6,
-      "y": 2
-    },
-    {
-      "type": "plate",
-      "id": "level-035-cross-1-op",
-      "x": 6,
-      "y": 1,
-      "doorId": "level-035-cross-1-bd"
-    },
-    {
-      "type": "door",
-      "id": "level-035-cross-1-bd",
-      "x": 4,
-      "y": 2
+      "type": "oneWay",
+      "arrow": "UP",
+      "x": 8,
+      "y": 4
     }
   ],
-  "parMoves": 18,
-  "parMovesNote": "BFS 最短步数=18；parMoves 与求解器严格一致",
+  "parMoves": 26,
+  "parMovesNote": "BFS 最短步数=26；parMoves 与求解器严格一致",
   "hint": {
-    "focus": "九宫格视野保持不变；单向格和专属门藏在岔路中，先探索再决定哪条路值得深入。"
+    "focus": "开放迷宫没有固定双线：先利用墙体让两球错位，再观察会车时的对穿交换。 九宫格视野保持不变；单向格和专属门藏在岔路中，先探索再决定哪条路值得深入。"
   },
   "tags": [
     "chapter-4",
@@ -308,8 +174,13 @@
     "exploration",
     "exploration-core",
     "maze",
+    "open-maze",
     "shared-maze",
-    "cross-interaction"
+    "branching-map",
+    "pass-through-design",
+    "cross-interaction",
+    "swap-optimal",
+    "swap-value"
   ],
   "visibility": {
     "mode": "fog",

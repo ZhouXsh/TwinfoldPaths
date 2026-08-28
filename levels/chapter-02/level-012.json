@@ -1,57 +1,125 @@
 {
   "schemaVersion": 1,
-  "initialMapping": "H_MIRROR",
   "id": "level-012",
   "title": "离板关门时序",
   "chapter": 2,
   "order": 12,
   "grid": {
-    "width": 6,
-    "height": 4
+    "width": 7,
+    "height": 7
   },
   "blueStart": {
-    "x": 0,
-    "y": 2
+    "x": 3,
+    "y": 0
   },
   "orangeStart": {
-    "x": 5,
-    "y": 2
+    "x": 1,
+    "y": 6
   },
   "blueExit": {
-    "x": 0,
-    "y": 0
+    "x": 2,
+    "y": 6
   },
   "orangeExit": {
-    "x": 5,
+    "x": 4,
     "y": 0
   },
+  "initialMapping": "V_MIRROR",
   "walls": [
     {
       "x": 5,
+      "y": 2
+    },
+    {
+      "x": 3,
+      "y": 2
+    },
+    {
+      "x": 4,
       "y": 1
+    },
+    {
+      "x": 2,
+      "y": 3
+    },
+    {
+      "x": 0,
+      "y": 3
+    },
+    {
+      "x": 1,
+      "y": 4
+    },
+    {
+      "x": 5,
+      "y": 5
+    },
+    {
+      "x": 3,
+      "y": 5
+    },
+    {
+      "x": 4,
+      "y": 6
+    },
+    {
+      "x": 2,
+      "y": 2
+    },
+    {
+      "x": 3,
+      "y": 6
     }
   ],
   "entities": [
     {
       "type": "plate",
-      "id": "p1",
-      "x": 1,
-      "y": 2,
-      "doorId": "d1"
+      "id": "level-012-m1-blue-opens-orange-plate",
+      "x": 6,
+      "y": 1,
+      "doorId": "level-012-m1-blue-opens-orange-door"
     },
     {
       "type": "door",
-      "id": "d1",
+      "id": "level-012-m1-blue-opens-orange-door",
+      "x": 5,
+      "y": 3
+    },
+    {
+      "type": "plate",
+      "id": "level-012-m1-orange-opens-blue-plate",
+      "x": 5,
+      "y": 1,
+      "doorId": "level-012-m1-orange-opens-blue-door"
+    },
+    {
+      "type": "door",
+      "id": "level-012-m1-orange-opens-blue-door",
       "x": 4,
-      "y": 2
+      "y": 4
     }
   ],
+  "parMoves": 18,
+  "parMovesNote": "BFS 最短步数=18；parMoves 与求解器严格一致",
   "hint": {
-    "focus": "蓝方先走到压板上为橙方开门，橙方穿过门后再让蓝方离开——注意门只会在压板被踩时打开。"
+    "focus": "开放迷宫没有固定双线：先利用墙体让两球错位，再观察会车时的对穿交换。 蓝方先走到压板上为橙方开门，橙方穿过门后再让蓝方离开——注意门只会在压板被踩时打开。"
   },
-  "tags": ["chapter-2", "tutorial", "M1", "plate-door-timing", "V1-fog", "exploration-core"],
-  "parMoves": 6,
-  "parMovesNote": "BFS 最短步数=6；parMoves 与求解器严格一致",
+  "tags": [
+    "chapter-2",
+    "tutorial",
+    "M1",
+    "plate-door-timing",
+    "V1-fog",
+    "exploration-core",
+    "maze",
+    "open-maze",
+    "shared-maze",
+    "branching-map",
+    "pass-through-design",
+    "cross-interaction",
+    "swap-optimal",
+    "swap-value"
+  ],
   "visibility": {
     "mode": "fog",
     "radius": 1,

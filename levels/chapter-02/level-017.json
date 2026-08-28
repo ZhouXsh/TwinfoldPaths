@@ -1,59 +1,160 @@
 {
   "schemaVersion": 1,
   "id": "level-017",
+  "title": "两类门的顺序",
   "chapter": 2,
   "order": 17,
-  "title": "两类门的顺序",
   "grid": {
     "width": 7,
-    "height": 3
+    "height": 8
   },
   "blueStart": {
-    "x": 1,
-    "y": 1
+    "x": 0,
+    "y": 6
   },
   "orangeStart": {
-    "x": 2,
-    "y": 1
-  },
-  "blueExit": {
-    "x": 0,
-    "y": 1
-  },
-  "orangeExit": {
     "x": 6,
     "y": 1
   },
+  "blueExit": {
+    "x": 6,
+    "y": 3
+  },
+  "orangeExit": {
+    "x": 0,
+    "y": 5
+  },
   "initialMapping": "H_MIRROR",
-  "walls": [],
+  "walls": [
+    {
+      "x": 4,
+      "y": 6
+    },
+    {
+      "x": 5,
+      "y": 7
+    },
+    {
+      "x": 5,
+      "y": 5
+    },
+    {
+      "x": 2,
+      "y": 5
+    },
+    {
+      "x": 1,
+      "y": 6
+    },
+    {
+      "x": 1,
+      "y": 4
+    },
+    {
+      "x": 4,
+      "y": 4
+    },
+    {
+      "x": 3,
+      "y": 5
+    },
+    {
+      "x": 3,
+      "y": 3
+    },
+    {
+      "x": 2,
+      "y": 6
+    },
+    {
+      "x": 3,
+      "y": 6
+    },
+    {
+      "x": 1,
+      "y": 2
+    },
+    {
+      "x": 2,
+      "y": 2
+    },
+    {
+      "x": 3,
+      "y": 2
+    },
+    {
+      "x": 4,
+      "y": 2
+    },
+    {
+      "x": 5,
+      "y": 2
+    },
+    {
+      "x": 4,
+      "y": 5
+    }
+  ],
   "entities": [
     {
       "type": "plate",
-      "id": "p1",
+      "id": "level-017-m1-blue-opens-orange-plate",
       "x": 0,
-      "y": 1,
-      "doorId": "d1"
+      "y": 2,
+      "doorId": "level-017-m1-blue-opens-orange-door"
     },
     {
       "type": "door",
-      "id": "d1",
-      "x": 3,
+      "id": "level-017-m1-blue-opens-orange-door",
+      "x": 5,
+      "y": 0
+    },
+    {
+      "type": "plate",
+      "id": "level-017-m1-orange-opens-blue-plate",
+      "x": 2,
+      "y": 1,
+      "doorId": "level-017-m1-orange-opens-blue-door"
+    },
+    {
+      "type": "door",
+      "id": "level-017-m1-orange-opens-blue-door",
+      "x": 4,
       "y": 1
     },
     {
       "type": "colorDoor",
-      "x": 4,
-      "y": 1,
-      "color": "ORANGE"
+      "color": "BLUE",
+      "x": 5,
+      "y": 1
+    },
+    {
+      "type": "colorDoor",
+      "color": "ORANGE",
+      "x": 6,
+      "y": 0
     }
   ],
-  "parMoves": 5,
-  "parMovesNote": "BFS 最短步数=5；parMoves 与求解器严格一致",
+  "parMoves": 17,
+  "parMovesNote": "BFS 最短步数=17；parMoves 与求解器严格一致",
   "hint": {
-    "focus": "先开压板门，再过橙的专属门；蓝的出口就在压板上",
-    "direction": "LEFT"
+    "focus": "开放迷宫没有固定双线：先利用墙体让两球错位，再观察会车时的对穿交换。 先开压板门，再过橙的专属门；蓝的出口就在压板上"
   },
-  "tags": ["chapter-2", "M1", "M2", "combo", "V1-fog", "exploration-core"],
+  "tags": [
+    "chapter-2",
+    "M1",
+    "M2",
+    "combo",
+    "V1-fog",
+    "exploration-core",
+    "maze",
+    "open-maze",
+    "shared-maze",
+    "branching-map",
+    "pass-through-design",
+    "cross-interaction",
+    "swap-optimal"
+  ],
   "visibility": {
     "mode": "fog",
     "radius": 1,

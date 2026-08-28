@@ -1,31 +1,51 @@
 {
   "schemaVersion": 1,
   "id": "level-020",
+  "title": "第二章综合",
   "chapter": 2,
   "order": 20,
-  "title": "第二章综合",
-  "initialMapping": "H_MIRROR",
   "grid": {
-    "width": 5,
-    "height": 5
+    "width": 7,
+    "height": 7
   },
   "blueStart": {
-    "x": 0,
+    "x": 5,
     "y": 0
   },
   "orangeStart": {
-    "x": 4,
-    "y": 0
+    "x": 2,
+    "y": 6
   },
   "blueExit": {
-    "x": 0,
-    "y": 4
+    "x": 1,
+    "y": 6
   },
   "orangeExit": {
     "x": 4,
-    "y": 4
+    "y": 0
   },
+  "initialMapping": "V_MIRROR",
   "walls": [
+    {
+      "x": 5,
+      "y": 4
+    },
+    {
+      "x": 3,
+      "y": 4
+    },
+    {
+      "x": 4,
+      "y": 3
+    },
+    {
+      "x": 3,
+      "y": 5
+    },
+    {
+      "x": 1,
+      "y": 5
+    },
     {
       "x": 2,
       "y": 4
@@ -35,8 +55,12 @@
       "y": 3
     },
     {
-      "x": 2,
-      "y": 2
+      "x": 0,
+      "y": 3
+    },
+    {
+      "x": 1,
+      "y": 4
     },
     {
       "x": 2,
@@ -44,42 +68,65 @@
     },
     {
       "x": 2,
-      "y": 0
-    },
-    {
-      "x": 0,
       "y": 2
     },
     {
-      "x": 4,
+      "x": 5,
+      "y": 1
+    },
+    {
+      "x": 5,
       "y": 2
+    },
+    {
+      "x": 5,
+      "y": 3
     }
   ],
   "entities": [
     {
       "type": "plate",
-      "id": "p1",
-      "x": 1,
+      "id": "level-020-m1-blue-opens-orange-plate",
+      "x": 6,
       "y": 2,
-      "doorId": "d1"
+      "doorId": "level-020-m1-blue-opens-orange-door"
     },
     {
       "type": "door",
-      "id": "d1",
-      "x": 1,
-      "y": 3
+      "id": "level-020-m1-blue-opens-orange-door",
+      "x": 6,
+      "y": 5
+    },
+    {
+      "type": "plate",
+      "id": "level-020-m1-orange-opens-blue-plate",
+      "x": 6,
+      "y": 1,
+      "doorId": "level-020-m1-orange-opens-blue-door"
+    },
+    {
+      "type": "door",
+      "id": "level-020-m1-orange-opens-blue-door",
+      "x": 5,
+      "y": 6
     },
     {
       "type": "colorDoor",
-      "x": 3,
-      "y": 1,
-      "color": "ORANGE"
+      "color": "BLUE",
+      "x": 6,
+      "y": 6
+    },
+    {
+      "type": "colorDoor",
+      "color": "ORANGE",
+      "x": 4,
+      "y": 5
     }
   ],
-  "parMoves": 6,
-  "parMovesNote": "BFS 最短步数=6；parMoves 与求解器严格一致",
+  "parMoves": 18,
+  "parMovesNote": "BFS 最短步数=18；parMoves 与求解器严格一致",
   "hint": {
-    "focus": "这一章的收尾不再沿用向上折线：从上方出发，综合利用墙、压板门和专属门向下汇合。"
+    "focus": "开放迷宫没有固定双线：先利用墙体让两球错位，再观察会车时的对穿交换。 这一章的收尾不再沿用向上折线：从上方出发，综合利用墙、压板门和专属门向下汇合。"
   },
   "tags": [
     "chapter-2",
@@ -87,9 +134,16 @@
     "M1",
     "M2",
     "chapter-final",
-    "route-variation",
     "V1-fog",
-    "exploration-core"
+    "exploration-core",
+    "maze",
+    "open-maze",
+    "shared-maze",
+    "branching-map",
+    "pass-through-design",
+    "cross-interaction",
+    "swap-optimal",
+    "swap-value"
   ],
   "visibility": {
     "mode": "fog",

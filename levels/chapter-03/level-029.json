@@ -1,389 +1,191 @@
 {
   "schemaVersion": 1,
   "id": "level-029",
+  "title": "回路封痕",
   "chapter": 3,
   "order": 29,
-  "title": "回路封痕",
-  "initialMapping": "H_MIRROR",
   "grid": {
-    "width": 13,
+    "width": 9,
     "height": 9
   },
   "blueStart": {
-    "x": 1,
+    "x": 0,
     "y": 1
   },
   "orangeStart": {
-    "x": 11,
-    "y": 1
+    "x": 8,
+    "y": 4
   },
   "blueExit": {
-    "x": 1,
-    "y": 7
+    "x": 8,
+    "y": 3
   },
   "orangeExit": {
-    "x": 11,
-    "y": 7
+    "x": 0,
+    "y": 2
   },
+  "initialMapping": "H_MIRROR",
   "walls": [
     {
-      "x": 2,
-      "y": 0
+      "x": 6,
+      "y": 6
     },
     {
       "x": 4,
-      "y": 0
+      "y": 6
     },
     {
-      "x": 6,
-      "y": 0
-    },
-    {
-      "x": 8,
-      "y": 0
-    },
-    {
-      "x": 9,
-      "y": 0
-    },
-    {
-      "x": 10,
-      "y": 0
-    },
-    {
-      "x": 11,
-      "y": 0
-    },
-    {
-      "x": 12,
-      "y": 0
-    },
-    {
-      "x": 0,
-      "y": 1
-    },
-    {
-      "x": 12,
-      "y": 1
-    },
-    {
-      "x": 0,
-      "y": 2
-    },
-    {
-      "x": 1,
-      "y": 2
-    },
-    {
-      "x": 2,
-      "y": 2
-    },
-    {
-      "x": 3,
-      "y": 2
-    },
-    {
-      "x": 4,
-      "y": 2
-    },
-    {
-      "x": 6,
-      "y": 2
-    },
-    {
-      "x": 8,
-      "y": 2
-    },
-    {
-      "x": 9,
-      "y": 2
-    },
-    {
-      "x": 10,
-      "y": 2
-    },
-    {
-      "x": 11,
-      "y": 2
-    },
-    {
-      "x": 12,
-      "y": 2
-    },
-    {
-      "x": 0,
-      "y": 3
-    },
-    {
-      "x": 6,
-      "y": 3
-    },
-    {
-      "x": 12,
-      "y": 3
-    },
-    {
-      "x": 0,
-      "y": 4
-    },
-    {
-      "x": 2,
-      "y": 4
-    },
-    {
-      "x": 3,
-      "y": 4
-    },
-    {
-      "x": 4,
-      "y": 4
+      "x": 5,
+      "y": 7
     },
     {
       "x": 5,
       "y": 4
     },
     {
-      "x": 6,
+      "x": 3,
       "y": 4
+    },
+    {
+      "x": 4,
+      "y": 5
+    },
+    {
+      "x": 3,
+      "y": 6
+    },
+    {
+      "x": 3,
+      "y": 1
+    },
+    {
+      "x": 4,
+      "y": 1
+    },
+    {
+      "x": 3,
+      "y": 2
+    },
+    {
+      "x": 4,
+      "y": 2
+    },
+    {
+      "x": 1,
+      "y": 6
+    },
+    {
+      "x": 1,
+      "y": 7
+    },
+    {
+      "x": 6,
+      "y": 1
+    },
+    {
+      "x": 6,
+      "y": 2
+    },
+    {
+      "x": 6,
+      "y": 3
     },
     {
       "x": 7,
       "y": 4
     },
     {
+      "x": 7,
+      "y": 5
+    },
+    {
       "x": 8,
-      "y": 4
-    },
-    {
-      "x": 9,
-      "y": 4
-    },
-    {
-      "x": 10,
-      "y": 4
-    },
-    {
-      "x": 12,
-      "y": 4
-    },
-    {
-      "x": 0,
       "y": 5
-    },
-    {
-      "x": 6,
-      "y": 5
-    },
-    {
-      "x": 12,
-      "y": 5
-    },
-    {
-      "x": 0,
-      "y": 6
-    },
-    {
-      "x": 1,
-      "y": 6
     },
     {
       "x": 2,
       "y": 6
     },
     {
-      "x": 3,
-      "y": 6
-    },
-    {
-      "x": 4,
-      "y": 6
-    },
-    {
-      "x": 6,
-      "y": 6
-    },
-    {
-      "x": 8,
-      "y": 6
-    },
-    {
-      "x": 9,
-      "y": 6
-    },
-    {
-      "x": 10,
-      "y": 6
-    },
-    {
-      "x": 11,
-      "y": 6
-    },
-    {
-      "x": 12,
-      "y": 6
-    },
-    {
-      "x": 0,
-      "y": 7
-    },
-    {
-      "x": 6,
-      "y": 7
-    },
-    {
-      "x": 12,
-      "y": 7
-    },
-    {
-      "x": 0,
-      "y": 8
-    },
-    {
-      "x": 1,
-      "y": 8
-    },
-    {
       "x": 2,
-      "y": 8
+      "y": 7
     },
     {
       "x": 3,
-      "y": 8
+      "y": 7
     },
     {
-      "x": 4,
-      "y": 8
+      "x": 6,
+      "y": 4
     },
     {
       "x": 5,
-      "y": 8
+      "y": 5
     },
     {
       "x": 6,
-      "y": 8
+      "y": 5
     },
     {
-      "x": 7,
-      "y": 8
-    },
-    {
-      "x": 8,
-      "y": 8
-    },
-    {
-      "x": 9,
-      "y": 8
-    },
-    {
-      "x": 10,
-      "y": 8
-    },
-    {
-      "x": 11,
-      "y": 8
-    },
-    {
-      "x": 12,
-      "y": 8
+      "x": 5,
+      "y": 6
     }
   ],
   "entities": [
     {
       "type": "fragile",
-      "x": 5,
-      "y": 3
-    },
-    {
-      "type": "fragile",
-      "x": 7,
-      "y": 3
-    },
-    {
-      "type": "pauseTile",
-      "x": 1,
-      "y": 3
-    },
-    {
-      "type": "pauseTile",
-      "x": 11,
-      "y": 3
-    },
-    {
-      "type": "fragile",
       "x": 2,
-      "y": 5
+      "y": 8
     },
     {
       "type": "fragile",
-      "x": 10,
-      "y": 5
+      "x": 5,
+      "y": 1
     },
     {
       "type": "pulseSwitch",
-      "pairId": "level-029-pulse",
-      "x": 3,
-      "y": 3
+      "pairId": "level-029-m8-pulse",
+      "x": 0,
+      "y": 0
     },
     {
       "type": "pulseSwitch",
-      "pairId": "level-029-pulse",
-      "x": 9,
-      "y": 3
+      "pairId": "level-029-m8-pulse",
+      "x": 8,
+      "y": 1
     },
     {
       "type": "pulseDoor",
-      "pairId": "level-029-pulse",
-      "x": 5,
-      "y": 7
+      "pairId": "level-029-m8-pulse",
+      "x": 4,
+      "y": 0
     },
     {
       "type": "pulseDoor",
-      "pairId": "level-029-pulse",
+      "pairId": "level-029-m8-pulse",
       "x": 7,
-      "y": 7
-    },
-    {
-      "type": "plate",
-      "id": "level-029-cross-1-bp",
-      "x": 5,
-      "y": 1,
-      "doorId": "level-029-cross-1-od"
-    },
-    {
-      "type": "door",
-      "id": "level-029-cross-1-od",
-      "x": 7,
-      "y": 2
-    },
-    {
-      "type": "plate",
-      "id": "level-029-cross-1-op",
-      "x": 7,
-      "y": 1,
-      "doorId": "level-029-cross-1-bd"
-    },
-    {
-      "type": "door",
-      "id": "level-029-cross-1-bd",
-      "x": 5,
-      "y": 2
+      "y": 1
     }
   ],
-  "parMoves": 23,
-  "parMovesNote": "BFS 最短步数=23；parMoves 与求解器严格一致",
+  "parMoves": 18,
+  "parMovesNote": "BFS 最短步数=18；parMoves 与求解器严格一致",
   "hint": {
-    "focus": "两段脆弱路封住退路，脉冲门要求你在深入前建立同步。"
+    "focus": "开放迷宫没有固定双线：先利用墙体让两球错位，再观察会车时的对穿交换。 两段脆弱路封住退路，脉冲门要求你在深入前建立同步。"
   },
   "tags": [
     "chapter-3",
     "M7",
     "M8",
-    "large-map",
     "V1-fog",
     "exploration-core",
     "maze",
+    "open-maze",
     "shared-maze",
-    "cross-interaction"
+    "branching-map",
+    "pass-through-design",
+    "cross-interaction",
+    "swap-optimal",
+    "swap-value"
   ],
   "visibility": {
     "mode": "fog",

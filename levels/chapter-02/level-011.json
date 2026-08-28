@@ -1,58 +1,141 @@
 {
   "schemaVersion": 1,
   "id": "level-011",
+  "title": "压板开门",
   "chapter": 2,
   "order": 11,
-  "title": "压板开门",
   "grid": {
-    "width": 6,
-    "height": 3
+    "width": 8,
+    "height": 7
   },
   "blueStart": {
-    "x": 1,
-    "y": 1
+    "x": 0,
+    "y": 3
   },
   "orangeStart": {
-    "x": 3,
+    "x": 7,
     "y": 1
   },
   "blueExit": {
-    "x": 1,
-    "y": 0
+    "x": 7,
+    "y": 4
   },
   "orangeExit": {
-    "x": 5,
-    "y": 0
+    "x": 0,
+    "y": 2
   },
   "initialMapping": "H_MIRROR",
   "walls": [
     {
+      "x": 1,
+      "y": 4
+    },
+    {
+      "x": 2,
+      "y": 5
+    },
+    {
+      "x": 2,
+      "y": 3
+    },
+    {
+      "x": 5,
+      "y": 3
+    },
+    {
+      "x": 3,
+      "y": 3
+    },
+    {
       "x": 4,
-      "y": 0
+      "y": 4
+    },
+    {
+      "x": 1,
+      "y": 6
+    },
+    {
+      "x": 5,
+      "y": 1
+    },
+    {
+      "x": 5,
+      "y": 2
+    },
+    {
+      "x": 1,
+      "y": 2
+    },
+    {
+      "x": 2,
+      "y": 2
+    },
+    {
+      "x": 3,
+      "y": 2
+    },
+    {
+      "x": 6,
+      "y": 3
+    },
+    {
+      "x": 5,
+      "y": 4
+    },
+    {
+      "x": 6,
+      "y": 4
     }
   ],
   "entities": [
     {
       "type": "plate",
-      "id": "p1",
-      "x": 0,
-      "y": 1,
-      "doorId": "d1"
+      "id": "level-011-m1-blue-opens-orange-plate",
+      "x": 2,
+      "y": 0,
+      "doorId": "level-011-m1-blue-opens-orange-door"
     },
     {
       "type": "door",
-      "id": "d1",
+      "id": "level-011-m1-blue-opens-orange-door",
       "x": 4,
+      "y": 0
+    },
+    {
+      "type": "plate",
+      "id": "level-011-m1-orange-opens-blue-plate",
+      "x": 1,
+      "y": 0,
+      "doorId": "level-011-m1-orange-opens-blue-door"
+    },
+    {
+      "type": "door",
+      "id": "level-011-m1-orange-opens-blue-door",
+      "x": 6,
       "y": 1
     }
   ],
-  "parMoves": 5,
-  "parMovesNote": "BFS 最短步数=5；parMoves 与求解器严格一致",
+  "parMoves": 20,
+  "parMovesNote": "BFS 最短步数=20；parMoves 与求解器严格一致",
   "hint": {
-    "focus": "蓝踩住压板门才开；蓝离开后回合末门关闭",
-    "direction": "LEFT"
+    "focus": "开放迷宫没有固定双线：先利用墙体让两球错位，再观察会车时的对穿交换。 蓝踩住压板门才开；蓝离开后回合末门关闭"
   },
-  "tags": ["chapter-2", "tutorial", "M1", "plate-door", "V1-fog", "exploration-core"],
+  "tags": [
+    "chapter-2",
+    "tutorial",
+    "M1",
+    "plate-door",
+    "V1-fog",
+    "exploration-core",
+    "maze",
+    "open-maze",
+    "shared-maze",
+    "branching-map",
+    "pass-through-design",
+    "cross-interaction",
+    "swap-optimal",
+    "swap-value"
+  ],
   "visibility": {
     "mode": "fog",
     "radius": 1,

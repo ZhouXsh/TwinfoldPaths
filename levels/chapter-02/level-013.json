@@ -1,90 +1,137 @@
 {
   "schemaVersion": 1,
-  "initialMapping": "H_MIRROR",
   "id": "level-013",
   "title": "双方交换职责",
   "chapter": 2,
   "order": 13,
   "grid": {
     "width": 7,
-    "height": 4
+    "height": 7
   },
   "blueStart": {
     "x": 0,
-    "y": 1
+    "y": 3
   },
   "orangeStart": {
-    "x": 5,
-    "y": 1
+    "x": 6,
+    "y": 5
   },
   "blueExit": {
-    "x": 0,
-    "y": 3
+    "x": 6,
+    "y": 2
   },
   "orangeExit": {
-    "x": 6,
-    "y": 3
+    "x": 0,
+    "y": 1
   },
+  "initialMapping": "H_MIRROR",
   "walls": [
     {
-      "x": 2,
+      "x": 5,
       "y": 3
+    },
+    {
+      "x": 4,
+      "y": 4
+    },
+    {
+      "x": 4,
+      "y": 2
     },
     {
       "x": 2,
       "y": 2
     },
     {
-      "x": 5,
-      "y": 3
+      "x": 3,
+      "y": 1
+    },
+    {
+      "x": 2,
+      "y": 5
+    },
+    {
+      "x": 0,
+      "y": 5
+    },
+    {
+      "x": 1,
+      "y": 6
+    },
+    {
+      "x": 3,
+      "y": 5
+    },
+    {
+      "x": 4,
+      "y": 5
     },
     {
       "x": 5,
+      "y": 5
+    },
+    {
+      "x": 1,
       "y": 2
+    },
+    {
+      "x": 1,
+      "y": 3
+    },
+    {
+      "x": 0,
+      "y": 6
     }
   ],
   "entities": [
     {
       "type": "plate",
-      "id": "p1",
+      "id": "level-013-m1-blue-opens-orange-plate",
       "x": 1,
-      "y": 1,
-      "doorId": "d1"
+      "y": 0,
+      "doorId": "level-013-m1-blue-opens-orange-door"
     },
     {
       "type": "door",
-      "id": "d1",
-      "x": 2,
+      "id": "level-013-m1-blue-opens-orange-door",
+      "x": 4,
       "y": 1
     },
     {
       "type": "plate",
-      "id": "p2",
-      "x": 6,
-      "y": 1,
-      "doorId": "d2"
+      "id": "level-013-m1-orange-opens-blue-plate",
+      "x": 3,
+      "y": 0,
+      "doorId": "level-013-m1-orange-opens-blue-door"
     },
     {
       "type": "door",
-      "id": "d2",
+      "id": "level-013-m1-orange-opens-blue-door",
       "x": 5,
       "y": 1
     }
   ],
+  "parMoves": 14,
+  "parMovesNote": "BFS 最短步数=14；parMoves 与求解器严格一致",
   "hint": {
-    "focus": "这一关把上一关的上下节奏翻转：仍是蓝先开橙门、橙再开蓝门，但最终要向下抵达出口。"
+    "focus": "开放迷宫没有固定双线：先利用墙体让两球错位，再观察会车时的对穿交换。 这一关把上一关的上下节奏翻转：仍是蓝先开橙门、橙再开蓝门，但最终要向下抵达出口。"
   },
   "tags": [
     "chapter-2",
     "tutorial",
     "M1",
     "swap-roles",
-    "route-variation",
     "V1-fog",
-    "exploration-core"
+    "exploration-core",
+    "maze",
+    "open-maze",
+    "shared-maze",
+    "branching-map",
+    "pass-through-design",
+    "cross-interaction",
+    "swap-optimal",
+    "swap-value"
   ],
-  "parMoves": 3,
-  "parMovesNote": "BFS 最短步数=3；parMoves 与求解器严格一致",
   "visibility": {
     "mode": "fog",
     "radius": 1,

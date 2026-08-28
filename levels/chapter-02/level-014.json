@@ -1,77 +1,161 @@
 {
   "schemaVersion": 1,
   "id": "level-014",
+  "title": "压板二次利用",
   "chapter": 2,
   "order": 14,
-  "title": "压板二次利用",
-  "initialMapping": "H_MIRROR",
   "grid": {
-    "width": 5,
-    "height": 5
+    "width": 7,
+    "height": 7
   },
   "blueStart": {
-    "x": 0,
-    "y": 4
+    "x": 2,
+    "y": 0
   },
   "orangeStart": {
-    "x": 4,
-    "y": 4
+    "x": 5,
+    "y": 6
   },
   "blueExit": {
-    "x": 0,
-    "y": 0
+    "x": 3,
+    "y": 6
   },
   "orangeExit": {
-    "x": 4,
+    "x": 1,
     "y": 0
   },
+  "initialMapping": "V_MIRROR",
   "walls": [
     {
-      "x": 2,
-      "y": 0
-    },
-    {
-      "x": 2,
-      "y": 1
-    },
-    {
-      "x": 2,
+      "x": 5,
       "y": 2
     },
     {
+      "x": 3,
+      "y": 2
+    },
+    {
+      "x": 4,
+      "y": 1
+    },
+    {
+      "x": 3,
+      "y": 5
+    },
+    {
       "x": 2,
-      "y": 3
+      "y": 6
     },
     {
       "x": 2,
       "y": 4
     },
     {
+      "x": 2,
+      "y": 3
+    },
+    {
       "x": 0,
+      "y": 3
+    },
+    {
+      "x": 1,
       "y": 2
+    },
+    {
+      "x": 2,
+      "y": 1
+    },
+    {
+      "x": 2,
+      "y": 2
+    },
+    {
+      "x": 5,
+      "y": 1
+    },
+    {
+      "x": 1,
+      "y": 3
+    },
+    {
+      "x": 0,
+      "y": 4
+    },
+    {
+      "x": 1,
+      "y": 4
+    },
+    {
+      "x": 0,
+      "y": 5
+    },
+    {
+      "x": 1,
+      "y": 5
+    },
+    {
+      "x": 2,
+      "y": 5
+    },
+    {
+      "x": 0,
+      "y": 6
+    },
+    {
+      "x": 1,
+      "y": 6
     }
   ],
   "entities": [
     {
       "type": "plate",
-      "id": "p1",
-      "x": 1,
-      "y": 2,
-      "doorId": "d1"
+      "id": "level-014-m1-blue-opens-orange-plate",
+      "x": 6,
+      "y": 0,
+      "doorId": "level-014-m1-blue-opens-orange-door"
     },
     {
       "type": "door",
-      "id": "d1",
-      "x": 1,
-      "y": 1
+      "id": "level-014-m1-blue-opens-orange-door",
+      "x": 6,
+      "y": 4
+    },
+    {
+      "type": "plate",
+      "id": "level-014-m1-orange-opens-blue-plate",
+      "x": 6,
+      "y": 1,
+      "doorId": "level-014-m1-orange-opens-blue-door"
+    },
+    {
+      "type": "door",
+      "id": "level-014-m1-orange-opens-blue-door",
+      "x": 6,
+      "y": 5
     }
   ],
-  "parMoves": 6,
-  "parMovesNote": "BFS 最短步数=6；parMoves 与求解器严格一致",
+  "parMoves": 18,
+  "parMovesNote": "BFS 最短步数=18；parMoves 与求解器严格一致",
   "hint": {
-    "focus": "蓝方走到压板上开门，通过门后继续向上。压板可被双方反复利用来开门。"
+    "focus": "开放迷宫没有固定双线：先利用墙体让两球错位，再观察会车时的对穿交换。 蓝方走到压板上开门，通过门后继续向上。压板可被双方反复利用来开门。"
   },
-  "tags": ["chapter-2", "tutorial", "M1", "reuse-plate", "V1-fog", "exploration-core"],
+  "tags": [
+    "chapter-2",
+    "tutorial",
+    "M1",
+    "reuse-plate",
+    "V1-fog",
+    "exploration-core",
+    "maze",
+    "open-maze",
+    "shared-maze",
+    "branching-map",
+    "pass-through-design",
+    "cross-interaction",
+    "swap-optimal",
+    "swap-value"
+  ],
   "visibility": {
     "mode": "fog",
     "radius": 1,
