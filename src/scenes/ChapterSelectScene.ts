@@ -2,6 +2,7 @@
 import Phaser from 'phaser';
 import { LEVELS } from '../content/levels';
 import { localStorageStore, loadSave } from '../persistence/save-store';
+import { loadDifficulty, setActiveDifficulty } from '../difficulty/game-difficulty';
 import { audioManager } from '../audio/audio-manager';
 import { bindButton, getEl, setStatusText, showBars } from './dom-ui';
 
@@ -21,6 +22,8 @@ export class ChapterSelectScene extends Phaser.Scene {
   }
 
   create(): void {
+    // 所有进入游戏的路径都以持久化选择为准，避免绕过首页“继续旅程”后退回默认难度。
+    setActiveDifficulty(loadDifficulty(localStorageStore()));
     showBars('bar-chapter-select');
     this.renderChapters();
     setStatusText('后半程从空间扩展进入暗域探索，再进入需要计算回合奇偶的时相终局。');
