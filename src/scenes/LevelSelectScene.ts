@@ -45,6 +45,13 @@ export class LevelSelectScene extends Phaser.Scene {
     });
   }
 
+  private startLevel(levelId: string): void {
+    // GameScene.init 会紧接着读取当前难度；在跳转前再次以 localStorage 为事实来源同步一次。
+    setActiveDifficulty(loadDifficulty(localStorageStore()));
+    audioManager.play('uiTap');
+    this.scene.start('Game', { levelId });
+  }
+
   private renderLevels(): void {
     const grid = getEl('level-grid');
     grid.innerHTML = '';
@@ -110,15 +117,11 @@ export class LevelSelectScene extends Phaser.Scene {
           <div class="best-row">${bestText}</div>
         `;
 
-        cell.addEventListener('click', () => {
-          audioManager.play('uiTap');
-          this.scene.start('Game', { levelId: level.id });
-        });
+        cell.addEventListener('click', () => this.startLevel(level.id));
         cell.addEventListener('keydown', (e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
-            audioManager.play('uiTap');
-            this.scene.start('Game', { levelId: level.id });
+            this.startLevel(level.id);
           }
         });
       }
