@@ -54,7 +54,7 @@ describe('fog visibility', () => {
     expect(cross.size).toBe(9);
   });
 
-  it('keeps persistent memory but can disable or decay it', () => {
+  it('persistent memory becomes fully visible, while none disables memory and decay stays translucent', () => {
     const frames = [
       { moveCount: 0, blue: { x: 1, y: 1 }, orange: { x: 6, y: 6 } },
       { moveCount: 1, blue: { x: 2, y: 1 }, orange: { x: 5, y: 6 } },
@@ -66,7 +66,8 @@ describe('fog visibility', () => {
       frames,
       rules: { mode: 'fog', radius: 1, memory: 'persistent' }
     });
-    expect(persistent.remembered.has('0,0')).toBe(true);
+    expect(persistent.visible.has('0,0')).toBe(true);
+    expect(persistent.remembered.has('0,0')).toBe(false);
 
     const none = computeFogState({
       width: 8,
@@ -74,15 +75,26 @@ describe('fog visibility', () => {
       frames,
       rules: { mode: 'fog', radius: 1, memory: 'none' }
     });
+    expect(none.visible.has('0,0')).toBe(false);
     expect(none.remembered.size).toBe(0);
 
-    const decay = computeFogState({
+    const recentFrames = frames.slice(0, 2);
+    const decayRecent = computeFogState({
+      width: 8,
+      height: 8,
+      frames: recentFrames,
+      rules: { mode: 'fog', radius: 1, memory: 'decay', memoryTurns: 2 }
+    });
+    expect(decayRecent.remembered.has('0,0')).toBe(true);
+    expect(decayRecent.visible.has('0,0')).toBe(false);
+
+    const decayExpired = computeFogState({
       width: 8,
       height: 8,
       frames,
       rules: { mode: 'fog', radius: 1, memory: 'decay', memoryTurns: 2 }
     });
-    expect(decay.remembered.has('0,0')).toBe(false);
+    expect(decayExpired.remembered.has('0,0')).toBe(false);
   });
 
   it('alternates the active vision source by move parity', () => {
