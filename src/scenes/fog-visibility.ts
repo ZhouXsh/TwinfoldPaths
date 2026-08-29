@@ -118,8 +118,8 @@ function frameTouchesBeacon(frame: FogFrame, beacon: FogBeacon): boolean {
 
 /**
  * 从可撤销的历史快照重建探索状态，不依赖额外 GameState 字段：
- * - persistent：所有历史视野保留为半透明记忆；
- * - decay：只保留最近 memoryTurns 回合；
+ * - persistent：所有历史视野永久并入 fully visible，标准难度下不会再覆盖半透明迷雾；
+ * - decay：只保留最近 memoryTurns 回合为半透明记忆；
  * - none：只显示当前视野；
  * - alternating：每回合只由一名角色提供视野；
  * - pulseEvery：指定回合扩大为雷达扫描；
@@ -170,13 +170,13 @@ export function computeFogState(input: FogStateInput): FogState {
 
   const remembered = new Set<string>();
   const memory = input.rules.memory ?? 'persistent';
-  if (memory !== 'none') {
+  if (memory === 'persistent') {
+    for (const key of seenAt.keys()) visible.add(key);
+  } else if (memory === 'decay') {
     const memoryTurns = Math.max(1, input.rules.memoryTurns ?? 3);
     for (const [key, lastSeen] of seenAt) {
       if (visible.has(key)) continue;
-      if (memory === 'persistent' || current.moveCount - lastSeen <= memoryTurns) {
-        remembered.add(key);
-      }
+      if (current.moveCount - lastSeen <= memoryTurns) remembered.add(key);
     }
   }
 
