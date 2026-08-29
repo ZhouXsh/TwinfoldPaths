@@ -1,5 +1,6 @@
 import type { LevelRecord } from './validate';
 import { parseLevel } from './validate';
+import { applyDifficultyToLevel } from '../difficulty/game-difficulty';
 import level001 from '../../levels/chapter-01/level-001.json';
 import level002 from '../../levels/chapter-01/level-002.json';
 import level003 from '../../levels/chapter-01/level-003.json';
@@ -116,8 +117,10 @@ export const LEVELS: readonly LevelRecord[] = (() => {
 
 export const FIRST_LEVEL_ID = LEVELS[0]?.id ?? 'level-001';
 
+/** 返回当前难度下用于实际游玩的关卡视图；原始 LEVELS 数据保持不变供校验/求解器使用。 */
 export function getLevelById(id: string): LevelRecord | undefined {
-  return LEVELS.find((level) => level.id === id);
+  const level = LEVELS.find((item) => item.id === id);
+  return level ? applyDifficultyToLevel(level) : undefined;
 }
 
 export function getLevelByOrder(chapter: number, order: number): LevelRecord | undefined {
