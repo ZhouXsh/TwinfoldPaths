@@ -2,6 +2,7 @@
 import Phaser from 'phaser';
 import { LEVELS } from '../content/levels';
 import { localStorageStore, loadSave } from '../persistence/save-store';
+import { loadDifficulty, setActiveDifficulty } from '../difficulty/game-difficulty';
 import { audioManager } from '../audio/audio-manager';
 import { bindButton, getEl, setStatusText, showBars, updateProgress } from './dom-ui';
 
@@ -30,6 +31,8 @@ export class LevelSelectScene extends Phaser.Scene {
   }
 
   create(): void {
+    // 从首页直接选关或经章节选关时，都重新加载玩家保存的探索难度。
+    setActiveDifficulty(loadDifficulty(localStorageStore()));
     showBars('bar-level-select');
     const title = getEl('level-select-title');
     title.textContent = `第${this.chapter}章 ${CHAPTER_NAMES[this.chapter] ?? ''}`;
