@@ -1,14 +1,17 @@
 import { expect, test, type Page } from '@playwright/test';
 
-async function sampleCanvasPixel(
-  page: Page,
-  normalizedX: number,
-  normalizedY: number
-): Promise<[number, number, number, number]> {
+interface NormalizedRegion {
+  xMin: number;
+  xMax: number;
+  yMin: number;
+  yMax: number;
+}
+
+async function sampleCanvasRegionMinRed(page: Page, region: NormalizedRegion): Promise<number> {
   const screenshot = await page.locator('#game canvas').screenshot();
   const dataUrl = `data:image/png;base64,${screenshot.toString('base64')}`;
   return page.evaluate(
-    async ({ source, x, y }) => {
+    async ({ source, bounds }) => {
       const image = new Image();
       image.src = source;
       await image.decode();
@@ -18,12 +21,30 @@ async function sampleCanvasPixel(
       const context = canvas.getContext('2d');
       if (!context) throw new Error('无法创建截图采样画布');
       context.drawImage(image, 0, 0);
-      const px = Math.min(canvas.width - 1, Math.max(0, Math.round(x * canvas.width)));
-      const py = Math.min(canvas.height - 1, Math.max(0, Math.round(y * canvas.height)));
-      const rgba = context.getImageData(px, py, 1, 1).data;
-      return [rgba[0]!, rgba[1]!, rgba[2]!, rgba[3]!] as [number, number, number, number];
+
+      let minRed = 255;
+      const samplesPerAxis = 9;
+      for (let yi = 0; yi < samplesPerAxis; yi++) {
+        const yRatio = yi / (samplesPerAxis - 1);
+        const normalizedY = bounds.yMin + (bounds.yMax - bounds.yMin) * yRatio;
+        const y = Math.min(
+          canvas.height - 1,
+          Math.max(0, Math.round(normalizedY * (canvas.height - 1)))
+        );
+        for (let xi = 0; xi < samplesPerAxis; xi++) {
+          const xRatio = xi / (samplesPerAxis - 1);
+          const normalizedX = bounds.xMin + (bounds.xMax - bounds.xMin) * xRatio;
+          const x = Math.min(
+            canvas.width - 1,
+            Math.max(0, Math.round(normalizedX * (canvas.width - 1)))
+          );
+          const red = context.getImageData(x, y, 1, 1).data[0]!;
+          minRed = Math.min(minRed, red);
+        }
+      }
+      return minRed;
     },
-    { source: dataUrl, x: normalizedX, y: normalizedY }
+    { source: dataUrl, bounds: region }
   );
 }
 
@@ -78,12 +99,17 @@ test('简单难度经“选关卡”和“选章节”进入游戏仍保持全�
   await expect(page.getByTestId('difficulty-panel')).toBeVisible({ timeout: 20000 });
   await page.getByTestId('btn-difficulty-easy').click();
 
-  // 直接“选关卡”进入 1-10：采样未处于初始九宫格内的墙体中心，不能被迷雾漂白。
+  // 直接“选关卡”进入 1-10：扫描不在初始九宫格内的墙体内部，避免缩放/抗锯齿导致单像素误判。
   await page.getByTestId('btn-level-select').click();
   await page.getByTestId('level-level-010').click();
   await expect(page.getByTestId('level-label')).toContainText('1-10');
-  const directLevelPixel = await sampleCanvasPixel(page, 52 / 360, 180 / 360);
-  expect(directLevelPixel[0]).toBeLessThan(225);
+  const directLevelWallMinRed = await sampleCanvasRegionMinRed(page, {
+    xMin: 27 / 360,
+    xMax: 77 / 360,
+    yMin: 155 / 360,
+    yMax: 205 / 360
+  });
+  expect(directLevelWallMinRed).toBeLessThan(225);
 
   // 返回首页后再走“选章节 → 第2章 → 2-11”，同样必须保持简单难度。
   await page.getByTestId('btn-home').click();
@@ -91,8 +117,13 @@ test('简单难度经“选关卡”和“选章节”进入游戏仍保持全�
   await page.getByTestId('chapter-2').click();
   await page.getByTestId('level-level-011').click();
   await expect(page.getByTestId('level-label')).toContainText('2-11');
-  const chapterLevelPixel = await sampleCanvasPixel(page, 72.5 / 360, 308.5 / 360);
-  expect(chapterLevelPixel[0]).toBeLessThan(225);
+  const chapterLevelWallMinRed = await sampleCanvasRegionMinRed(page, {
+    xMin: 56 / 360,
+    xMax: 89 / 360,
+    yMin: 292 / 360,
+    yMax: 325 / 360
+  });
+  expect(chapterLevelWallMinRed).toBeLessThan(225);
 });
 
 test('标准难度走过的探索区域完全点亮，不再保留半透明雾层', async ({ page }) => {
@@ -113,8 +144,14 @@ test('标准难度走过的探索区域完全点亮，不再保留半透明雾�
   await page.getByTestId('btn-up').click();
   await page.waitForTimeout(260);
 
-  const exploredWallPixel = await sampleCanvasPixel(page, 72.5 / 360, 136.5 / 360);
-  expect(exploredWallPixel[0]).toBeLessThan(195);
+  const exploredWallMinRed = await sampleCanvasRegionMinRed(page, {
+    xMin: 56 / 360,
+    xMax: 89 / 360,
+    yMin: 120 / 360,
+    yMax: 153 / 360
+  });
+  // 原来的 0.58 alpha 半雾会把墙体暗纹抬到约 205；完全点亮应明显低于 200。
+  expect(exploredWallMinRed).toBeLessThan(200);
 });
 
 test('进入第11关时显示“难度飙升”提示', async ({ page }) => {
