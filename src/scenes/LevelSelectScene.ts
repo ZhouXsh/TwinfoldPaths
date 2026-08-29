@@ -2,6 +2,7 @@
 import Phaser from 'phaser';
 import { LEVELS } from '../content/levels';
 import { localStorageStore, loadSave } from '../persistence/save-store';
+import { loadDifficulty, setActiveDifficulty } from '../difficulty/game-difficulty';
 import { audioManager } from '../audio/audio-manager';
 import { bindButton, getEl, setStatusText, showBars, updateProgress } from './dom-ui';
 
@@ -30,6 +31,8 @@ export class LevelSelectScene extends Phaser.Scene {
   }
 
   create(): void {
+    // 从首页直接选关或经章节选关时，都重新加载玩家保存的探索难度。
+    setActiveDifficulty(loadDifficulty(localStorageStore()));
     showBars('bar-level-select');
     const title = getEl('level-select-title');
     title.textContent = `第${this.chapter}章 ${CHAPTER_NAMES[this.chapter] ?? ''}`;
@@ -40,6 +43,13 @@ export class LevelSelectScene extends Phaser.Scene {
       for (const fn of this.cleanupFns) fn();
       this.cleanupFns = [];
     });
+  }
+
+  private startLevel(levelId: string): void {
+    // GameScene.init 会紧接着读取当前难度；在跳转前再次以 localStorage 为事实来源同步一次。
+    setActiveDifficulty(loadDifficulty(localStorageStore()));
+    audioManager.play('uiTap');
+    this.scene.start('Game', { levelId });
   }
 
   private renderLevels(): void {
@@ -107,15 +117,11 @@ export class LevelSelectScene extends Phaser.Scene {
           <div class="best-row">${bestText}</div>
         `;
 
-        cell.addEventListener('click', () => {
-          audioManager.play('uiTap');
-          this.scene.start('Game', { levelId: level.id });
-        });
+        cell.addEventListener('click', () => this.startLevel(level.id));
         cell.addEventListener('keydown', (e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
-            audioManager.play('uiTap');
-            this.scene.start('Game', { levelId: level.id });
+            this.startLevel(level.id);
           }
         });
       }
